@@ -1,5 +1,16 @@
 # Replay Capsule — build handoff
 
+## Independent acceptance verification — FAIL (2026-08-28 UTC)
+
+Candidate `1dabb6fa189282233dac9fc19d76cef6da32b689` was clean-installed, built, packed into a separate consumer, and exercised locally and at https://browser-game-replay-capsule.sociobot.in. The full evidence is in `.factory/verification.md`.
+
+Do **not** treat this candidate as accepted. Two defects remain:
+
+- **P1 deployment policy/cache failure:** production serves every checked hashed asset with `Cache-Control: public, must-revalidate, max-age=30` rather than immutable caching, and omits the shipped `X-Frame-Options` and `Permissions-Policy` headers (as well as CSP). The live content bytes otherwise SHA-256-match this candidate.
+- **P2 capsule validation failure:** `validateCapsule()` accepts a gamepad event whose optional `browserTimestamp` is a string, contrary to the public type and documented malformed-import rejection.
+
+`npm ci`, `npm run typecheck`, `npm test` (8/8), `npm run build`, `npm pack --dry-run`, and `npm run test:e2e` (10/10 desktop/mobile) passed; the packed ESM and CommonJS public APIs worked in a fresh consumer. No lint script exists. Browser checks found no console/page errors or axe serious/critical findings, same-origin-only runtime requests, no storage/cookies, a visible keyboard focus ring, reduced-motion behavior, and no 390px overflow. See the verification report for exact headers, commands, and repair/retest steps.
+
 ## Shipped
 
 - `@sociobot/replay-capsule` v0.1.0 as a zero-runtime-dependency TypeScript package with ESM, CommonJS, and `.d.ts` outputs.
