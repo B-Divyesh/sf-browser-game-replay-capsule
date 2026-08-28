@@ -1,0 +1,71 @@
+import AxeBuilder from '@axe-core/playwright'
+import { expect, test } from '@playwright/test'
+
+test('landing page is semantic, clean, and accessible', async ({ page }, testInfo) => {
+  const errors: string[] = []
+  page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()) })
+  await page.goto('/')
+
+  await expect(page).toHaveTitle(/Replay Capsule/)
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en')
+  await expect(page.locator('main')).toHaveCount(1)
+  await expect(page.locator('h1')).toHaveCount(1)
+  await expect(page.locator('img')).toHaveAttribute('alt', /flight recorder/)
+  await expect(page.getByRole('heading', { name: 'Make the bug play itself.' })).toBeVisible()
+  expect(errors).toEqual([])
+
+  // axe bundles its own Playwright peer types; runtime is pinned by this project.
+  const results = await new AxeBuilder({ page: page as never }).analyze()
+  const serious = results.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? ''))
+  expect(serious, JSON.stringify(serious, null, 2)).toEqual([])
+
+  if (testInfo.project.name === 'mobile') {
+    const dimensions = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }))
+    expect(dimensions.scroll).toBeLessThanOrEqual(dimensions.client)
+  }
+})
+
+test('records, exports, and replays a real input capsule', async ({ page }) => {
+  await page.goto('/#demo')
+  await page.getByRole('button', { name: 'Arm & start' }).click()
+  await expect(page.getByText('Recording', { exact: true })).toBeVisible()
+  await page.keyboard.press('ArrowRight')
+  await page.keyboard.press('ArrowUp')
+  await page.getByRole('button', { name: 'Stop recording' }).click()
+  await expect(page.locator('#event-readout')).toHaveText('4')
+
+  const downloadPromise = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Download capsule' }).click()
+  const download = await downloadPromise
+  expect(download.suggestedFilename()).toMatch(/^replay-.+\.json$/)
+
+  await page.getByRole('button', { name: 'Replay capsule' }).click()
+  await expect(page.locator('#demo-message')).toContainText('Replay complete')
+})
+
+test('invalid imports explain how to recover', async ({ page }) => {
+  await page.goto('/#demo')
+  await page.locator('#import').setInputFiles({ name: 'not-a-capsule.json', mimeType: 'application/json', buffer: Buffer.from('{bad') })
+  await expect(page.locator('#demo-message')).toContainText('not valid JSON')
+  await expect(page.locator('#demo-message')).toContainText('under 1 MB')
+})
+
+test('never records text-field keystrokes', async ({ page }) => {
+  await page.goto('/#demo')
+  await page.getByRole('button', { name: 'Arm & start' }).click()
+  await page.evaluate(() => {
+    const input = document.createElement('input')
+    input.setAttribute('aria-label', 'Private text test')
+    document.body.append(input)
+    input.focus()
+  })
+  await page.keyboard.type('never capture this')
+  await expect(page.locator('#event-readout')).toHaveText('0')
+})
+
+test('legal pages are reachable', async ({ page }) => {
+  await page.goto('/privacy/')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Privacy, by construction.')
+  await page.goto('/terms/')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Plain terms for a small tool.')
+})

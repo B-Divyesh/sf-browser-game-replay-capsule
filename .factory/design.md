@@ -34,7 +34,7 @@ Spacing follows an 8px base rhythm with 4px micro-adjustments: 4, 8, 12, 16, 24,
 
 The hero includes one generated raster illustration used as an explanatory instrument-panel cutaway, not wallpaper. It depicts an input pulse entering a compact black-box capsule and returning as an identical pulse, with room for live HTML status labels beside it. No text is baked into the image.
 
-- File: `site/assets/replay-instrument.webp`
+- Files: `site/assets/replay-instrument.webp` (1200px archive) and `site/assets/replay-instrument-600.webp` (600px delivery asset)
 - Generation tool: `/opt/fleet/lib/gen-image.sh` using the factory `factory-image` deployment.
 - License/provenance: original AI-generated project asset, created for Replay Capsule on 2026-08-28; no source artwork or trademarks used.
 - Final prompt: “Use case: stylized-concept. Asset type: explanatory landing-page hero illustration. A compact 1950s laboratory flight recorder for a tiny 2D browser game: cream enamel faceplate, deep petrol-green bezel, one amber lamp, two circular input sockets, a paper timeline entering the machine and the exact same sequence leaving it. Flat screen-print gouache illustration with subtle paper grain, precise geometric shapes, restrained mid-century industrial design. Three-quarter tabletop view, instrument centered with generous cream negative space, no people. Palette limited to cream, dark green-black, petrol, burnt orange and muted brass. No words, letters, numbers, logos, gradients, photorealism, neon, generic laptop UI, watermark.”
