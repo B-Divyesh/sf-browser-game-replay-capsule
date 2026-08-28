@@ -1,0 +1,12 @@
+{
+  "slug": "browser-game-replay-capsule",
+  "title": "Replay Capsule",
+  "territory": "games-creative",
+  "user": "A solo developer of a 2D browser game who needs a bug report that recreates the player's inputs and timing without operating a full analytics stack.",
+  "smallest_useful_product": "NPM library to record pointer/key/gamepad events plus developer-supplied seed and checkpoints, then download/import a capped replay file.",
+  "success_measure": "A sample Phaser/Kaplay demo reproduces 90% of seeded failures from a single imported capsule.",
+  "artifact_class": "library-npm",
+  "monetization": "free",
+  "constraints": "Explicit opt-in UI; never record text fields; strict size cap; browser API compatibility and gamepad timestamp caveats.",
+  "state": "RESEARCHED"
+}
