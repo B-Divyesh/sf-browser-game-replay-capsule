@@ -4,3 +4,8 @@ dist/
 *.log
 graphify-out/
 .DS_Store
+coverage/
+playwright-report/
+test-results/
+output/
+*.tgz
