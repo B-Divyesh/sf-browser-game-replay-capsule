@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.3 — 2026-08-28
+
+- Enforce the strict recorder cap again when stopping or exporting changes duration metadata, preserving a valid, importable capped artifact at the 4 KB, 128 KB, and 1 MB boundaries.
+- Mark the scoped package for public npm publication by the factory release workflow.
+
 ## 0.1.2 — 2026-08-28
 
 - Account for the exact compact JSON representation that downloads use, so a capped recorder export remains downloadable and importable.

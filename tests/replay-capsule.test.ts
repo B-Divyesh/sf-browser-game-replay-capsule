@@ -61,6 +61,58 @@ describe('createRecorder', () => {
     expect(recorder.export().truncated).toBe(true)
   })
 
+  for (const maxBytes of [4_096, 128_000, 1_000_000]) {
+    it(`keeps an exactly ${maxBytes.toLocaleString()}-byte recording exportable after stop changes duration metadata`, async () => {
+      let clock = 0
+      const makeRecorder = () => createRecorder({
+        seed: 'duration-boundary', target: new EventTarget(), keyTarget: new EventTarget(), captureGamepads: false, maxBytes, now: () => clock,
+      })
+
+      // JSON byte growth is linear for this ASCII checkpoint payload. Measure
+      // the fixed checkpoint envelope, then create a fresh exact-cap run.
+      const measured = makeRecorder()
+      measured.start()
+      const emptyBytes = measured.status.bytes
+      expect(measured.checkpoint('boundary', '')).toBe(true)
+      const envelopeBytes = measured.status.bytes - emptyBytes
+
+      const recorder = makeRecorder()
+      recorder.start()
+      expect(recorder.checkpoint('boundary', 'x'.repeat(maxBytes - emptyBytes - envelopeBytes))).toBe(true)
+      expect(recorder.status.bytes).toBe(maxBytes)
+
+      clock = 100
+      recorder.stop()
+      const capsule = recorder.export()
+      const serialized = JSON.stringify(capsule)
+
+      expect(recorder.state).toBe('limit-reached')
+      expect(capsule.truncated).toBe(true)
+      expect(new TextEncoder().encode(serialized).byteLength).toBeLessThanOrEqual(maxBytes)
+      await expect(importCapsule(serialized, maxBytes)).resolves.toEqual(capsule)
+    })
+  }
+
+  it('finalizes a recording at the cap when export is the first duration-changing operation', async () => {
+    let clock = 0
+    const target = new EventTarget()
+    const recorder = createRecorder({ seed: 'export-boundary', target, keyTarget: target, captureGamepads: false, maxBytes: 4_096, now: () => clock })
+    recorder.start()
+    const emptyBytes = recorder.status.bytes
+    expect(recorder.checkpoint('boundary', '')).toBe(true)
+    const envelopeBytes = recorder.status.bytes - emptyBytes
+
+    recorder.clear()
+    recorder.start()
+    expect(recorder.checkpoint('boundary', 'x'.repeat(4_096 - emptyBytes - envelopeBytes))).toBe(true)
+    clock = 100
+
+    const capsule = recorder.export()
+    expect(recorder.state).toBe('limit-reached')
+    expect(new TextEncoder().encode(JSON.stringify(capsule)).byteLength).toBeLessThanOrEqual(4_096)
+    await expect(importCapsule(JSON.stringify(capsule), 4_096)).resolves.toEqual(capsule)
+  })
+
   it('keeps a near-cap recorder download within the same cap and importable', async () => {
     const target = new EventTarget()
     const recorder = createRecorder({ seed: 'near-cap', target, keyTarget: target, captureGamepads: false, maxBytes: 128_000, now: () => 10 })

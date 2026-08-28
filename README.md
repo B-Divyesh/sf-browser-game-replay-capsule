@@ -81,7 +81,7 @@ The package exports ESM, CommonJS, and declarations. The `ReplayEvent`, `ReplayC
 
 ## Limits and browser behavior
 
-- Default cap: 128 KB; supported range: 4 KB–1 MB. The recorder stops before an event would cross the cap and reports `limit-reached`. Accounting and the downloaded file use the same compact JSON bytes, so a capped recorder export stays importable.
+- Default cap: 128 KB; supported range: 4 KB–1 MB. The recorder stops before an event would cross the cap and reports `limit-reached`. It also rechecks the cap when final timing metadata changes on `stop()` or `export()`; it preserves whole retained entries and finalizes at the last retained timestamp when necessary. Accounting and the downloaded file use the same compact JSON bytes, so a capped recorder export stays importable.
 - Pointer coordinates are normalized to the configured target when possible.
 - Key identity uses `KeyboardEvent.code`, not typed characters. Events originating in text-entry controls are ignored.
 - Gamepads are sampled once per animation frame, but browser gamepad timestamps are inconsistent. Replay Capsule timestamps the sample at observation time and stores the browser timestamp only as optional diagnostic metadata.

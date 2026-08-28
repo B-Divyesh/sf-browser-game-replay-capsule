@@ -136,6 +136,10 @@ export function createRecorder(options: RecorderOptions): ReplayRecorder {
   let state: RecorderState = 'idle'
   let startedAt = 0
   let stoppedAt = 0
+  // Set only when cap enforcement needs to preserve the final artifact. A
+  // capsule may otherwise grow after its final input simply because duration
+  // gains another digit (for example, 0 -> 100 ms).
+  let durationOverride: number | undefined
   let lastMoveAt = -Infinity
   let animationFrame: number | undefined
   let events: ReplayEvent[] = []
@@ -143,11 +147,17 @@ export function createRecorder(options: RecorderOptions): ReplayRecorder {
   const gamepadSnapshots = new Map<number, string>()
 
   const timestamp = () => Math.max(0, round((state === 'recording' ? now() : stoppedAt) - startedAt, 2))
+  const latestRetainedTimestamp = () => {
+    let latest = 0
+    for (const event of events) latest = Math.max(latest, event.t)
+    for (const checkpoint of checkpoints) latest = Math.max(latest, checkpoint.t)
+    return latest
+  }
   const makeCapsule = (): ReplayCapsule => ({
     format: CAPSULE_FORMAT,
     version: CAPSULE_VERSION,
     createdAt,
-    durationMs: state === 'idle' ? 0 : timestamp(),
+    durationMs: state === 'idle' ? 0 : durationOverride ?? timestamp(),
     seed: options.seed,
     events: [...events],
     checkpoints: [...checkpoints],
@@ -174,13 +184,19 @@ export function createRecorder(options: RecorderOptions): ReplayRecorder {
     animationFrame = undefined
   }
 
-  const reachLimit = () => {
-    stoppedAt = now()
+  const reachLimit = (endedAt = now()) => {
+    stoppedAt = endedAt
     state = 'limit-reached'
     // Changing the state adds `truncated: true` (and can change duration
-    // digits). Drop the newest retained item if that metadata would otherwise
-    // make the final downloadable artifact exceed its promised cap.
+    // digits). Drop whole newest entries until the final downloadable artifact
+    // fits. If only metadata remains, duration can safely end at the last
+    // retained input rather than making the export fail over idle time.
     while (byteLength(makeCapsule()) > maxBytes) {
+      const minimumDuration = latestRetainedTimestamp()
+      if (durationOverride === undefined || durationOverride > minimumDuration) {
+        durationOverride = minimumDuration
+        continue
+      }
       const event = events.at(-1)
       const checkpoint = checkpoints.at(-1)
       if (!event && !checkpoint) break
@@ -255,6 +271,7 @@ export function createRecorder(options: RecorderOptions): ReplayRecorder {
       if (state !== 'idle') throw new Error('Call clear() before starting a new recording.')
       startedAt = now()
       stoppedAt = startedAt
+      durationOverride = undefined
       state = 'recording'
       keyTarget.addEventListener('keydown', onKey)
       keyTarget.addEventListener('keyup', onKey)
@@ -269,6 +286,10 @@ export function createRecorder(options: RecorderOptions): ReplayRecorder {
       if (state !== 'recording') return
       stoppedAt = now()
       state = 'stopped'
+      if (byteLength(makeCapsule()) > maxBytes) {
+        reachLimit(stoppedAt)
+        return
+      }
       removeListeners()
       notify()
     },
@@ -279,6 +300,7 @@ export function createRecorder(options: RecorderOptions): ReplayRecorder {
       gamepadSnapshots.clear()
       startedAt = 0
       stoppedAt = 0
+      durationOverride = undefined
       state = 'idle'
       notify()
     },
@@ -289,6 +311,10 @@ export function createRecorder(options: RecorderOptions): ReplayRecorder {
       return append({ label, data, t: timestamp() }, 'checkpoint')
     },
     export() {
+      // Export may be the first operation after elapsed time crosses a JSON
+      // digit boundary. Finalize instead of returning a capsule that exceeds
+      // the exact cap enforced for downloads and imports.
+      if (state === 'recording' && byteLength(makeCapsule()) > maxBytes) reachLimit()
       const capsule = makeCapsule()
       if (byteLength(capsule) > maxBytes) throw new CapsuleError('Capsule exceeds its configured size limit.', 'too-large')
       return capsule
