@@ -1,6 +1,6 @@
 {
   "name": "@sociobot/replay-capsule",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Tiny deterministic input-and-seed replay files for browser games",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -61,6 +61,7 @@
     "@playwright/test": "1.58.2",
     "@types/node": "24.3.0",
     "eslint": "9.35.0",
+    "phaser": "3.90.0",
     "tsup": "8.5.0",
     "typescript": "5.9.2",
     "typescript-eslint": "8.42.0",

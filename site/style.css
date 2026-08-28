@@ -39,7 +39,7 @@ a:hover { text-decoration-thickness: 2px; }
 
 .site-header, footer { max-width: 1280px; margin: 0 auto; padding: 24px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .site-header { border-bottom: 1px solid var(--line); }
-.wordmark { display: inline-flex; gap: 12px; align-items: center; color: var(--ink); font-weight: 700; text-decoration: none; }
+.wordmark { min-height: 44px; padding-block: 8px; display: inline-flex; gap: 12px; align-items: center; color: var(--ink); font-weight: 700; text-decoration: none; }
 .wordmark span { padding: 4px 7px; font: 700 11px/1 'Space Mono', monospace; color: var(--petrol-contrast); background: var(--petrol); letter-spacing: .08em; }
 nav { display: flex; gap: 24px; align-items: center; }
 nav a { min-height: 44px; display: inline-flex; align-items: center; color: var(--ink); font-weight: 700; text-decoration: none; }
@@ -102,6 +102,8 @@ h3 { font-size: 1.25rem; line-height: 1.2; }
 kbd { min-width: 26px; margin-right: 4px; padding: 2px 6px; display: inline-block; border: 1px solid var(--ink); border-bottom-width: 3px; border-radius: 2px; color: var(--ink); background: #fff9e9; text-align: center; }
 .secondary-row { margin-top: 12px; }
 .file-button { user-select: none; }
+/* The native file input owns keyboard focus; mirror it on its visible label. */
+#import:focus-visible + .file-button { outline: 3px solid var(--amber); outline-offset: 3px; }
 .timeline, .cap-gauge { height: 10px; margin-top: 28px; overflow: hidden; border: 1px solid var(--ink); border-radius: 6px; background: var(--panel-deep); }
 .timeline span, .cap-gauge span { display: block; width: 100%; height: 100%; background: var(--amber); transform: scaleX(0); transform-origin: left; transition: transform 180ms linear; }
 .demo-message { min-height: 28px; margin: 12px 0 0; color: var(--muted); }
@@ -126,7 +128,7 @@ kbd { min-width: 26px; margin-right: 4px; padding: 2px 6px; display: inline-bloc
 .install-section { background: var(--bench); }
 .code-panel { max-width: 900px; border: 2px solid var(--ink); background: #102d2b; box-shadow: 10px 10px 0 var(--shadow); }
 .code-title { min-height: 52px; padding: 8px 8px 8px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #58716d; color: #d7d4bd; font: 13px 'Space Mono', monospace; }
-.copy-code { min-height: 36px; padding: 4px 12px; border: 1px solid #d7d4bd; color: #fff9e9; background: transparent; cursor: pointer; }
+.copy-code { min-height: 44px; padding: 4px 12px; border: 1px solid #d7d4bd; color: #fff9e9; background: transparent; cursor: pointer; }
 pre { margin: 0; padding: 28px; overflow-x: auto; color: #edf0dd; font: 14px/1.75 'Space Mono', monospace; tab-size: 2; }
 .code-key { color: #f19b69; } .code-str { color: #c3d893; } .code-num { color: #f0c674; }
 .compatibility { margin-top: 40px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }

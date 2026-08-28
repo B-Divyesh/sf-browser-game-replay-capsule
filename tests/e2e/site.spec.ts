@@ -43,6 +43,34 @@ test('records, exports, and replays a real input capsule', async ({ page }) => {
   await expect(page.locator('#demo-message')).toContainText('Replay complete')
 })
 
+test('keeps the visible import control focused for keyboard users', async ({ page }) => {
+  await page.goto('/#demo')
+  await page.getByRole('button', { name: 'Arm & start' }).click()
+  await page.keyboard.press('ArrowRight')
+  await page.getByRole('button', { name: 'Stop recording' }).click()
+  await page.getByRole('button', { name: 'Download capsule' }).focus()
+  await page.keyboard.press('Tab')
+  await expect(page.locator('#import')).toBeFocused()
+  const focus = await page.locator('#import-label').evaluate((label) => {
+    const style = getComputedStyle(label)
+    const box = label.getBoundingClientRect()
+    return { outlineWidth: style.outlineWidth, outlineStyle: style.outlineStyle, box: { width: box.width, height: box.height } }
+  })
+  expect(focus.outlineWidth).toBe('3px')
+  expect(focus.outlineStyle).toBe('solid')
+  expect(focus.box.height).toBeGreaterThanOrEqual(44)
+})
+
+test('keeps compact navigation and code actions at 44px targets on mobile', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile', 'Target dimensions are a compact-layout regression.')
+  await page.goto('/')
+  for (const selector of ['.wordmark', '.copy-code']) {
+    const box = await page.locator(selector).boundingBox()
+    expect(box, `${selector} should have a measurable target`).not.toBeNull()
+    expect(box!.height).toBeGreaterThanOrEqual(44)
+  }
+})
+
 test('invalid imports explain how to recover', async ({ page }) => {
   await page.goto('/#demo')
   await page.locator('#import').setInputFiles({ name: 'not-a-capsule.json', mimeType: 'application/json', buffer: Buffer.from('{bad') })

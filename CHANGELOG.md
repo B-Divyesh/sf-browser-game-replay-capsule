@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.2 — 2026-08-28
+
+- Account for the exact compact JSON representation that downloads use, so a capped recorder export remains downloadable and importable.
+- Mirror keyboard focus from the native import input onto its visible control and bring compact navigation/code controls to 44px touch targets.
+- Add a tested Phaser integration fixture with repeated seeded-failure replay trials.
+
 ## 0.1.1 — 2026-08-28
 
 - Reject malformed gamepad diagnostic timestamps and non-integer gamepad indexes during capsule validation.

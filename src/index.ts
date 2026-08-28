@@ -86,7 +86,13 @@ export class CapsuleError extends Error {
 }
 
 const encoder = new TextEncoder()
-const byteLength = (value: unknown) => encoder.encode(JSON.stringify(value)).byteLength
+/**
+ * The one wire representation used for accounting, downloads, and string imports.
+ * Keeping it compact is important: pretty-print whitespace can otherwise turn a
+ * capped recorder export into a file the importer refuses.
+ */
+const serializeCapsule = (value: unknown) => JSON.stringify(value)
+const byteLength = (value: unknown) => encoder.encode(serializeCapsule(value)).byteLength
 const round = (value: number, places = 4) => Number(value.toFixed(places))
 
 function assertJson(value: unknown, path = 'value'): asserts value is JsonValue {
@@ -171,6 +177,16 @@ export function createRecorder(options: RecorderOptions): ReplayRecorder {
   const reachLimit = () => {
     stoppedAt = now()
     state = 'limit-reached'
+    // Changing the state adds `truncated: true` (and can change duration
+    // digits). Drop the newest retained item if that metadata would otherwise
+    // make the final downloadable artifact exceed its promised cap.
+    while (byteLength(makeCapsule()) > maxBytes) {
+      const event = events.at(-1)
+      const checkpoint = checkpoints.at(-1)
+      if (!event && !checkpoint) break
+      if (!checkpoint || (event && event.t >= checkpoint.t)) events.pop()
+      else checkpoints.pop()
+    }
     removeListeners()
     notify()
   }
@@ -336,7 +352,11 @@ export async function importCapsule(source: string | Blob | unknown, maxBytes = 
 
 export function downloadCapsule(capsule: ReplayCapsule, filename = 'bug.replay.json'): void {
   validateCapsule(capsule)
-  const blob = new Blob([JSON.stringify(capsule, null, 2)], { type: 'application/json' })
+  const serialized = serializeCapsule(capsule)
+  if (encoder.encode(serialized).byteLength > HARD_MAX_BYTES) {
+    throw new CapsuleError(`Capsule exceeds the ${HARD_MAX_BYTES}-byte download limit.`, 'too-large')
+  }
+  const blob = new Blob([serialized], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
   const anchor = document.createElement('a')
   anchor.href = url

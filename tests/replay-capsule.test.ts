@@ -5,6 +5,7 @@ import {
   CapsuleError,
   createPlayer,
   createRecorder,
+  downloadCapsule,
   importCapsule,
   validateCapsule,
   type ReplayCapsule,
@@ -58,6 +59,53 @@ describe('createRecorder', () => {
     expect(recorder.state).toBe('limit-reached')
     expect(new TextEncoder().encode(JSON.stringify(recorder.export())).byteLength).toBeLessThanOrEqual(4_096)
     expect(recorder.export().truncated).toBe(true)
+  })
+
+  it('keeps a near-cap recorder download within the same cap and importable', async () => {
+    const target = new EventTarget()
+    const recorder = createRecorder({ seed: 'near-cap', target, keyTarget: target, captureGamepads: false, maxBytes: 128_000, now: () => 10 })
+    recorder.start()
+    expect(recorder.checkpoint('near-cap-payload', 'x'.repeat(127_000))).toBe(true)
+    recorder.stop()
+    const capsule = recorder.export()
+    const compact = JSON.stringify(capsule)
+    expect(new TextEncoder().encode(compact).byteLength).toBeGreaterThan(126_000)
+    expect(new TextEncoder().encode(compact).byteLength).toBeLessThanOrEqual(recorder.status.maxBytes)
+
+    let downloaded: Blob | undefined
+    const anchor = { href: '', download: '', click: vi.fn() }
+    vi.stubGlobal('URL', {
+      createObjectURL: vi.fn((blob: Blob) => { downloaded = blob; return 'blob:replay-capsule' }),
+      revokeObjectURL: vi.fn(),
+    })
+    vi.stubGlobal('document', { createElement: vi.fn(() => anchor) })
+
+    downloadCapsule(capsule, 'near-cap')
+    expect(anchor.download).toBe('near-cap.json')
+    expect(anchor.click).toHaveBeenCalledOnce()
+    expect(downloaded).toBeDefined()
+    expect(await downloaded!.text()).toBe(compact)
+    await expect(importCapsule(downloaded!, recorder.status.maxBytes)).resolves.toEqual(capsule)
+  })
+
+  it('keeps a near-1 MB recorder download within the hard import limit', async () => {
+    const target = new EventTarget()
+    const recorder = createRecorder({ seed: 'hard-cap', target, keyTarget: target, captureGamepads: false, maxBytes: 1_000_000, now: () => 10 })
+    recorder.start()
+    expect(recorder.checkpoint('near-hard-cap', 'x'.repeat(999_000))).toBe(true)
+    recorder.stop()
+    const capsule = recorder.export()
+    expect(new TextEncoder().encode(JSON.stringify(capsule)).byteLength).toBeGreaterThan(998_000)
+    expect(recorder.status.bytes).toBeLessThanOrEqual(1_000_000)
+
+    let downloaded: Blob | undefined
+    vi.stubGlobal('URL', {
+      createObjectURL: vi.fn((blob: Blob) => { downloaded = blob; return 'blob:hard-cap' }),
+      revokeObjectURL: vi.fn(),
+    })
+    vi.stubGlobal('document', { createElement: vi.fn(() => ({ href: '', download: '', click: vi.fn() })) })
+    downloadCapsule(capsule)
+    await expect(importCapsule(downloaded!)).resolves.toEqual(capsule)
   })
 
   it('rejects non-JSON checkpoint values', () => {
