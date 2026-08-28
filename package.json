@@ -1,6 +1,6 @@
 {
   "name": "@sociobot/replay-capsule",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Tiny deterministic input-and-seed replay files for browser games",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -24,11 +24,13 @@
   "sideEffects": false,
   "scripts": {
     "dev": "vite --config vite.site.config.ts",
-    "build": "npm run clean && npm run build:lib && npm run build:site",
+    "build": "npm run clean && npm run build:lib && npm run build:site && npm run verify:site-build",
     "build:lib": "tsup src/index.ts --format esm,cjs --dts --target es2022 --clean=false",
     "build:site": "vite build --config vite.site.config.ts",
     "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
     "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "verify:site-build": "node scripts/verify-site-build.mjs",
     "test": "vitest run --coverage=false",
     "test:e2e": "playwright test",
     "check": "npm run typecheck && npm test && npm run build && npm run test:e2e"
@@ -58,8 +60,10 @@
     "@fontsource/space-mono": "5.2.6",
     "@playwright/test": "1.58.2",
     "@types/node": "24.3.0",
+    "eslint": "9.35.0",
     "tsup": "8.5.0",
     "typescript": "5.9.2",
+    "typescript-eslint": "8.42.0",
     "vite": "7.3.6",
     "vitest": "3.2.7"
   }

@@ -63,6 +63,20 @@ test('never records text-field keystrokes', async ({ page }) => {
   await expect(page.locator('#event-readout')).toHaveText('0')
 })
 
+test('continues to record offline without browser persistence', async ({ page, context }) => {
+  await page.goto('/#demo')
+  expect(await page.evaluate(() => ({ local: Object.keys(localStorage), session: Object.keys(sessionStorage) }))).toEqual({ local: [], session: [] })
+  expect(await context.cookies()).toEqual([])
+
+  await context.setOffline(true)
+  await page.evaluate(() => window.dispatchEvent(new Event('offline')))
+  await expect(page.getByText('You are offline.')).toBeVisible()
+  await page.getByRole('button', { name: 'Arm & start' }).click()
+  await page.keyboard.press('ArrowRight')
+  await expect(page.locator('#event-readout')).toHaveText('2')
+  await context.setOffline(false)
+})
+
 test('legal pages are reachable', async ({ page }) => {
   await page.goto('/privacy/')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Privacy, by construction.')

@@ -282,6 +282,7 @@ export function createRecorder(options: RecorderOptions): ReplayRecorder {
 
 const isFiniteNumber = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value)
 const isTimestamp = (value: unknown): value is number => isFiniteNumber(value) && value >= 0
+const isGamepadIndex = (value: unknown): value is number => isFiniteNumber(value) && Number.isSafeInteger(value) && value >= 0
 
 export function validateCapsule(value: unknown): ReplayCapsule {
   if (!value || typeof value !== 'object') throw new CapsuleError('Capsule must be a JSON object.', 'invalid')
@@ -305,7 +306,8 @@ export function validateCapsule(value: unknown): ReplayCapsule {
       if (!['down', 'move', 'up', 'cancel'].includes(String(event.action)) || !isFiniteNumber(event.x) || !isFiniteNumber(event.y) || typeof event.pointerType !== 'string') throw new CapsuleError(`Pointer event ${index} is invalid.`, 'invalid')
       for (const key of ['button', 'buttons', 'pointerId', 'pressure']) if (typeof event[key] !== 'number' || !Number.isFinite(event[key])) throw new CapsuleError(`Pointer event ${index} is invalid.`, 'invalid')
     } else if (event.type === 'gamepad') {
-      if (typeof event.index !== 'number' || typeof event.connected !== 'boolean' || !Array.isArray(event.axes) || !Array.isArray(event.buttons) || !event.axes.every(isFiniteNumber) || !event.buttons.every((button) => isFiniteNumber(button) && button >= 0)) throw new CapsuleError(`Gamepad event ${index} is invalid.`, 'invalid')
+      const hasBrowserTimestamp = Object.hasOwn(event, 'browserTimestamp')
+      if (!isGamepadIndex(event.index) || typeof event.connected !== 'boolean' || !Array.isArray(event.axes) || !Array.isArray(event.buttons) || !event.axes.every(isFiniteNumber) || !event.buttons.every((button) => isFiniteNumber(button) && button >= 0) || (hasBrowserTimestamp && !isTimestamp(event.browserTimestamp))) throw new CapsuleError(`Gamepad event ${index} is invalid.`, 'invalid')
     } else throw new CapsuleError(`Event ${index} has an unknown type.`, 'invalid')
   }
   for (const [index, raw] of capsule.checkpoints.entries()) {

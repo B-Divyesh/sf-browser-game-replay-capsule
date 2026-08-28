@@ -98,6 +98,25 @@ describe('capsule import and validation', () => {
     expect(() => validateCapsule({ ...validCapsule(), version: 2 })).toThrowError(expect.objectContaining({ code: 'unsupported' }))
     await expect(importCapsule(' '.repeat(4_097), 4_096)).rejects.toMatchObject({ code: 'too-large' })
   })
+
+  it('rejects malformed gamepad diagnostic metadata and indexes', async () => {
+    const malformedTimestamp = validCapsule()
+    malformedTimestamp.events[0] = {
+      type: 'gamepad', index: 0, connected: true, axes: [], buttons: [], browserTimestamp: 'not-a-number' as never, t: 0,
+    }
+    expect(() => validateCapsule(malformedTimestamp)).toThrowError(expect.objectContaining({ code: 'invalid' }))
+    await expect(importCapsule(JSON.stringify(malformedTimestamp))).rejects.toMatchObject({ code: 'invalid' })
+
+    for (const index of [-1, 0.5, Infinity]) {
+      const malformedIndex = validCapsule()
+      malformedIndex.events[0] = { type: 'gamepad', index, connected: true, axes: [], buttons: [], t: 0 }
+      expect(() => validateCapsule(malformedIndex)).toThrowError(expect.objectContaining({ code: 'invalid' }))
+    }
+
+    const validTimestamp = validCapsule()
+    validTimestamp.events[0] = { type: 'gamepad', index: 0, connected: true, axes: [], buttons: [], browserTimestamp: 14.25, t: 0 }
+    expect(validateCapsule(validTimestamp)).toEqual(validTimestamp)
+  })
 })
 
 describe('createPlayer', () => {
