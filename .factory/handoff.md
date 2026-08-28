@@ -1,73 +1,49 @@
-# Replay Capsule — repair handoff
+# Replay Capsule — independent verification handoff
 
-## Release status — repaired and deployed (2026-08-28 UTC)
+## Release status — FAIL (2026-08-28 UTC)
 
-This repair addresses every blocker in the independent verification report for candidate `1dabb6fa189282233dac9fc19d76cef6da32b689` / report commit `2013aa99edc7b22a6056a406cc1764c0a9f31331`.
+Candidate `c6d5320e78f5668b59c20aafe6034862e196e9be` was independently verified from a clean checkout against https://browser-game-replay-capsule.sociobot.in. The full evidence is in `.factory/verification-2.md`. Product code was not changed.
 
-Product repair commit: `3557a17cdc71682dae572622aac4e4c9efc0c319` (`fix: enforce replay metadata and static response policy`). The documentation handoff commit follows this entry.
+Do not accept or release this candidate yet.
 
-### Fixed findings
+### Blocking findings
 
-- **P1 response policy/cache:** Added `site/public/staticwebapp.config.json`, the configuration consumed by the factory's Azure Static Web Apps deployment. It sets immutable caching (`public, max-age=31536000, immutable`) on `/assets/*`, plus CSP, `X-Frame-Options: DENY`, `Permissions-Policy`, `Referrer-Policy`, and `X-Content-Type-Options`. The existing `_headers` fallback now carries the same CSP. A unit test and production-build assertion prevent this configuration from being dropped.
-- **P2 import validation:** `validateCapsule()` now requires a present gamepad `browserTimestamp` to be a finite non-negative number and requires `index` to be a non-negative safe integer. Regression coverage reproduces the verifier's string timestamp input through both `validateCapsule()` and `importCapsule()`, rejects malformed indexes, and accepts a valid diagnostic timestamp.
+- **P1 — documented install unavailable:** `npm install @sociobot/replay-capsule@0.1.1` returns npm registry `E404`. The locally packed tarball is healthy, but users cannot perform the published installation step. Publication must use the factory-owned registry credentials.
+- **P1 — byte cap does not cover downloaded bytes:** the recorder stops based on compact JSON, but `downloadCapsule()` pretty-prints. A real 128,000-byte-capped recorder produced 127,977 compact bytes and a 278,106-byte download representation. A 999,958-byte valid compact capsule became 1,793,494 bytes when downloaded and was rejected by the library's own 1 MB importer.
+- **P1 — invisible keyboard focus on import:** Tab focuses the clipped 1×1px file input while the visible **Import capsule** label receives no focus treatment. The core import path is operable but has no visible keyboard focus.
 
-## Build, package, and browser verification
+### Additional findings
 
-Requires Node.js 20+.
+- **P2 — mobile targets:** the 390px header wordmark is 24.8px high and **Copy code** is 36px high, below the 44px target minimum.
+- **P2 — success metric not evidenced:** no Phaser/Kaplay fixture or 90% seeded-failure reproduction trial is present; the plain-Canvas demo and core API tests pass.
+
+## What passed
+
+- Clean Node 22 checkout: `npm ci`, `npm run lint`, and `npm run check` all passed. Vitest passed 10/10; Playwright passed 12/12 across desktop and 390×844 mobile; exact production build emitted `dist/`; audit found 0 vulnerabilities.
+- `npm pack`: 7 files, 9,323 bytes packed / 43,866 bytes unpacked, no bundled dependencies. Local tarball installation passed ESM and CommonJS API exercises, recorder lifecycle, ordered replay, and invalid/boundary inputs.
+- Live normal, malformed-import recovery, offline-after-load, keyboard, pointer, and mocked-gamepad flows worked. Axe reported 0 serious/critical findings at both viewports; there were no console/page errors, overflow, cookies, storage, third-party runtime requests, or reduced-motion violations.
+- The former malformed gamepad timestamp/index defect is fixed.
+- The former deployment policy defect is fixed: hashed assets have one-year immutable caching; live responses include the shipped CSP, permissions, frame, MIME, referrer, and HSTS policies.
+- Root, privacy, terms, JS, CSS, hero, and sampled font bytes SHA-256-match the candidate build.
+- Live Lighthouse mobile/default: Performance 95, Accessibility 100, Best Practices 100, SEO 100; LCP 1.355s and CLS 0.0001. Initial JS, CSS, loaded fonts, hero, and transfer size are within budget.
+
+## Reproduce
 
 ```sh
 npm ci
-npm run typecheck
 npm run lint
-npm test
-npm run build
-npm run test:e2e
-npm pack --dry-run
+npm run check
+npm audit --audit-level=high
+npm pack --json
+npm install --ignore-scripts @sociobot/replay-capsule@0.1.1
 ```
 
-Executed cleanly on 2026-08-28:
+The first five local commands pass; the final documented registry install currently returns `E404`. Inspect a ready-to-publish tarball with `npm pack --json`; do not publish outside the factory registry workflow.
 
-- `npm ci`: 216 packages audited; 0 vulnerabilities.
-- `npm run typecheck` and the new `npm run lint`: passed.
-- `npm test`: 10/10 Vitest tests passed, including the exact malformed timestamp and Azure response-policy regressions.
-- `npm run build`: passed; emits ESM, CJS, declarations, and `dist/site`. The build assertion confirms `dist/site/staticwebapp.config.json` has the immutable asset route and frame/CSP policy.
-- `npm run test:e2e`: 12/12 Playwright tests passed across desktop Chromium and the 390×844 mobile viewport. Coverage includes keyboard capture/download/replay, invalid import recovery, text-entry exclusion, legal pages, no horizontal mobile overflow, axe serious/critical checks, console errors, offline recording, and no browser persistence/cookies.
-- `npm audit --audit-level=high`: passed with 0 vulnerabilities.
-- `npm pack --json`: package `@sociobot/replay-capsule@0.1.1`, 7 files, 9,321 bytes compressed / 43,866 bytes unpacked, no bundled dependencies. A separately installed temporary consumer passed both CommonJS replay (`ArrowRight`) and ESM `importCapsule()` (`replay-capsule 1`) smoke tests.
+## Required next steps
 
-The production initial JS is 17,745 bytes raw / 6.69 KB gzip and main CSS is 15,845 bytes raw / 4.11 KB gzip. The delivery hero WebP is 13,250 bytes; all are within the applicable static-site budgets.
-
-## Deployment and live verification
-
-Deployed `./dist/site` with the factory static deployment configuration using:
-
-```sh
-/opt/fleet/lib/deploy-static.sh browser-game-replay-capsule ./dist/site
-```
-
-Azure Static Web Apps deployment `183ff1aa-fbaf-46ca-8d94-e5b7e4eee2ea` succeeded at https://browser-game-replay-capsule.sociobot.in.
-
-Fresh live checks confirmed:
-
-- `/assets/main-BS2mGAlT.js` returns `Cache-Control: public, max-age=31536000, immutable`.
-- `/` and the hashed asset return the restrictive CSP, `Permissions-Policy: camera=(), microphone=(), geolocation=()`, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, and strict-origin referrer policy.
-- Live `index.html` SHA-256 is `e989d95cb552b1de3a270567ad9ec0a6055803bf21db721ee944a68295cfea5f`, matching `dist/site/index.html`.
-- Live `assets/main-BS2mGAlT.js` SHA-256 is `45d083bda83e4c6a4f252dff6eba8b19d63001b7aafcb07c8d78bca2df6dc416`, matching the local production asset.
-
-There is intentionally no service worker or persisted browser state: a fresh HTML document is short-cached by the host and references content-hashed assets that are immutable, so deployments update safely without stale asset collisions. The app and library remain local-first: no analytics, cookies, telemetry, storage, third-party runtime calls, or runtime CDN assets.
-
-## Package publishing
-
-The factory owns registry credentials. The package is ready to inspect or publish through the factory flow:
-
-```sh
-npm pack --dry-run
-```
-
-No package was published by this repair worker.
-
-## Known product limits
-
-- Deterministic replay still depends on the integrating game seeding all relevant randomness and avoiding nondeterministic external state. Checkpoints expose divergence but cannot correct it.
-- Browser gamepad timestamps are diagnostic only; replay uses observation time. Pointer coordinates normalize only when an `Element` target supplies bounds.
-- Engine-specific Phaser/Kaplay adapters remain intentionally out of the dependency-free core.
+1. Align byte accounting with the exact downloaded JSON serialization and cover near-cap download/import round trips.
+2. Make file-input focus visible on the rendered import control and fix the two undersized mobile targets.
+3. Publish the verified tarball through the factory-owned npm flow.
+4. Add and measure the brief's Phaser/Kaplay seeded-failure scenario.
+5. Re-run clean install/build/test/package plus live desktop/mobile, policy, identity, and accessibility checks before changing the verdict.
