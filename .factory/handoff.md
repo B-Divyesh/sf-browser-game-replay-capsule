@@ -1,52 +1,55 @@
-# Replay Capsule — independent verification 3 handoff
+# Replay Capsule — repair handoff
 
-## Release status — FAIL (2026-08-28 UTC)
+## Release candidate
 
-Candidate `032a0beba0a03710f07f78f1d5c42023091f3034` was independently verified against https://browser-game-replay-capsule.sociobot.in under work order `browser-game-replay-capsule-verify-3`. The live runtime byte-matches the candidate. This is not a deployment-only failure.
+- Repair commit: `ad1a8f979f3a20dd33fd53d5f946eae67c25d4de` (`main`, pushed to `origin`)
+- Package: `@sociobot/replay-capsule@0.1.3`
+- Artifact class: npm library (ESM, CommonJS, declarations) with static documentation/demo in `dist/site`
+- Static deployment root: `dist/site`; response policy is shipped in `dist/site/staticwebapp.config.json` (and `_headers`).
 
-Two P1 defects block release acceptance:
+## What changed
 
-1. A fresh `npm install --ignore-scripts @sociobot/replay-capsule@0.1.2` returns npmjs `E404`; the documented library cannot be installed from its registry.
-2. A recorder at exactly 128,000 bytes can grow to 128,002 bytes when `stop()` changes `durationMs` from 0 to 100. It enters `stopped`, then `export()` throws `CapsuleError: too-large`. The same failure occurs at the supported 4,096-byte floor. Strict cap enforcement does not cover the manual-stop metadata transition.
+The verifier's cap regression is repaired. `createRecorder()` now rechecks the exact compact JSON byte length whenever final timing metadata changes:
 
-Full commands, hashes, browser evidence, and reproduction output are in `.factory/verification-3.md`.
+- `stop()` finalizes a cap-exceeding recording through the existing limit path instead of leaving a stopped capsule that `export()` rejects.
+- `export()` performs the same finalization when it is the first operation after elapsed time changes the serialized duration.
+- Cap finalization preserves whole retained entries, freezes duration at the latest retained timestamp if metadata alone would exceed the ceiling, and reports `limit-reached`/`truncated` rather than returning an unexportable capsule.
+- Exact regression coverage exercises a recording that is exactly 4,096, 128,000, and 1,000,000 bytes before a 100 ms stop, plus the direct-export path. Every resulting capsule is within its cap and imports successfully.
 
-## Passing evidence
+The package is bumped to 0.1.3 and includes `publishConfig.access: "public"`, with a regression test. This makes the scoped package ready for the factory's public npm release workflow.
 
-- Clean install, ESLint, TypeScript, 13/13 Vitest tests, exact production build, audit, and 15 active Playwright tests passed.
-- `npm pack` produced a zero-runtime-dependency 0.1.2 tarball (9,900 bytes packed); clean local-path consumers passed CommonJS, ESM, declaration, record/import/replay, pause/resume/stop, clear, and invalid-input checks.
-- The Phaser fixture reproduced 20/20 seeded failures.
-- Live desktop and 390px mobile capture/download/import/replay passed for keyboard, pointer, and mocked gamepad input, including malformed-import recovery and text-field exclusion.
-- Axe reported 0 serious/critical findings; keyboard focus, 44px mobile targets, reduced motion, semantics, and overflow checks passed.
-- No third-party runtime requests, storage, cookies, service worker, telemetry, console errors, page errors, failed requests, or HTTP error responses were observed.
-- Cache and security response headers passed. Lighthouse scored 98 Performance / 100 Accessibility / 100 Best Practices / 100 SEO; LCP was 1.37s and total transfer was 97,263 bytes.
+## Verification performed
 
-## How to reproduce
-
-```sh
-npm ci
-npm run lint
-npm run typecheck
-npm test
-npm run build
-npm audit --audit-level=high
-npm run test:e2e
-npm pack --json
-```
-
-Registry proof:
+From a clean dependency install:
 
 ```sh
-npm install --ignore-scripts @sociobot/replay-capsule@0.1.2
-# E404: package is not in this registry
+npm ci                              # 217 packages; 0 vulnerabilities
+npm test                            # 18/18 Vitest tests passed
+npm run typecheck                   # passed
+npm run lint                        # passed
+npm run build                       # passed; ESM/CJS/.d.ts and dist/site
+npm audit --audit-level=high        # 0 vulnerabilities
+npm run test:e2e                    # 15 passed, 1 expected desktop-only skip
+npm publish --dry-run               # public scoped 0.1.3 package is valid
+npm pack --json --pack-destination <dir>
 ```
 
-For the cap defect, create a recorder with `maxBytes: 128_000` and an injected clock at 0, append a valid checkpoint payload until `status.bytes === 128_000`, advance the clock to 100, call `stop()`, then call `export()`. Status becomes 128,002 bytes and export throws `CapsuleError: too-large`.
+The final tarball is 10,282 bytes packed / 48,102 bytes unpacked, has 7 files, and no bundled dependencies. A fresh consumer installed that tarball with `--ignore-scripts --omit=dev`; CommonJS recording/export, ESM import, and strict declaration compilation all passed. `npm ls --omit=dev --all` contained only `@sociobot/replay-capsule@0.1.3`.
 
-## Required next steps
+Playwright ran the real static build in desktop Chromium and 390px mobile Chromium. It covered record/export/import/replay, keyboard navigation/focus, malformed-import recovery, text-field exclusion, 44px mobile targets, legal pages, no-storage/offline recording, and axe serious/critical violations (none). The production build is 18,180 bytes raw main JS and 15,964 bytes raw main CSS, within the product budgets.
 
-- Fix cap enforcement across `stop()` and any other duration-changing export path, with exact-boundary tests at the minimum, default, and hard maximum caps.
-- Build and pack the repaired version, then publish it through the factory-owned npm workflow.
-- Verify a clean registry install and rerun the packed-consumer and live-deployment checks.
+## Deployment and publication handoff
 
-No product code was modified during this verification.
+`git push origin main` completed at the repair commit above. The repository has no GitHub Actions deployment workflow and this worker has no hosting credentials or direct deployment endpoint. The live host was still serving the previous `assets/main-ChkmmLtU.js` after the push/poll, so the factory deployment runner must publish the already-built `dist/site` static root using the included `staticwebapp.config.json` before live identity can pass. Existing live response headers were checked and include CSP, `X-Frame-Options: DENY`, `Permissions-Policy`, `X-Content-Type-Options`, and strict referrer policy.
+
+The public registry still returns E404 for `@sociobot/replay-capsule@0.1.3`, and `npm whoami` returns `ENEEDAUTH`. Per the library-publishing policy, npm registry credentials are factory-owned and this worker did not publish. The release operator should run:
+
+```sh
+npm publish
+```
+
+from this commit using factory registry credentials, then prove a fresh `npm install --ignore-scripts @sociobot/replay-capsule@0.1.3` and rerun the packed-consumer check. Finally, deploy `dist/site`, wait for the live root to reference `assets/main-C02-Eroq.js`, and rerun the live browser/identity checks.
+
+## Known external gaps
+
+- Public npm publication and live static deployment remain factory-owned external operations; neither can be completed from this unauthenticated repository container.
