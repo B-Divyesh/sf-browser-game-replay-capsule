@@ -66,6 +66,11 @@ describe('createRecorder', () => {
     recorder.start()
     expect(() => recorder.checkpoint('bad', { value: undefined } as never)).toThrow(CapsuleError)
   })
+
+  it('rejects an initial seed that already exceeds the configured cap', () => {
+    const target = new EventTarget()
+    expect(() => createRecorder({ seed: 'x'.repeat(5_000), target, keyTarget: target, captureGamepads: false, maxBytes: 4_096 })).toThrowError(expect.objectContaining({ code: 'too-large' }))
+  })
 })
 
 const validCapsule = (): ReplayCapsule => ({

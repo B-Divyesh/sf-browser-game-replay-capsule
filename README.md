@@ -59,6 +59,16 @@ await player.play()
 
 `pause()`, `resume()`, and `stop()` are available for debugger controls. Use `speed` to accelerate playback. See the live documentation and working Canvas demo at [browser-game-replay-capsule.sociobot.in](https://browser-game-replay-capsule.sociobot.in).
 
+## API
+
+- `createRecorder(options)` → `start`, `stop`, `clear`, `checkpoint`, `export`, plus live `state` and `status` getters.
+- `importCapsule(string | Blob | object, maxBytes?)` → validates and resolves a versioned `ReplayCapsule`.
+- `validateCapsule(value)` → synchronously validates trusted in-memory input.
+- `createPlayer(capsule, options)` → `play`, `pause`, `resume`, and `stop` with event, checkpoint, state, and progress callbacks.
+- `downloadCapsule(capsule, filename?)` → starts a local JSON download.
+
+The package exports ESM, CommonJS, and declarations. The `ReplayEvent`, `ReplayCheckpoint`, `ReplayCapsule`, recorder/player option, state, and status types are public.
+
 ## Limits and browser behavior
 
 - Default cap: 128 KB; supported range: 4 KB–1 MB. The recorder stops before an event would cross the cap and reports `limit-reached`.

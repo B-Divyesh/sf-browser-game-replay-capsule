@@ -33,18 +33,34 @@
     "test:e2e": "playwright test",
     "check": "npm run typecheck && npm test && npm run build && npm run test:e2e"
   },
-  "keywords": ["browser-game", "replay", "canvas", "phaser", "kaplay", "debugging"],
+  "keywords": [
+    "browser-game",
+    "replay",
+    "canvas",
+    "phaser",
+    "kaplay",
+    "debugging"
+  ],
   "author": "Sociobot (Param Factory)",
   "license": "MIT",
-  "engines": { "node": ">=20" },
+  "homepage": "https://browser-game-replay-capsule.sociobot.in",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/B-Divyesh/sf-browser-game-replay-capsule.git"
+  },
+  "bugs": "https://github.com/B-Divyesh/sf-browser-game-replay-capsule/issues",
+  "engines": {
+    "node": ">=20"
+  },
   "devDependencies": {
     "@axe-core/playwright": "4.10.2",
     "@fontsource/atkinson-hyperlegible": "5.2.6",
     "@fontsource/space-mono": "5.2.6",
     "@playwright/test": "1.58.2",
+    "@types/node": "24.3.0",
     "tsup": "8.5.0",
     "typescript": "5.9.2",
-    "vite": "7.1.3",
-    "vitest": "3.2.4"
+    "vite": "7.3.6",
+    "vitest": "3.2.7"
   }
 }

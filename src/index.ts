@@ -227,6 +227,10 @@ export function createRecorder(options: RecorderOptions): ReplayRecorder {
     if (typeof requestAnimationFrame === 'function') animationFrame = requestAnimationFrame(sampleGamepads)
   }
 
+  if (byteLength(makeCapsule()) > maxBytes) {
+    throw new CapsuleError('The seed and capsule metadata exceed the configured size limit.', 'too-large')
+  }
+
   return {
     get state() { return state },
     get status() { return getStatus() },
@@ -284,7 +288,7 @@ export function validateCapsule(value: unknown): ReplayCapsule {
   const capsule = value as Record<string, unknown>
   if (capsule.format !== CAPSULE_FORMAT) throw new CapsuleError('This file is not a Replay Capsule.', 'invalid')
   if (capsule.version !== CAPSULE_VERSION) throw new CapsuleError(`Capsule version ${String(capsule.version)} is not supported.`, 'unsupported')
-  if (typeof capsule.createdAt !== 'string' || !isTimestamp(capsule.durationMs) || typeof capsule.truncated !== 'boolean') {
+  if (typeof capsule.createdAt !== 'string' || !Number.isFinite(Date.parse(capsule.createdAt)) || !isTimestamp(capsule.durationMs) || typeof capsule.truncated !== 'boolean') {
     throw new CapsuleError('Capsule metadata is incomplete.', 'invalid')
   }
   assertJson(capsule.seed, 'seed')
@@ -294,7 +298,7 @@ export function validateCapsule(value: unknown): ReplayCapsule {
   for (const [index, raw] of capsule.events.entries()) {
     if (!raw || typeof raw !== 'object') throw new CapsuleError(`Event ${index} is invalid.`, 'invalid')
     const event = raw as Record<string, unknown>
-    if (!isTimestamp(event.t)) throw new CapsuleError(`Event ${index} has an invalid timestamp.`, 'invalid')
+    if (!isTimestamp(event.t) || event.t > capsule.durationMs) throw new CapsuleError(`Event ${index} has an invalid timestamp.`, 'invalid')
     if (event.type === 'key') {
       if (!['down', 'up'].includes(String(event.action)) || typeof event.code !== 'string' || typeof event.repeat !== 'boolean') throw new CapsuleError(`Key event ${index} is invalid.`, 'invalid')
     } else if (event.type === 'pointer') {
@@ -307,7 +311,7 @@ export function validateCapsule(value: unknown): ReplayCapsule {
   for (const [index, raw] of capsule.checkpoints.entries()) {
     if (!raw || typeof raw !== 'object') throw new CapsuleError(`Checkpoint ${index} is invalid.`, 'invalid')
     const checkpoint = raw as Record<string, unknown>
-    if (typeof checkpoint.label !== 'string' || !checkpoint.label || !isTimestamp(checkpoint.t)) throw new CapsuleError(`Checkpoint ${index} is invalid.`, 'invalid')
+    if (typeof checkpoint.label !== 'string' || !checkpoint.label || !isTimestamp(checkpoint.t) || checkpoint.t > capsule.durationMs) throw new CapsuleError(`Checkpoint ${index} is invalid.`, 'invalid')
     assertJson(checkpoint.data, `checkpoint ${index} data`)
   }
   return value as ReplayCapsule
@@ -323,8 +327,9 @@ export async function importCapsule(source: string | Blob | unknown, maxBytes = 
     if (source.size > maxBytes) throw new CapsuleError(`Capsule exceeds the ${maxBytes}-byte import limit.`, 'too-large')
     try { value = JSON.parse(await source.text()) } catch { throw new CapsuleError('Capsule is not valid JSON.', 'invalid') }
   }
-  if (byteLength(value) > maxBytes) throw new CapsuleError(`Capsule exceeds the ${maxBytes}-byte import limit.`, 'too-large')
-  return validateCapsule(value)
+  const validated = validateCapsule(value)
+  if (byteLength(validated) > maxBytes) throw new CapsuleError(`Capsule exceeds the ${maxBytes}-byte import limit.`, 'too-large')
+  return validated
 }
 
 export function downloadCapsule(capsule: ReplayCapsule, filename = 'bug.replay.json'): void {
