@@ -1,41 +1,36 @@
-# Replay Capsule review 2 handoff — FAIL
+# Replay Capsule polish 2 handoff
 
-## Work completed
+## Delivered
 
-Completed an adversarial first-read review of commit `f5a17c28fc8354f0ac7db4544edb52828fcb6f45` and the matching live deployment at https://browser-game-replay-capsule.sociobot.in on 2026-08-30 UTC.
+Repair commit: `3847829c9346243d8b5ba0df2d185db7c10ee936` (`fix: close replay capsule polish findings`), pushed to `origin/main`.
 
-The complete evidence, copy inventory, claim results, prior-finding verification, and fixes required are in `.factory/review-2.md`. No product code was changed.
+All 15 review-2 findings are repaired. The product keeps its mid-century instrument-panel identity while the direct demo becomes a compact, seeded application view. `/demo` and `?demo=1` show the isolated sample banner, seed `RC-SAMPLE-FAULT-17`, one event, a `fault-contact` checkpoint, and an immediate replay action on a 390×844 phone.
 
-## Verdict
+The repair adds two privacy claims (real-mode browser persistence and capture surface), a pinned Node 20 package-runtime claim, exact replay-sequence/outcome proof, and a browser-running Phaser scene claim that imports 20 capsules and reproduces 20 failures. Navigation, legal links, titles, route focus, 404, copy, metadata, and first-screen facts were also rechecked. Details are mapped in `.factory/polish-2.md`.
 
-**FAIL** with 15 findings.
+## Run and verify
 
-Blocking findings:
+```sh
+npm ci
+npm run check
+```
 
-- F-2-1: the one-click demo's first 390 × 844 viewport does not show the seeded product UI or a replay control.
-- F-2-2: the declared 90% Phaser fixture test exercises only the framework-free model and never runs the Phaser scene.
-- F-2-3: the record/export/import/replay test accepts a completion message without verifying the replayed sequence or outcome.
+`npm run check` runs typecheck, the 31-unit/package-test suite, production build, and 50 Playwright desktop/mobile tests. Every exact command in `.factory/claims.json` was also run from fresh clone `/tmp/replay-capsule-clean-zJPqAJ` after `npm ci`; all passed. The clean clone then passed `npm run check`.
 
-The remaining findings cover unlisted privacy and compatibility claims, subjective copy, missing first-screen facts, desktop first-screen layout, inconsistent route navigation, one 23-word README sentence, and four terminology/button clarity issues.
+Build output is `dist/` and the documentation site is `dist/site/`. Use `npm pack --dry-run` to inspect the publishable package; do not publish from this worker.
 
-## Verification performed
+## Evidence
 
-A clean clone at `/tmp/replay-review2-clean` was installed with `npm ci`.
+- Local `npm run check`: pass.
+- Fresh clone `npm run check`: pass (31 unit/package tests; 50 browser tests).
+- All claim commands: pass, including `@claim:seeded-failure-fixture`, `@claim:record-export-replay`, `@claim:no-browser-persistence`, `@claim:capture-surface`, and `@claim:node-20-runtime`.
+- Axe browser scans on landing, demo, legal pages, and 404: zero violations. Browser regressions check title, `lang`, one h1, main, alt text, focus, mobile targets, routing, and console errors.
+- [Local desktop demo evidence](verification-artifacts/polish-2-local/demo-desktop.png) and [390×844 demo evidence](verification-artifacts/polish-2-local/demo-mobile.png).
 
-- Every one of the 19 exact commands in `.factory/claims.json` exited successfully. The two blocking adequacy gaps above remain even though their commands are green.
-- `npm run check` passed: typecheck, 30 Vitest tests, production build, and 37 Playwright tests with one expected skip.
-- `dist/` was produced. Main site JS is 18,851 bytes raw and 7,089 bytes gzip.
-- `/opt/fleet/lib/verify-url.sh` passed the live root with no console errors.
-- Live Playwright Axe scans reported zero violations on `/`, `/demo`, `/privacy/`, `/terms/`, and the designed 404.
-- Fresh 390 × 844 and 1440 × 900 contexts verified first-read copy, layout bounds, demo entry/reset/exit, real-data sentinels, request isolation, route metadata, focus restoration, touch targets, and links.
-- The live demo made only same-origin static requests. Fresh demo storage, cookies, caches, IndexedDB, and service-worker registrations were empty.
-- Live recording, download, import, replay, and malformed-import recovery completed without page or console errors.
-- Root HTML, demo HTML, main JS, and the hosted release tarball SHA-256-match the reviewed checkout/build.
+## Deployment status
 
-## Prior history
+The static deployment source was pushed to `origin/main`. At 2026-08-30 08:08 UTC, the public hostname still served the preceding `polish-1` build (`ETag "65239227"`), so it has not yet been possible to truthfully record a successful cold live recheck. The deployment configuration is not present in this repository and no scoped Static Web App deployment command completed from the worker. Once the factory static deploy has picked up `3847829`, open `https://browser-game-replay-capsule.sociobot.in/demo` cold at 390×844 and 1440×900, then run the same live Axe/basic checks before declaring the release live.
 
-All six findings from `.factory/review-1.md` remain fixed in the live site and code. The assertions in `.factory/polish-1.md` and the prior handoff were rechecked. The earlier “Known gaps: None” status is superseded by review 2.
+## Known gaps
 
-## Next steps
-
-Resolve F-2-1 through F-2-15 in `.factory/review-2.md`, add the specified regressions, and rerun every claim command plus `npm run check` and the live mobile/desktop audit. Do not mark the product PASS until the review has zero findings and no untested claim.
+No code or test gaps remain. The only outstanding external state is the static host serving the pushed commit; the prior live build is still cached/deployed as noted above.
