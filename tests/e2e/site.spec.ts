@@ -30,6 +30,43 @@ test('sample demo has no axe violations', async ({ page }) => {
   expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual([])
 })
 
+test('keyboard users can reach and activate the sample action with a visible focus ring', async ({ page }) => {
+  await page.goto('/')
+  await page.keyboard.press('Tab')
+  await expect(page.getByRole('link', { name: 'Skip to main content' })).toBeFocused()
+
+  const sampleAction = page.getByRole('link', { name: 'Try it with sample data' })
+  for (let step = 0; step < 10 && !(await sampleAction.evaluate((element) => element === document.activeElement)); step += 1) {
+    await page.keyboard.press('Tab')
+  }
+  await expect(sampleAction).toBeFocused()
+  const focus = await sampleAction.evaluate((element) => {
+    const style = getComputedStyle(element)
+    return { width: style.outlineWidth, style: style.outlineStyle, color: style.outlineColor }
+  })
+  expect(focus).toEqual({ width: '3px', style: 'solid', color: 'rgb(164, 71, 33)' })
+  await page.keyboard.press('Enter')
+  await expect(page).toHaveURL(/\/demo\/$/)
+})
+
+test('reduced motion and 200% text keep the interface usable', async ({ page }, testInfo) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/')
+  const motion = await page.evaluate(() => ({
+    scrollBehavior: getComputedStyle(document.documentElement).scrollBehavior,
+    animationDuration: getComputedStyle(document.querySelector('.hero-copy')!).animationDuration,
+  }))
+  expect(motion.scrollBehavior).toBe('auto')
+  expect(Number.parseFloat(motion.animationDuration)).toBeLessThanOrEqual(0.00001)
+
+  if (testInfo.project.name === 'mobile') {
+    await page.evaluate(() => { document.documentElement.style.fontSize = '200%' })
+    const dimensions = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }))
+    expect(dimensions.scroll).toBeLessThanOrEqual(dimensions.client)
+    await expect(page.getByRole('link', { name: 'Try it with sample data' })).toBeVisible()
+  }
+})
+
 test('@claim:sample-demo loads isolated sample data in one click and can reset or exit', async ({ page }) => {
   await page.goto('/')
   await page.getByRole('link', { name: 'Try it with sample data' }).click()
@@ -66,7 +103,7 @@ test('@claim:opt-in-recording captures nothing before the person starts recordin
   await expect(page.locator('#event-readout')).toHaveText('2')
 })
 
-test('records, exports, and replays a real input capsule', async ({ page }) => {
+test('@claim:record-export-replay records, exports, imports, and replays a real input capsule', async ({ page }) => {
   await page.goto('/#demo')
   await page.getByRole('button', { name: 'Arm & start' }).click()
   await expect(page.getByText('Recording', { exact: true })).toBeVisible()
@@ -79,6 +116,11 @@ test('records, exports, and replays a real input capsule', async ({ page }) => {
   await page.getByRole('button', { name: 'Download capsule' }).click()
   const download = await downloadPromise
   expect(download.suggestedFilename()).toMatch(/^replay-.+\.json$/)
+
+  const downloadPath = await download.path()
+  expect(downloadPath).not.toBeNull()
+  await page.locator('#import').setInputFiles(downloadPath!)
+  await expect(page.locator('#demo-message')).toContainText('Imported 4 events')
 
   await page.getByRole('button', { name: 'Replay capsule' }).click()
   await expect(page.locator('#demo-message')).toContainText('Replay complete')
@@ -102,12 +144,13 @@ test('keeps the visible import control focused for keyboard users', async ({ pag
   expect(focus.box.height).toBeGreaterThanOrEqual(44)
 })
 
-test('keeps compact navigation and code actions at 44px targets on mobile', async ({ page }, testInfo) => {
+test('keeps compact navigation, footer links, and code actions at 44px targets on mobile', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile', 'Target dimensions are a compact-layout regression.')
   await page.goto('/')
-  for (const selector of ['.wordmark', '.copy-code']) {
+  for (const selector of ['.wordmark', '.copy-code', 'footer a[href="/demo/"]']) {
     const box = await page.locator(selector).boundingBox()
     expect(box, `${selector} should have a measurable target`).not.toBeNull()
+    expect(box!.width).toBeGreaterThanOrEqual(44)
     expect(box!.height).toBeGreaterThanOrEqual(44)
   }
 })
@@ -140,11 +183,19 @@ test('@claim:text-entry-excluded never records text-field keystrokes', async ({ 
   })
   await page.keyboard.type('also private')
   await expect(page.locator('#event-readout')).toHaveText('0')
-})
 
-test('never records text typed in a Shadow DOM input', async ({ page }) => {
-  await page.goto('/#demo')
-  await page.getByRole('button', { name: 'Arm & start' }).click()
+  await page.evaluate(() => {
+    const host = document.createElement('closed-private-input')
+    host.setAttribute('aria-label', 'Closed Shadow DOM text test')
+    const shadow = host.attachShadow({ mode: 'closed' })
+    const input = document.createElement('input')
+    shadow.append(input)
+    document.body.append(host)
+    input.focus()
+  })
+  await page.keyboard.type('secret')
+  await expect(page.locator('#event-readout')).toHaveText('0')
+
   await page.evaluate(() => {
     const host = document.createElement('shadow-private-input')
     const shadow = host.attachShadow({ mode: 'open' })
@@ -155,11 +206,41 @@ test('never records text typed in a Shadow DOM input', async ({ page }) => {
     input.focus()
   })
 
-  // This is the verifier's exact failure: before the regression fix, these
-  // six characters produced 12 key down/up events because window received a
-  // retargeted Shadow DOM host instead of the input.
   await page.keyboard.type('secret')
   await expect(page.locator('#event-readout')).toHaveText('0')
+
+  await page.getByRole('button', { name: 'Stop recording' }).click()
+  const downloadPromise = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Download capsule' }).click()
+  const download = await downloadPromise
+  const downloadPath = await download.path()
+  expect(downloadPath).not.toBeNull()
+  const capsule = JSON.parse(await (await import('node:fs/promises')).readFile(downloadPath!, 'utf8'))
+  expect(capsule.events).toEqual([])
+})
+
+test('@claim:pointer-normalization stores target-relative pointer coordinates', async ({ page }) => {
+  await page.goto('/#demo')
+  await page.getByRole('button', { name: 'Arm & start' }).click()
+  await page.locator('#game').evaluate((canvas) => {
+    const box = canvas.getBoundingClientRect()
+    canvas.dispatchEvent(new PointerEvent('pointerdown', {
+      bubbles: true,
+      clientX: box.left + box.width * 0.2,
+      clientY: box.top + box.height * 0.8,
+      pointerId: 7,
+      pointerType: 'mouse',
+      buttons: 1,
+    }))
+  })
+  await page.getByRole('button', { name: 'Stop recording' }).click()
+  const downloadPromise = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Download capsule' }).click()
+  const download = await downloadPromise
+  const downloadPath = await download.path()
+  expect(downloadPath).not.toBeNull()
+  const capsule = JSON.parse(await (await import('node:fs/promises')).readFile(downloadPath!, 'utf8'))
+  expect(capsule.events[0]).toMatchObject({ type: 'pointer', x: 0.2, y: 0.8, pointerId: 7 })
 })
 
 test('never records text-entry events through an open Shadow DOM path', async ({ page }) => {
@@ -209,10 +290,15 @@ test('@claim:offline-demo continues to record offline without browser persistenc
 })
 
 test('legal pages are reachable', async ({ page }) => {
-  await page.goto('/privacy/')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Privacy for Replay Capsule.')
-  await page.goto('/terms/')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Terms for Replay Capsule.')
-  await page.goto('/404.html')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('That page was not found.')
+  const routes = [
+    ['/privacy/', 'Privacy for Replay Capsule.'],
+    ['/terms/', 'Terms for Replay Capsule.'],
+    ['/404.html', 'That page was not found.'],
+  ] as const
+  for (const [route, heading] of routes) {
+    await page.goto(route)
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(heading)
+    const results = await new AxeBuilder({ page: page as never }).analyze()
+    expect(results.violations, `${route}: ${JSON.stringify(results.violations, null, 2)}`).toEqual([])
+  }
 })

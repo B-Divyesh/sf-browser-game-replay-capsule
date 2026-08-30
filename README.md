@@ -1,8 +1,8 @@
 # Replay Capsule
 
-Replay Capsule is a tiny, dependency-free TypeScript library for reproducible browser-game bug reports. It records keyboard, pointer, and gamepad inputs with their timing, a developer-supplied deterministic seed, and small checkpoints—then exports one strictly capped JSON file your game can replay.
+Replay Capsule is a dependency-free TypeScript library for reproducible browser-game bug reports. It records keyboard, pointer, and gamepad inputs with timing, a deterministic seed, and small checkpoints. It then exports one capped JSON file your game can replay.
 
-It is for solo developers shipping plain Canvas, Phaser, Kaplay, Pixi, or similarly small 2D browser games. It is not video recording, analytics, session tracking, server playback, or anti-cheat.
+It is for solo developers shipping small 2D browser games. It is not video recording, analytics, session tracking, server playback, or anti-cheat.
 
 ## Try the sample demo
 
@@ -11,8 +11,10 @@ Open [the sample demo](https://browser-game-replay-capsule.sociobot.in/demo), or
 ## Install
 
 ```sh
-npm install @sociobot/replay-capsule
+npm install https://browser-game-replay-capsule.sociobot.in/releases/sociobot-replay-capsule-0.1.6.tgz
 ```
+
+This versioned npm tarball is available now. The factory release owner publishes the same package to the public npm registry.
 
 ## Record
 
@@ -41,7 +43,7 @@ document.querySelector('#export')!.addEventListener('click', () => {
 
 ## Import and replay
 
-The player owns scheduling; your game owns meaning. `onEvent` receives the same normalized event shape stored in the capsule, so it works without synthetic DOM events or an engine adapter.
+The player owns scheduling; your game owns meaning. `onEvent` receives the same normalized event shape stored in the capsule.
 
 ```ts
 import { createPlayer, importCapsule } from '@sociobot/replay-capsule'
@@ -87,7 +89,7 @@ The package exports ESM, CommonJS, and declarations. The `ReplayEvent`, `ReplayC
 
 - Default cap: 128 KB; supported range: 4 KB–1 MB. The recorder stops before an event would cross the cap and reports `limit-reached`. It also rechecks the cap when final timing metadata changes on `stop()` or `export()`; it preserves whole retained entries and finalizes at the last retained timestamp when necessary. Accounting and the downloaded file use the same compact JSON bytes, so a capped recorder export stays importable.
 - Pointer coordinates are normalized to the configured target when possible.
-- Key identity uses `KeyboardEvent.code`, not typed characters. Events originating in text-entry controls are ignored, including controls inside open Shadow DOM.
+- Key identity uses `KeyboardEvent.code`, not typed characters. Text-entry events are ignored in light, open-shadow, and closed-shadow DOM. Ambiguous events retargeted from a possible closed-shadow host fail closed.
 - Gamepads are sampled once per animation frame, but browser gamepad timestamps are inconsistent. Replay Capsule timestamps the sample at observation time and stores the browser timestamp only as optional diagnostic metadata.
 - Capsule imports are schema-validated and reject malformed, unsupported, or over-limit files.
 - No network requests, persistence, telemetry, cookies, or third-party runtime dependencies.
@@ -106,4 +108,4 @@ npm run test:e2e
 npm pack --dry-run  # inspect the publishable package
 ```
 
-Deploy `dist/site` as the static root. Run every command listed in [.factory/claims.json](.factory/claims.json) when changing a listed product claim. Package publication is intentionally left to the factory release workflow; use `npm pack` to prepare its artifact.
+Deploy `dist/site` as the static root. Run every command listed in [.factory/claims.json](.factory/claims.json) when changing a listed product claim. Package registry publication is left to the factory release workflow; `npm run build` also prepares the versioned tarball served by the site.

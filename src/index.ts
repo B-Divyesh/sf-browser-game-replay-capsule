@@ -115,15 +115,32 @@ function isTextEntry(target: EventTarget | null): boolean {
     Boolean(target.closest('[contenteditable]:not([contenteditable="false"])'))
 }
 
+// Closed shadow roots intentionally hide their descendants from both
+// `composedPath()` and `shadowRoot`. These are the HTML elements on which a
+// shadow root may legally be attached, plus autonomous custom elements. When
+// one is the first visible path entry, the recorder cannot prove that the
+// original control was safe, so it excludes the event. Body is deliberately
+// absent because it is the normal target for unfocused game keyboard input.
+const possibleClosedShadowHosts = new Set([
+  'article', 'aside', 'blockquote', 'div', 'footer', 'h1', 'h2', 'h3', 'h4',
+  'h5', 'h6', 'header', 'main', 'nav', 'p', 'section', 'span',
+])
+
+function isHiddenShadowOrigin(event: Event, path: EventTarget[]): boolean {
+  const visibleOrigin = path[0] ?? event.target
+  if (typeof Element === 'undefined' || !(visibleOrigin instanceof Element) || visibleOrigin.shadowRoot !== null) return false
+  return visibleOrigin.localName.includes('-') || possibleClosedShadowHosts.has(visibleOrigin.localName)
+}
+
 /**
  * Events observed from a window are retargeted at Shadow DOM boundaries. The
- * host is therefore `event.target`, while the focused input remains in the
- * composed path. Check both so an opt-in recorder can never reconstruct text
- * typed into an open Shadow DOM text-entry control.
+ * host is therefore `event.target`. Open roots expose the focused input in the
+ * composed path. Closed roots conceal it, so ambiguous events from a possible
+ * closed host fail closed instead of risking capture of typed text.
  */
 function originatesInTextEntry(event: Event): boolean {
   const path = typeof event.composedPath === 'function' ? event.composedPath() : []
-  return isTextEntry(event.target) || path.some((target) => isTextEntry(target))
+  return isTextEntry(event.target) || path.some((target) => isTextEntry(target)) || isHiddenShadowOrigin(event, path)
 }
 
 function validateMaxBytes(value: number): number {

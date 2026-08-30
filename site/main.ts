@@ -358,7 +358,7 @@ for (const button of document.querySelectorAll<HTMLElement>('[data-copy]')) {
     try {
       await navigator.clipboard.writeText(button.dataset.copy ?? '')
       $('.copy-result').textContent = 'Install command copied.'
-    } catch { $('.copy-result').textContent = 'Copy unavailable. Select: npm install @sociobot/replay-capsule' }
+    } catch { $('.copy-result').textContent = 'Copy unavailable. Select the install command in the package section.' }
   })
 }
 

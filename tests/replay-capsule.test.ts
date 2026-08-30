@@ -24,7 +24,7 @@ class TestKeyboardEvent extends Event {
 afterEach(() => vi.unstubAllGlobals())
 
 describe('createRecorder', () => {
-  it('records the documented key and checkpoint flow only after start', () => {
+  it('@claim:checkpoint-capture records a developer seed, timed input, and JSON-safe checkpoints only after start', () => {
     vi.stubGlobal('KeyboardEvent', TestKeyboardEvent)
     const target = new EventTarget()
     let clock = 100
@@ -69,6 +69,52 @@ describe('createRecorder', () => {
     expect(recorder.checkpoint('large-payload', 'x'.repeat(128_000))).toBe(false)
     expect(recorder.state).toBe('limit-reached')
     expect(new TextEncoder().encode(JSON.stringify(recorder.export())).byteLength).toBeLessThanOrEqual(128_000)
+  })
+
+  it('@claim:custom-cap-range accepts the documented 4 KB–1 MB range and rejects values outside it', async () => {
+    const target = new EventTarget()
+    for (const maxBytes of [4_096, 128_000, 1_000_000]) {
+      expect(createRecorder({ seed: null, target, keyTarget: target, captureGamepads: false, maxBytes }).status.maxBytes).toBe(maxBytes)
+      const capsule = validCapsule()
+      await expect(importCapsule(JSON.stringify(capsule), maxBytes)).resolves.toEqual(capsule)
+    }
+    for (const maxBytes of [4_095, 1_000_001, 4_096.5]) {
+      expect(() => createRecorder({ seed: null, target, keyTarget: target, captureGamepads: false, maxBytes })).toThrow(RangeError)
+      await expect(importCapsule(JSON.stringify(validCapsule()), maxBytes)).rejects.toThrow(RangeError)
+    }
+  })
+
+  it('@claim:gamepad-sampling stores changed frame samples with observation and diagnostic timestamps', () => {
+    const target = new EventTarget()
+    let clock = 100
+    let scheduled: FrameRequestCallback | undefined
+    const pad = {
+      axes: [-0.5, 0.25],
+      buttons: [{ value: 0 }, { value: 1 }],
+      connected: true,
+      index: 2,
+      timestamp: 77.125,
+    }
+    vi.stubGlobal('navigator', { getGamepads: () => [pad] })
+    vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => { scheduled = callback; return 1 })
+    vi.stubGlobal('cancelAnimationFrame', vi.fn())
+
+    const recorder = createRecorder({ seed: 'gamepad', target, keyTarget: target, now: () => clock })
+    recorder.start()
+    clock = 125.25
+    scheduled!(clock)
+    expect(recorder.export().events).toEqual([{
+      type: 'gamepad', index: 2, connected: true, axes: [-0.5, 0.25], buttons: [0, 1], browserTimestamp: 77.13, t: 25.25,
+    }])
+
+    scheduled!(clock)
+    expect(recorder.export().events).toHaveLength(1)
+    pad.axes[0] = -0.25
+    clock = 140
+    scheduled!(clock)
+    expect(recorder.export().events).toHaveLength(2)
+    expect(recorder.export().events[1]).toMatchObject({ axes: [-0.25, 0.25], t: 40 })
+    recorder.stop()
   })
 
   for (const maxBytes of [4_096, 128_000, 1_000_000]) {
@@ -210,6 +256,10 @@ describe('capsule import and validation', () => {
   })
 
   it('@claim:validated-import rejects blank and overlong checkpoint labels', async () => {
+    await expect(importCapsule('{nope')).rejects.toMatchObject({ code: 'invalid' })
+    expect(() => validateCapsule({ ...validCapsule(), version: 2 })).toThrowError(expect.objectContaining({ code: 'unsupported' }))
+    await expect(importCapsule(' '.repeat(4_097), 4_096)).rejects.toMatchObject({ code: 'too-large' })
+
     const blank = validCapsule()
     blank.checkpoints[0]!.label = '   '
     expect(() => validateCapsule(blank)).toThrowError(expect.objectContaining({ code: 'invalid' }))
@@ -242,7 +292,7 @@ describe('capsule import and validation', () => {
 })
 
 describe('createPlayer', () => {
-  it('emits events and checkpoints in timestamp order', async () => {
+  it('@claim:adapter-callbacks emits normalized events and checkpoints through callbacks in timestamp order', async () => {
     const received: string[] = []
     const player = createPlayer(validCapsule(), {
       speed: 100,

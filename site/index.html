@@ -46,7 +46,7 @@
           <div class="hero-actions">
             <a class="button primary" href="/demo/">Try it with sample data</a>
             <span class="action-note">Loads a seeded bug run you can replay.</span>
-            <button class="button copy-install" type="button" data-copy="npm install @sociobot/replay-capsule">Copy install command</button>
+            <button class="button copy-install" type="button" data-copy="npm install https://browser-game-replay-capsule.sociobot.in/releases/sociobot-replay-capsule-0.1.6.tgz">Copy install command</button>
           </div>
           <p class="copy-result" role="status" aria-live="polite"></p>
           <ul class="trust-line" aria-label="Product properties">
@@ -130,7 +130,7 @@
           <h2 id="why-title">Keep the bug report small and private.</h2>
         </div>
         <div class="explain-grid">
-          <article><span aria-hidden="true">⌁</span><h3>Use your game adapter</h3><p>Apply normalized inputs in your game. The library does not send synthetic DOM events or require an engine.</p></article>
+          <article><span aria-hidden="true">⌁</span><h3>Use your game adapter</h3><p>Your game adapter receives each stored event through a callback.</p></article>
           <article><span aria-hidden="true">◉</span><h3>Stay inside the byte cap</h3><p>The recorder stops before it crosses the configured cap. Capped files stay small enough to share.</p></article>
           <article><span aria-hidden="true">↺</span><h3>Control replay timing</h3><p>Replay at normal speed or faster. Pause, resume, and stop are available in the public API.</p></article>
         </div>
@@ -155,15 +155,12 @@ reportButton.onclick = () =&gt; recorder.start()
 recorder.checkpoint(<span class="code-str">'level-loaded'</span>, { level: <span class="code-num">7</span> })
 downloadCapsule(recorder.export())</code></pre>
         </div>
-        <div class="compatibility">
-          <strong>Works with</strong>
-          <span>Canvas</span><span>Phaser</span><span>Kaplay</span><span>PixiJS</span><span>DOM games</span>
-        </div>
+        <p class="release-note">This versioned npm tarball is hosted with the documentation while registry publication is pending.</p>
       </section>
     </main>
 
     <footer>
-      <div><strong>Replay Capsule</strong><p>Local replay files for browser-game debugging.</p><p class="build-id">Built by Param Factory · v0.1.5 · repair-5</p></div>
+      <div><strong>Replay Capsule</strong><p>Local replay files for browser-game debugging.</p><p class="build-id">Built by Param Factory · v0.1.6 · repair-6</p></div>
       <nav aria-label="Legal"><a href="/demo/">Demo</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="https://github.com/B-Divyesh/sf-browser-game-replay-capsule">GitHub</a></nav>
     </footer>
     <script type="module" src="/main.ts"></script>

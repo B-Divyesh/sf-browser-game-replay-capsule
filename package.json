@@ -1,6 +1,6 @@
 {
   "name": "@sociobot/replay-capsule",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Tiny deterministic input-and-seed replay files for browser games",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -27,8 +27,9 @@
   },
   "scripts": {
     "dev": "vite --config vite.site.config.ts",
-    "build": "npm run clean && npm run build:lib && npm run build:site && npm run verify:site-build",
+    "build": "npm run clean && npm run build:lib && npm run build:release && npm run build:site && npm run verify:site-build",
     "build:lib": "tsup src/index.ts --format esm,cjs --dts --target es2022 --clean=false",
+    "build:release": "npm pack --pack-destination site/public/releases --silent",
     "build:site": "vite build --config vite.site.config.ts",
     "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
     "typecheck": "tsc --noEmit",

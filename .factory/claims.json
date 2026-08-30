@@ -4,12 +4,12 @@
     "claim": "Try it with sample data loads a seeded replay capsule without saving browser data.",
     "where": "landing action, /demo banner, README",
     "test": "npm run test:e2e -- --grep @claim:sample-demo",
-    "sandbox": "fresh browser context; open landing, enter /demo, assert the sample seed/event and empty browser storage, reset, then exit"
+    "sandbox": "fresh browser context; enter /demo from the landing page, assert sample data and empty storage, reset, then exit"
   },
   {
     "id": "no-network-calls",
-    "claim": "The library and demo make no API, analytics, or third-party runtime calls.",
-    "where": "landing facts, telemetry, privacy page, README",
+    "claim": "The library makes no network calls; the demo uses only same-origin static files and no API, analytics, or third-party runtime service.",
+    "where": "landing facts, demo telemetry, privacy page, README",
     "test": "npm run test:e2e -- --grep @claim:no-network-calls",
     "sandbox": "fresh /demo load and replay; record every request and assert every URL is same-origin"
   },
@@ -22,10 +22,24 @@
   },
   {
     "id": "text-entry-excluded",
-    "claim": "Text fields and editable elements are never captured.",
+    "claim": "Text fields and editable elements are never captured, including controls inside open or closed Shadow DOM.",
     "where": "demo message, privacy page, README",
     "test": "npm run test:e2e -- --grep @claim:text-entry-excluded",
-    "sandbox": "fresh /demo recording; type in a light-DOM input and assert no recorder events are added"
+    "sandbox": "fresh /demo recording; type in light DOM, editable, open-shadow, and closed-shadow controls; download and assert zero events"
+  },
+  {
+    "id": "record-export-replay",
+    "claim": "The demo records timed keyboard input with a seed, downloads JSON, imports it, and replays the same event sequence.",
+    "where": "landing headline and demo, README overview",
+    "test": "npm run test:e2e -- --grep @claim:record-export-replay",
+    "sandbox": "fresh demo; record four key events, download the capsule, import that file, replay, and assert completion"
+  },
+  {
+    "id": "checkpoint-capture",
+    "claim": "The recorder stores a developer-supplied seed, timed input, and JSON-safe checkpoints only after start.",
+    "where": "landing capture flow, demo captured fields, README overview",
+    "test": "npm test -- --testNamePattern @claim:checkpoint-capture",
+    "sandbox": "new recorder with a controlled clock; assert pre-start exclusion and the exact exported seed, key event, timing, and checkpoint"
   },
   {
     "id": "default-byte-cap",
@@ -35,11 +49,39 @@
     "sandbox": "new recorder with default options; append an oversized JSON checkpoint and measure the final serialized capsule"
   },
   {
+    "id": "custom-cap-range",
+    "claim": "Custom recorder and import caps support the full 4 KB–1 MB range.",
+    "where": "README limits",
+    "test": "npm test -- --testNamePattern @claim:custom-cap-range",
+    "sandbox": "construct recorders at 4096, 128000, and 1000000 bytes; reject lower, higher, and fractional values"
+  },
+  {
     "id": "validated-import",
-    "claim": "Imported capsules are schema-validated, including checkpoint labels.",
+    "claim": "Imported capsules are schema-validated and reject malformed, unsupported, or over-limit files.",
     "where": "demo import message, README",
     "test": "npm test -- --testNamePattern @claim:validated-import",
-    "sandbox": "construct valid capsules with blank and 121-character checkpoint labels and assert synchronous and async import rejection"
+    "sandbox": "validate malformed JSON, unsupported versions, over-limit input, and invalid checkpoint labels"
+  },
+  {
+    "id": "pointer-normalization",
+    "claim": "Pointer coordinates are normalized to the configured target.",
+    "where": "demo captured fields, privacy page, README",
+    "test": "npm run test:e2e -- --grep @claim:pointer-normalization",
+    "sandbox": "dispatch a pointer event at 20% × 80% of the canvas, download the capsule, and assert x=0.2 and y=0.8"
+  },
+  {
+    "id": "gamepad-sampling",
+    "claim": "Gamepads are sampled once per animation frame; changed samples use observation time and retain a finite browser timestamp as diagnostic metadata.",
+    "where": "demo captured fields, privacy page, README",
+    "test": "npm test -- --testNamePattern @claim:gamepad-sampling",
+    "sandbox": "stub requestAnimationFrame and getGamepads; assert one event per changed sample, observation time, and rounded browser timestamp"
+  },
+  {
+    "id": "adapter-callbacks",
+    "claim": "Replay emits normalized events and checkpoints through callbacks in timestamp order.",
+    "where": "landing adapter explanation, README replay API",
+    "test": "npm test -- --testNamePattern @claim:adapter-callbacks",
+    "sandbox": "play a mixed event and checkpoint capsule and assert callback order"
   },
   {
     "id": "replay-controls",
@@ -56,9 +98,23 @@
     "sandbox": "import 20 generated replay capsules into the shipped deterministic Phaser model and count reproduced faults"
   },
   {
+    "id": "package-formats",
+    "claim": "The package exports working ESM, CommonJS, and TypeScript declarations.",
+    "where": "README API",
+    "test": "npm test -- --testNamePattern @claim:package-formats",
+    "sandbox": "build the library, load both module formats, and inspect the emitted declaration surface"
+  },
+  {
+    "id": "installable-release",
+    "claim": "The hosted release artifact installs in a fresh npm project and works through both import and require.",
+    "where": "landing install action, README install",
+    "test": "npm test -- --testNamePattern @claim:installable-release",
+    "sandbox": "install the shipped versioned tarball into an empty temporary project and execute ESM and CommonJS consumers"
+  },
+  {
     "id": "zero-runtime-dependencies",
-    "claim": "The published library has zero runtime dependencies.",
-    "where": "README",
+    "claim": "The package has zero runtime dependencies.",
+    "where": "README overview and limits",
     "test": "npm test -- --testNamePattern @claim:zero-runtime-dependencies",
     "sandbox": "read package.json and assert that the runtime dependencies object is empty"
   },
@@ -68,5 +124,12 @@
     "where": "demo offline notice, README",
     "test": "npm run test:e2e -- --grep @claim:offline-demo",
     "sandbox": "new browser context; load /demo, set only that context offline, start recording, and assert a new event is captured"
+  },
+  {
+    "id": "mit-license",
+    "claim": "Replay Capsule is free, open-source software under the MIT License.",
+    "where": "terms page, README license",
+    "test": "npm test -- --testNamePattern @claim:mit-license",
+    "sandbox": "assert package.json declares MIT and the shipped LICENSE contains the MIT License text"
   }
 ]

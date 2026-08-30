@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.6 — 2026-08-30
+
+- Exclude ambiguous keyboard and pointer events retargeted from closed Shadow DOM hosts, preventing hidden text-entry capture.
+- Inventory and test the core capture, pointer, gamepad, cap-range, package-format, license, and install claims.
+- Ship a directly installable versioned npm tarball while public registry publication remains factory-owned.
+- Bring every mobile footer link to the 44px minimum touch target.
+
 ## 0.1.5 — 2026-08-30
 
 - Reject imported checkpoint labels that are blank after trimming or longer than 120 characters, matching the recorder API.

@@ -141,12 +141,11 @@ kbd { min-width: 26px; margin-right: 4px; padding: 2px 6px; display: inline-bloc
 .copy-code { min-height: 44px; padding: 4px 12px; border: 1px solid #d7d4bd; color: #fff9e9; background: transparent; cursor: pointer; }
 pre { margin: 0; padding: 28px; overflow-x: auto; color: #edf0dd; font: 14px/1.75 'Space Mono', monospace; tab-size: 2; }
 .code-key { color: #f19b69; } .code-str { color: #c3d893; } .code-num { color: #f0c674; }
-.compatibility { margin-top: 40px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-.compatibility strong { margin-right: 10px; }
-.compatibility span { padding: 6px 12px; border: 1px solid var(--line); border-radius: 20px; background: var(--panel); font: 12px 'Space Mono', monospace; }
+.release-note { max-width: 700px; margin-top: 24px; color: var(--muted); }
 
 footer { min-height: 160px; border-top: 1px solid var(--line); }
 footer p { margin: 4px 0 0; color: var(--muted); }
+footer nav a { min-width: 44px; justify-content: center; }
 .build-id { font: 12px/1.5 'Space Mono', monospace; }
 
 @keyframes settle { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

@@ -17,11 +17,12 @@ Audited: 2026-08-30. This audit covers visitor-facing landing-page sentences, la
 | Start recording, steer the probe, and reach a red fault cell. | 11 | Pass |
 | Download the file or import it again to replay the path. | 12 | Pass |
 | Keep the bug report small and private. | 8 | Pass |
-| The library does not send synthetic DOM events or require an engine. | 12 | Pass |
+| Your game adapter receives each stored event through a callback. | 10 | Pass |
 | The recorder stops before it crosses the configured cap. | 10 | Pass |
 | Replay at normal speed or faster. | 6 | Pass |
 | Pause, resume, and stop are available in the public API. | 11 | Pass |
 | Add replay capture to your game loop. | 8 | Pass |
+| This versioned npm tarball is hosted with the documentation while registry publication is pending. | 14 | Pass |
 
 No copy exceeds 22 words or contains a banned plain-words term.
 
