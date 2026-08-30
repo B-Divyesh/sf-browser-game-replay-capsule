@@ -115,6 +115,17 @@ function isTextEntry(target: EventTarget | null): boolean {
     Boolean(target.closest('[contenteditable]:not([contenteditable="false"])'))
 }
 
+/**
+ * Events observed from a window are retargeted at Shadow DOM boundaries. The
+ * host is therefore `event.target`, while the focused input remains in the
+ * composed path. Check both so an opt-in recorder can never reconstruct text
+ * typed into an open Shadow DOM text-entry control.
+ */
+function originatesInTextEntry(event: Event): boolean {
+  const path = typeof event.composedPath === 'function' ? event.composedPath() : []
+  return isTextEntry(event.target) || path.some((target) => isTextEntry(target))
+}
+
 function validateMaxBytes(value: number): number {
   if (!Number.isInteger(value) || value < 4_096 || value > HARD_MAX_BYTES) {
     throw new RangeError(`maxBytes must be an integer from 4096 to ${HARD_MAX_BYTES}.`)
@@ -220,12 +231,12 @@ export function createRecorder(options: RecorderOptions): ReplayRecorder {
   }
 
   function onKey(raw: Event) {
-    if (state !== 'recording' || !(raw instanceof KeyboardEvent) || isTextEntry(raw.target)) return
+    if (state !== 'recording' || !(raw instanceof KeyboardEvent) || originatesInTextEntry(raw)) return
     append({ type: 'key', action: raw.type === 'keydown' ? 'down' : 'up', code: raw.code, repeat: raw.repeat, t: timestamp() }, 'event')
   }
 
   function onPointer(raw: Event) {
-    if (state !== 'recording' || !(raw instanceof PointerEvent) || isTextEntry(raw.target)) return
+    if (state !== 'recording' || !(raw instanceof PointerEvent) || originatesInTextEntry(raw)) return
     const action = raw.type.slice(7) as 'down' | 'move' | 'up' | 'cancel'
     const currentTime = now()
     if (action === 'move' && currentTime - lastMoveAt < interval) return

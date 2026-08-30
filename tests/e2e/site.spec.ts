@@ -91,6 +91,53 @@ test('never records text-field keystrokes', async ({ page }) => {
   await expect(page.locator('#event-readout')).toHaveText('0')
 })
 
+test('never records text typed in a Shadow DOM input', async ({ page }) => {
+  await page.goto('/#demo')
+  await page.getByRole('button', { name: 'Arm & start' }).click()
+  await page.evaluate(() => {
+    const host = document.createElement('shadow-private-input')
+    const shadow = host.attachShadow({ mode: 'open' })
+    const input = document.createElement('input')
+    input.setAttribute('aria-label', 'Shadow private text')
+    shadow.append(input)
+    document.body.append(host)
+    input.focus()
+  })
+
+  // This is the verifier's exact failure: before the regression fix, these
+  // six characters produced 12 key down/up events because window received a
+  // retargeted Shadow DOM host instead of the input.
+  await page.keyboard.type('secret')
+  await expect(page.locator('#event-readout')).toHaveText('0')
+})
+
+test('never records text-entry events through an open Shadow DOM path', async ({ page }) => {
+  await page.goto('/#demo')
+  await page.getByRole('button', { name: 'Arm & start' }).click()
+
+  for (const kind of ['textarea', 'select', 'editable'] as const) {
+    await page.evaluate((controlKind) => {
+      const host = document.createElement(`shadow-private-${controlKind}`)
+      const shadow = host.attachShadow({ mode: 'open' })
+      const control = controlKind === 'editable'
+        ? document.createElement('div')
+        : document.createElement(controlKind)
+      control.setAttribute('aria-label', `Shadow private ${controlKind}`)
+      if (controlKind === 'select') {
+        control.innerHTML = '<option>First choice</option><option>Second choice</option>'
+      }
+      if (controlKind === 'editable') control.setAttribute('contenteditable', 'true')
+      shadow.append(control)
+      document.body.append(host)
+      control.focus()
+    }, kind)
+
+    if (kind === 'select') await page.keyboard.press('ArrowDown')
+    else await page.keyboard.type('secret')
+    await expect(page.locator('#event-readout')).toHaveText('0')
+  }
+})
+
 test('continues to record offline without browser persistence', async ({ page, context }) => {
   await page.goto('/#demo')
   expect(await page.evaluate(() => ({ local: Object.keys(localStorage), session: Object.keys(sessionStorage) }))).toEqual({ local: [], session: [] })

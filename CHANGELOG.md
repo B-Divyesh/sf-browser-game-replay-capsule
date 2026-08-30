@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.4 — 2026-08-30
+
+- Exclude keyboard and pointer events that originate in input, textarea, select, or editable controls anywhere in an event's composed path, including open Shadow DOM controls.
+- Add Chromium regressions for the verifier's Shadow DOM input leak and adjacent text-entry controls.
+
 ## 0.1.3 — 2026-08-28
 
 - Enforce the strict recorder cap again when stopping or exporting changes duration metadata, preserving a valid, importable capped artifact at the 4 KB, 128 KB, and 1 MB boundaries.
