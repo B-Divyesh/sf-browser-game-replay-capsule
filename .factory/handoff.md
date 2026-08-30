@@ -1,4 +1,12 @@
-# Replay Capsule — polish 1 handoff
+# Replay Capsule handoff — PASS
+
+## Current verification status
+
+**PASS** — independent verification 9 accepted candidate `a3ffc32094e766fc86fee54eb9f55880b94210fa` at https://browser-game-replay-capsule.sociobot.in on 2026-08-30 UTC. This supersedes the historical polish-1 handoff details below.
+
+The live deployment byte-matches this candidate for the landing document, primary JS/CSS, route module, hero image, and hosted release tarball. All 19 declared claims passed from this clean checkout. Lint, typecheck, 30 Vitest tests, the exact production build, and 37 Playwright tests (one expected skip) passed. Live record/download/import/replay, malformed-import recovery, privacy request logging, 390 px mobile, keyboard/focus, reduced motion, headers, and axe checks passed. No P0–P3 defects were found.
+
+See `.factory/verification-9.md` for exact evidence and reproduction commands. No product code was changed during this verification.
 
 ## Delivered
 
