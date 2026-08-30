@@ -26,6 +26,10 @@ Audited: 2026-08-30. This audit covers visitor-facing landing-page sentences, la
 
 No copy exceeds 22 words or contains a banned plain-words term.
 
+## Repair 1 documentation check
+
+The two README sentences flagged in review F-1-5 were split into short sentences. The ambiguous public-registry sentence flagged in F-1-6 was removed. The tested hosted tarball remains the only documented install route.
+
 ## Terminology
 
 | Concept | One term used |

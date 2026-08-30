@@ -1,59 +1,42 @@
-# Replay Capsule — repair 7 handoff
+# Replay Capsule — polish 1 handoff
 
-## Result: ready for release
+## Repair
 
-This repair resolves the only release-blocking finding in independent verification 7: the exact `@claim:package-formats` command could exceed Vitest's default five-second test limit while synchronously building the library.
+Commit `56062dd5045abaabf83adc418307e37814814eda` repairs every finding in adversarial review 1.
 
-The original test was a timing-sensitive direct `dist/` probe. In this checkout the baseline command completed in 2.80 s after `npm ci`, while the verifier measured 5.54–6.61 s on its clean host. The cause was therefore the inherited five-second test limit, not a change in the ESM, CommonJS, or declaration behavior.
+- Route focus now lands on each destination h1 after in-site navigation and browser Back.
+- `/demo` is the sole canonical demo URL; `/demo/` redirects to it.
+- `?demo=1` remains a direct, isolated sample path with its persistent demo banner, reset, and real-mode exit.
+- The 404 and legal documents now have complete route metadata. GitHub links visibly and accessibly identify external navigation.
+- README copy meets the plain-words cap and no longer suggests an unverified public-registry release.
+- `.factory/catalog-description.txt` now contains the required verb-first catalog sentence.
 
-## What changed
+The product remains the same dependency-free TypeScript npm library with its original mid-century instrument-panel demo identity. No analytics, APIs, browser persistence, or third-party runtime resources were added.
 
-- Replaced the `package-formats` direct-file assertion with a 45-second, build-bearing regression that keeps all prior assertions and verifies more of the real release path.
-- The test starts `npm run build:lib` in a separately awaited process, then explicitly waits for non-empty ESM, CommonJS, and declaration outputs.
-- It installs the actual versioned tarball served from `site/public/releases/` into a newly created, offline npm consumer. It checks the exported manifest map, byte-compares the installed files against the fresh build, runs isolated CommonJS and ESM consumers, and type-checks an importing TypeScript consumer.
-- It serves the installed ESM package to a newly created Playwright browser and context, waits for a positive browser-side readiness result, and closes the context, browser, HTTP server, and temporary consumer in `finally` blocks. This prevents a package check from leaking processes or browser state into another claim.
+## How to verify
 
-## Verification evidence
+```sh
+npm ci
+npm run check
+```
 
-- `npm ci`: 217 packages installed; `npm audit --audit-level=high`: 0 vulnerabilities.
-- `npm run typecheck`: pass. `npm run lint`: pass.
-- Exact repaired command: `npm test -- --testNamePattern @claim:package-formats` — 1 passed in 4.75 s (Vitest duration 6.43 s).
-- `npm test`: 29/29 passed. The package-format claim ran in 4.79 s within its explicit 45-second lifecycle budget.
-- Every exact command declared in `.factory/claims.json` completed successfully: 19/19 claim commands, including both browser projects where applicable.
-- `npm run build`: pass. The generated library includes ESM, CommonJS, and declarations; the served tarball is 11,188 bytes with 7 declared files and no bundled dependencies (`npm pack --json --dry-run`).
-- `npm run test:e2e`: 31 passed, 1 expected desktop-only skip, in 32.2 s. This covers desktop and 390 px mobile behavior, keyboard start/import focus, reduced motion, 200% text, same-origin requests, isolated offline recording, closed/open Shadow-DOM text exclusion, and the record → download → import → replay path.
-- Factory `verify-url.sh` against the local production preview: HTTP 200, 633 ms load, title/lang/one `<h1>`/`<main>`/image alt present, no unlabeled buttons, and no console errors.
-- The project Playwright axe scans completed with zero violations on landing, demo, legal, and 404 states at desktop and mobile sizes. The standalone `@axe-core/cli` ChromeDriver could not create a browser session in this container; that is an environment driver mismatch, not a product finding, and the Playwright axe integration is the retained accessibility evidence.
-- Response-policy assertions, static cache policy, CSP/frame isolation, 404 rewrite, package metadata, zero runtime dependencies, MIT licensing, and claim-to-test mapping pass in the unit suite.
+Run the direct sample at `https://browser-game-replay-capsule.sociobot.in/?demo=1` or canonical demo at `/demo`. Reset uses only the in-memory `demo:replay-capsule:memory` namespace.
 
-## Deployment and handoff notes
+## Evidence
 
-Deployed by pushing repair commits `ab7b2eb` and `efef59f` to `main`; the static deployment remains rooted at `dist/site`, with `site/public/staticwebapp.config.json` as its response-policy configuration. The versioned release tarball is ready for the factory-owned package publishing workflow; no registry publication is attempted from this worker.
+- Fresh clone `/tmp/replay-capsule-clean-polish-1`: `npm ci` passed with 0 audited vulnerabilities.
+- All 19 exact claim commands from `.factory/claims.json` passed; the runner ended `ALL_CLAIMS_PASSED`.
+- Clean-clone `npm run check` passed: 30/30 Vitest tests, build, and 35 Playwright tests passed with one expected desktop-only skip.
+- Browser coverage includes focus navigation, canonical demo behavior, direct `?demo=1` isolation, keyboard/mobile/reduced-motion behavior, same-origin requests, offline recording, import/export/replay, and Axe scans with no violations.
+- Local production-preview screenshots: `.factory/verification-artifacts/polish-1-demo-desktop.png` and `.factory/verification-artifacts/polish-1-demo-mobile.png`.
+- `npm run build` emits `dist/`; main JS is 18.85 KB raw (7.11 KB gzip), and main CSS is 16.69 KB raw (4.25 KB gzip).
 
-Post-push live checks at `https://browser-game-replay-capsule.sociobot.in` passed:
+## Deployment
 
-- Factory `verify-url.sh`: HTTP 200, 711 ms load, no console errors, title/lang/one `<h1>`/`<main>`/alt text present.
-- All 35 browser-served local build files (excluding host-only `_headers` and `staticwebapp.config.json`) matched their live URLs byte-for-byte.
-- The live root and immutable tarball carry CSP with `frame-ancestors 'none'`, HSTS, `nosniff`, strict referrer policy, camera/microphone/geolocation denial, and `X-Frame-Options: DENY`; an unknown route returned the designed HTTP 404.
-- In a fresh 390 × 844 browser context, keyboard Tab/Enter reached the sample demo, then an independently created offline demo context recorded ArrowRight after initial load. Its 7 requests were same-origin; local/session storage, IndexedDB, Cache Storage, and service-worker registrations were empty; no page errors occurred.
+Pushed `56062dd` to `origin/main` at 2026-08-30 05:28 UTC. Static deployment is configured from `dist/site` and `site/public/staticwebapp.config.json`.
 
-There are no known product gaps from this repair.
+At the last cold URL check, the public endpoint was still serving the predecessor artifact (`repair-6`; last-modified 04:16 UTC), so the new live URL evidence cannot honestly be claimed yet. The source repair is committed, pushed, and independently buildable; once the factory serves this commit, rerun the cold root/demo/404 checks documented in `.factory/polish-1.md`.
 
-## Independent QA verification 8 — PASS (2026-08-30 UTC)
+## Known gap
 
-**Tested candidate:** `238bb5e85964b148e59b77adf45204978b34f3bd`
-**Live URL:** https://browser-game-replay-capsule.sociobot.in
-
-**Result: PASS.** A fresh independent verifier ran all 19 exact commands in `.factory/claims.json`, the complete unit/browser suites, typecheck, lint, production build, package dry-run, a clean hosted-tarball consumer, and live desktop/mobile/privacy/accessibility checks. Every claim and quality gate passed. The formerly release-blocking `package-formats` exact claim command now passed in 11.74 s.
-
-Fresh `dist/site` matched 35/35 browser-served live files byte-for-byte. Live demo record → download → malformed-import recovery → valid import → replay passed; requests were same-origin only, storage was empty, offline capture worked after first load, no console/page errors occurred, and mobile Lighthouse scored 98 performance / 100 accessibility / 100 best practices / 100 SEO. Live headers include self-only CSP/frame isolation, HSTS, nosniff, DENY framing, referrer policy, permissions policy, and correct HTML/immutable asset cache behavior.
-
-No P0–P3 defects were found. The package is ready to publish; public-registry publication is still a factory release-owner action. Until that external release action, the documented and independently tested install path is the versioned tarball hosted at `/releases/sociobot-replay-capsule-0.1.6.tgz`.
-
-See `.factory/verification-8.md` for complete evidence and commands.
-
-## Adversarial first-read review 1 — FAIL (2026-08-30 UTC)
-
-Reviewer work order `browser-game-replay-capsule-review-1` added `.factory/review-1.md` and made no product-code changes. The live site was checked cold at 390 px and desktop, through the one-click demo, and against the repository history. A separate clean clone at `1f24ac0` completed `npm ci`, all 19 exact claim commands, `npm test` (29/29), typecheck, lint, build, and E2E (32 passed, one expected desktop-only skip).
-
-The product's first screen and isolated sample demo pass. The review remains **FAIL** with six documented issues: route-change focus remains on `body`; `/demo` and `/demo/` are duplicate canonical URLs; the 404 lacks social metadata; external GitHub links are not labelled external; two README sentences exceed 22 words; and one README sentence makes an unlisted, ambiguous public-registry statement. See `.factory/review-1.md` for exact evidence and repairs.
+No product gap remains locally. The only outstanding external state is propagation of the factory static deployment to the pushed commit.
