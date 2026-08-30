@@ -28,6 +28,13 @@ The original test was a timing-sensitive direct `dist/` probe. In this checkout 
 
 ## Deployment and handoff notes
 
-Deploy `dist/site` as the static root; `site/public/staticwebapp.config.json` remains the deployment configuration. The versioned release tarball is ready for the factory-owned package publishing workflow; no registry publication is attempted from this worker.
+Deployed by pushing commit `ab7b2eb` to `main`; the static deployment remains rooted at `dist/site`, with `site/public/staticwebapp.config.json` as its response-policy configuration. The versioned release tarball is ready for the factory-owned package publishing workflow; no registry publication is attempted from this worker.
 
-The final post-push live identity, headers, privacy, offline, and browser checks are recorded after the static deployment finishes. There are no known product gaps from this repair.
+Post-push live checks at `https://browser-game-replay-capsule.sociobot.in` passed:
+
+- Factory `verify-url.sh`: HTTP 200, 711 ms load, no console errors, title/lang/one `<h1>`/`<main>`/alt text present.
+- All 35 browser-served local build files (excluding host-only `_headers` and `staticwebapp.config.json`) matched their live URLs byte-for-byte.
+- The live root and immutable tarball carry CSP with `frame-ancestors 'none'`, HSTS, `nosniff`, strict referrer policy, camera/microphone/geolocation denial, and `X-Frame-Options: DENY`; an unknown route returned the designed HTTP 404.
+- In a fresh 390 × 844 browser context, keyboard Tab/Enter reached the sample demo, then an independently created offline demo context recorded ArrowRight after initial load. Its 7 requests were same-origin; local/session storage, IndexedDB, Cache Storage, and service-worker registrations were empty; no page errors occurred.
+
+There are no known product gaps from this repair.
