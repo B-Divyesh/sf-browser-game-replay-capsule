@@ -177,11 +177,13 @@ describe('static deployment response policy', () => {
       expect(esm).toBe('function:1')
 
       await writeFile(join(consumer, 'consumer.ts'), [
-        "import { createPlayer, createRecorder, validateCapsule, type ReplayCapsule } from '@sociobot/replay-capsule'",
+        "import { createPlayer, createRecorder, downloadCapsule, importCapsule, validateCapsule, type ReplayCapsule } from '@sociobot/replay-capsule'",
         "const capsule: ReplayCapsule = { format: 'replay-capsule', version: 1, createdAt: '2026-08-30T00:00:00.000Z', durationMs: 0, seed: 'release-fixture', events: [], checkpoints: [], truncated: false }",
         'validateCapsule(capsule)',
         'createRecorder({ seed: capsule.seed, target: new EventTarget(), keyTarget: new EventTarget(), captureGamepads: false })',
         'createPlayer(capsule, { onEvent: () => {} })',
+        'void downloadCapsule',
+        'void importCapsule',
       ].join('\n'))
       await runReleaseProcess(resolve('node_modules/.bin/tsc'), ['--noEmit', '--strict', '--target', 'ES2022', '--module', 'NodeNext', '--moduleResolution', 'NodeNext', 'consumer.ts'], consumer)
 
