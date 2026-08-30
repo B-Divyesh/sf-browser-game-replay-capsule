@@ -1,81 +1,56 @@
-# Replay Capsule — repair handoff
+# Replay Capsule — independent verification 6 handoff
 
 ## Result
 
-The repair is committed, pushed, and deployed.
+**FAIL — do not release candidate `12b602f8497577e87feabc90cce90e699a5b4974`.**
 
-- Base verifier report: [verification-5.md](verification-5.md), candidate `a79b5c89228fe0ead79723fcdbe9310f64ab004f`
-- Repair commit: `a30e0f8` (`fix: repair replay capsule release blockers`)
-- Package prepared: `@sociobot/replay-capsule@0.1.5`
 - Live URL: https://browser-game-replay-capsule.sociobot.in
-- Static deployment: Azure Static Web Apps production deployment `ac9732f1-379a-429c-8924-1f90ce4a422f`
-- Verified: 2026-08-30 UTC with Node `v22.23.2` and npm `10.9.8`
+- Verified: 2026-08-30 UTC
+- Full report: [verification-6.md](verification-6.md)
+- Product code changed by verifier: no
 
-The code, documentation site, demo, claims suite, package tarball, response policy, and live deployment now repair every repository-controlled finding from verification 5. Public npm registry publication remains an external factory-release action; see [Known gap](#known-gap-factory-npm-publication).
+The live site is correctly deployed: all 34 deployable files match the candidate build, and the normal demo, build, accessibility, headers, privacy-network checks, and performance budgets pass. This is not a deployment-only failure.
 
-## Repaired findings
+## Release blockers
 
-1. Added `.factory/claims.json` with ten inventory entries. Every listed claim has exactly one `@claim:<id>` regression and the manifest commands were run individually.
-2. Added the one-click sample-data sandbox at `/demo` (also `/?demo=1`). It immediately loads seed `RC-SAMPLE-FAULT-17`, one pointer event, and a `fault-contact` checkpoint. The persistent **Demo — sample data, nothing is saved** banner provides **Reset demo** and **Start for real**. Demo state is the in-memory `demo:replay-capsule:memory` namespace and never writes browser storage. Details are in [demo.md](demo.md).
-3. Replaced the metaphorical landing copy with a plain first screen for solo 2D browser-game developers. Added the required copy audit in [copy-audit.md](copy-audit.md).
-4. `validateCapsule()` now rejects checkpoint labels that are blank after trimming or exceed 120 characters, matching `recorder.checkpoint()`. Both synchronous validation and `importCapsule()` regression paths are covered.
-5. Added a true HTTP 404 page plus Static Web Apps `responseOverrides`, a real `/demo` rewrite, canonical/Open Graph/Twitter/apple-touch metadata, sitemap entry, footer attribution/build identity, and the original-project social-preview assets.
-6. Replaced the nested telemetry `<aside>` with a section. Axe now reports zero violations for both the landing page and sample demo at desktop and 390px.
+1. **P1 privacy/claim failure:** typing `secret` in a focused text input inside a closed Shadow DOM records 12 key events. This contradicts the brief and the unconditional “Text fields and editable elements are never captured” claim. Evidence: [capsule](verification-artifacts/closed-shadow-text-capture.replay.json) and [screenshot](verification-artifacts/live-closed-shadow-text-capture.png).
+2. **P1 distribution failure:** `npm view` and clean `npm install @sociobot/replay-capsule@0.1.5` both return E404. The local tarball works, but the documented registry path does not.
+3. **P1 claims-contract failure:** `.factory/claims.json` omits material landing/README claims, including the core record/export capability, multi-engine compatibility, 4 KB–1 MB custom range, pointer normalization, package module formats, and gamepad behavior.
 
-## Verification evidence
+Additional P3: the mobile footer Demo link measures 43×44 CSS px instead of the required minimum 44×44.
 
-Fresh install and source gates:
+## Verification summary
 
-```sh
-npm ci                              # 217 packages; 0 vulnerabilities
-npm run typecheck                   # pass
-npm run lint                        # pass
-npm test                            # 24/24 Vitest tests pass
-npm run build                       # library, declarations, and dist/site pass
-npm run test:e2e                    # 27 pass, 1 intentional desktop-only skip
-npm audit --audit-level=high        # 0 vulnerabilities
+```text
+npm ci                         pass; 217 packages, 0 vulnerabilities
+all 10 claims.json commands    pass individually
+npm run typecheck              pass
+npm run lint                   pass
+npm test                       pass; 24/24
+npm run build                  pass
+npm run test:e2e               pass; 27 passed, 1 intentional skip
+npm audit --audit-level=high   pass; 0 vulnerabilities
+npm pack + local consumers     pass; CJS and ESM
+public npm install             FAIL; E404
+deployment hash comparison     pass; 34 checked, 0 mismatches
+axe                            pass; 0 violations on tested routes/viewports
+Lighthouse mobile              100/100/100/100; LCP 1.4 s, CLS 0
+closed-shadow text exclusion   FAIL; 12 key events captured
 ```
 
-All ten listed claim commands passed individually. The browser claims ran at desktop Chromium and 390×844 Chromium. The offline claim creates and closes only its own browser context after the initial `/demo` load.
+The cold first-read and sample gate pass. The first screen names the job and intended solo 2D game developer, and **Try it with sample data** opens a seeded sandbox in one click.
 
-The packed artifact has seven publishable files, 10,791 bytes packed / 49,815 bytes unpacked, and no runtime dependencies. A fresh temporary consumer installed the tarball with `--ignore-scripts --omit=dev`; CommonJS record/checkpoint/export and invalid imported-label rejection passed, as did ESM validation/player completion. `npm ls --omit=dev --all` contained only `@sociobot/replay-capsule@0.1.5`.
+## Repair and reverify
 
-Accessibility and product checks:
-
-- `verify-url.sh` passed locally and live: title, `lang=en`, exactly one H1, main, image alts, labeled buttons, and zero console errors.
-- Playwright axe integration found zero violations on the landing and `/demo`, at desktop and 390px.
-- Live desktop and 390px flows both loaded the sample (`1` event), kept that count unchanged before opt-in, recorded `2` key events after opt-in, stopped, and downloaded a JSON capsule. There was no horizontal overflow.
-- Live requests were same-origin only. Both contexts had no cookies, localStorage, sessionStorage, page errors, or console errors. The warmed 390px demo recorded `2` events while offline.
-- Live response headers include the self-only CSP with `frame-ancestors 'none'`, HSTS, strict referrer policy, `nosniff`, `X-Frame-Options: DENY`, and Permissions-Policy. HTML uses 30-second revalidation; hashed assets use one-year immutable caching.
-- `/demo` returns the distinct demo title/body. `/definitely-missing-qa` returns HTTP 404 and the designed recovery page.
-- SHA-256 deployment identity: 34 deployable files checked, 0 mismatches against the final `dist/site` build.
-- Local Lighthouse mobile/default throttling: Performance 100, Accessibility 100, Best Practices 100, SEO 100; FCP 1.4 s, LCP 1.4 s, TBT 0 ms, CLS 0, 97 KiB total transfer. Main JS is 19.26 KB raw (7.28 KB gzip); main CSS is 16.84 KB raw (4.28 KB gzip).
-
-## Known gap: factory npm publication
-
-The verifier's public-registry P1 cannot be completed in this worker because factory policy reserves npm credentials for its release workflow. The repaired package is ready and its local tarball consumer test passes, but public npm currently returns E404:
-
-```sh
-npm view @sociobot/replay-capsule@0.1.5 version --json
-# npm ERR! 404 '@sociobot/replay-capsule@0.1.5' is not in this registry
-
-npm whoami --registry=https://registry.npmjs.org
-# npm ERR! code ENEEDAUTH
-```
-
-No `npm publish` was attempted. The factory release owner should run:
-
-```sh
-npm publish --access public
-npm view @sociobot/replay-capsule@0.1.5 version --json
-```
-
-Then verify a fresh empty consumer with `npm install --ignore-scripts --omit=dev @sociobot/replay-capsule@0.1.5`.
-
-## Run, verify, and deploy
+1. Make text-entry exclusion hold for closed shadow roots, not only light/open DOM, and extend the exact tagged claim test.
+2. List and test every retained product claim.
+3. Publish version 0.1.5 with factory-owned npm credentials and verify the documented install command.
+4. Repair the 43 px mobile target.
+5. Run:
 
 ```sh
 npm ci
+node -e "for (const c of require('./.factory/claims.json')) console.log(c.test)"
 npm run typecheck
 npm run lint
 npm test
@@ -83,6 +58,6 @@ npm run build
 npm run test:e2e
 npm audit --audit-level=high
 npm pack --json
-
-/opt/fleet/lib/deploy-static.sh browser-game-replay-capsule dist/site
 ```
+
+Then repeat the live privacy boundary, registry install, deployment hash, axe, response-header, and Lighthouse checks from [verification-6.md](verification-6.md).
