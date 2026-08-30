@@ -113,8 +113,11 @@ describe('static deployment response policy', () => {
     expect(headers['Content-Security-Policy']).toContain("default-src 'self'")
     expect(headers['Content-Security-Policy']).toContain("frame-ancestors 'none'")
     expect(config.responseOverrides?.['404']).toEqual({ rewrite: '/404.html' })
-    expect(config.routes?.find((route) => route.route === '/demo')?.rewrite).toBe('/demo/index.html')
-    expect(config.routes?.find((route) => route.route === '/demo/')?.redirect).toBe('/demo')
+    expect(config.routes?.find((route) => route.route === '/demo')?.rewrite).toBe('/demo.html')
+    expect(config.routes?.find((route) => route.route === '/demo/')).toBeUndefined()
+    const trailingDemo = readFileSync('site/public/demo/index.html', 'utf8')
+    expect(trailingDemo).toContain('http-equiv="refresh" content="0; url=/demo"')
+    expect(trailingDemo).toContain('rel="canonical" href="https://browser-game-replay-capsule.sociobot.in/demo"')
   })
 
   it('marks the scoped package for public factory publication', () => {
@@ -218,7 +221,7 @@ describe('static deployment response policy', () => {
 
   it('ships the documented metadata, demo route, and a designed 404 document', () => {
     const landing = readFileSync('site/index.html', 'utf8')
-    const demo = readFileSync('site/demo/index.html', 'utf8')
+    const demo = readFileSync('site/demo.html', 'utf8')
     const privacy = readFileSync('site/privacy/index.html', 'utf8')
     const terms = readFileSync('site/terms/index.html', 'utf8')
     const notFound = readFileSync('site/404.html', 'utf8')
@@ -241,7 +244,7 @@ describe('static deployment response policy', () => {
   it('keeps external GitHub links visibly and accessibly marked as external', () => {
     const pages = [
       readFileSync('site/index.html', 'utf8'),
-      readFileSync('site/demo/index.html', 'utf8'),
+      readFileSync('site/demo.html', 'utf8'),
       readFileSync('site/privacy/index.html', 'utf8'),
       readFileSync('site/terms/index.html', 'utf8'),
       readFileSync('site/404.html', 'utf8'),

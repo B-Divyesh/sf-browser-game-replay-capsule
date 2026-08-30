@@ -8,12 +8,8 @@
   },
   "routes": [
     {
-      "route": "/demo/",
-      "redirect": "/demo"
-    },
-    {
       "route": "/demo",
-      "rewrite": "/demo/index.html"
+      "rewrite": "/demo.html"
     },
     {
       "route": "/assets/*",

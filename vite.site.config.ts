@@ -10,7 +10,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: 'site/index.html',
-        demo: 'site/demo/index.html',
+        demo: 'site/demo.html',
         privacy: 'site/privacy/index.html',
         terms: 'site/terms/index.html',
         notFound: 'site/404.html',
@@ -23,12 +23,7 @@ export default defineConfig({
       configurePreviewServer(server) {
         server.middlewares.use((request, response, next) => {
           const pathname = new URL(request.url ?? '/', 'http://preview.local').pathname
-          if (pathname === '/demo/') {
-            response.writeHead(302, { Location: '/demo' })
-            response.end()
-            return
-          }
-          if (pathname === '/demo') request.url = '/demo/index.html'
+          if (pathname === '/demo') request.url = '/demo.html'
           next()
         })
       },

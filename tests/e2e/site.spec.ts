@@ -25,9 +25,15 @@ test('landing page is semantic, clean, and accessible', async ({ page }, testInf
 })
 
 test('sample demo has no axe violations', async ({ page }) => {
-  await page.goto('/demo/')
+  await page.goto('/demo')
   const results = await new AxeBuilder({ page: page as never }).analyze()
   expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual([])
+})
+
+test('the trailing demo URL resolves to the canonical demo URL', async ({ page }) => {
+  await page.goto('/demo/')
+  await page.waitForURL('**/demo')
+  await expect(page).toHaveTitle('Demo — Replay Capsule')
 })
 
 test('moves focus to the destination heading after document navigation', async ({ page }) => {
@@ -105,7 +111,7 @@ test('@claim:sample-demo loads isolated sample data in one click and can reset o
 test('@claim:no-network-calls uses only same-origin assets and makes no API calls', async ({ page }) => {
   const requests: string[] = []
   page.on('request', (request) => requests.push(request.url()))
-  await page.goto('/demo/')
+  await page.goto('/demo')
   await page.getByRole('button', { name: 'Replay capsule' }).click()
   await expect(page.locator('#demo-message')).toContainText('Replay complete')
   const origin = new URL(page.url()).origin
@@ -114,7 +120,7 @@ test('@claim:no-network-calls uses only same-origin assets and makes no API call
 })
 
 test('@claim:opt-in-recording captures nothing before the person starts recording', async ({ page }) => {
-  await page.goto('/demo/')
+  await page.goto('/demo')
   await page.keyboard.press('ArrowRight')
   await expect(page.locator('#event-readout')).toHaveText('1')
   await page.getByRole('button', { name: 'Arm & start' }).click()
@@ -293,7 +299,7 @@ test('@claim:offline-demo continues to record offline without browser persistenc
   const offlineContext = await browser.newContext()
   const offlinePage = await offlineContext.newPage()
   try {
-    await offlinePage.goto('http://127.0.0.1:4173/demo/')
+    await offlinePage.goto('http://127.0.0.1:4173/demo')
     expect(await offlinePage.evaluate(() => ({ local: Object.keys(localStorage), session: Object.keys(sessionStorage) }))).toEqual({ local: [], session: [] })
     expect(await offlineContext.cookies()).toEqual([])
 
