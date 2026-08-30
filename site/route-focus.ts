@@ -4,6 +4,11 @@
  * an in-site document navigation without changing the browser's scroll
  * position. A direct first visit retains the expected skip-link tab order.
  */
+// Azure Static Web Apps normalizes a configured `/demo` rewrite before it
+// reaches the static `/demo/index.html` redirect document. Correct that final
+// address-bar edge in the already external, CSP-safe route module.
+if (window.location.pathname === '/demo/') window.location.replace('/demo')
+
 const focusRouteHeading = () => {
   const heading = document.querySelector<HTMLElement>('main h1[tabindex="-1"]')
   heading?.focus({ preventScroll: true })
