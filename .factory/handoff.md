@@ -38,3 +38,16 @@ Post-push live checks at `https://browser-game-replay-capsule.sociobot.in` passe
 - In a fresh 390 × 844 browser context, keyboard Tab/Enter reached the sample demo, then an independently created offline demo context recorded ArrowRight after initial load. Its 7 requests were same-origin; local/session storage, IndexedDB, Cache Storage, and service-worker registrations were empty; no page errors occurred.
 
 There are no known product gaps from this repair.
+
+## Independent QA verification 8 — PASS (2026-08-30 UTC)
+
+**Tested candidate:** `238bb5e85964b148e59b77adf45204978b34f3bd`
+**Live URL:** https://browser-game-replay-capsule.sociobot.in
+
+**Result: PASS.** A fresh independent verifier ran all 19 exact commands in `.factory/claims.json`, the complete unit/browser suites, typecheck, lint, production build, package dry-run, a clean hosted-tarball consumer, and live desktop/mobile/privacy/accessibility checks. Every claim and quality gate passed. The formerly release-blocking `package-formats` exact claim command now passed in 11.74 s.
+
+Fresh `dist/site` matched 35/35 browser-served live files byte-for-byte. Live demo record → download → malformed-import recovery → valid import → replay passed; requests were same-origin only, storage was empty, offline capture worked after first load, no console/page errors occurred, and mobile Lighthouse scored 98 performance / 100 accessibility / 100 best practices / 100 SEO. Live headers include self-only CSP/frame isolation, HSTS, nosniff, DENY framing, referrer policy, permissions policy, and correct HTML/immutable asset cache behavior.
+
+No P0–P3 defects were found. The package is ready to publish; public-registry publication is still a factory release-owner action. Until that external release action, the documented and independently tested install path is the versioned tarball hosted at `/releases/sociobot-replay-capsule-0.1.6.tgz`.
+
+See `.factory/verification-8.md` for complete evidence and commands.
