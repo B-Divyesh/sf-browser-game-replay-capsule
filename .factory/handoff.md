@@ -17,8 +17,8 @@ The original test was a timing-sensitive direct `dist/` probe. In this checkout 
 
 - `npm ci`: 217 packages installed; `npm audit --audit-level=high`: 0 vulnerabilities.
 - `npm run typecheck`: pass. `npm run lint`: pass.
-- Exact repaired command: `npm test -- --testNamePattern @claim:package-formats` — 1 passed in 4.73 s (Vitest duration 6.42 s).
-- `npm test`: 29/29 passed. The package-format claim ran in 4.84 s within its explicit 45-second lifecycle budget.
+- Exact repaired command: `npm test -- --testNamePattern @claim:package-formats` — 1 passed in 4.75 s (Vitest duration 6.43 s).
+- `npm test`: 29/29 passed. The package-format claim ran in 4.79 s within its explicit 45-second lifecycle budget.
 - Every exact command declared in `.factory/claims.json` completed successfully: 19/19 claim commands, including both browser projects where applicable.
 - `npm run build`: pass. The generated library includes ESM, CommonJS, and declarations; the served tarball is 11,188 bytes with 7 declared files and no bundled dependencies (`npm pack --json --dry-run`).
 - `npm run test:e2e`: 31 passed, 1 expected desktop-only skip, in 32.2 s. This covers desktop and 390 px mobile behavior, keyboard start/import focus, reduced motion, 200% text, same-origin requests, isolated offline recording, closed/open Shadow-DOM text exclusion, and the record → download → import → replay path.
@@ -28,7 +28,7 @@ The original test was a timing-sensitive direct `dist/` probe. In this checkout 
 
 ## Deployment and handoff notes
 
-Deployed by pushing commit `ab7b2eb` to `main`; the static deployment remains rooted at `dist/site`, with `site/public/staticwebapp.config.json` as its response-policy configuration. The versioned release tarball is ready for the factory-owned package publishing workflow; no registry publication is attempted from this worker.
+Deployed by pushing repair commits `ab7b2eb` and `efef59f` to `main`; the static deployment remains rooted at `dist/site`, with `site/public/staticwebapp.config.json` as its response-policy configuration. The versioned release tarball is ready for the factory-owned package publishing workflow; no registry publication is attempted from this worker.
 
 Post-push live checks at `https://browser-game-replay-capsule.sociobot.in` passed:
 
