@@ -51,3 +51,9 @@ Fresh `dist/site` matched 35/35 browser-served live files byte-for-byte. Live de
 No P0–P3 defects were found. The package is ready to publish; public-registry publication is still a factory release-owner action. Until that external release action, the documented and independently tested install path is the versioned tarball hosted at `/releases/sociobot-replay-capsule-0.1.6.tgz`.
 
 See `.factory/verification-8.md` for complete evidence and commands.
+
+## Adversarial first-read review 1 — FAIL (2026-08-30 UTC)
+
+Reviewer work order `browser-game-replay-capsule-review-1` added `.factory/review-1.md` and made no product-code changes. The live site was checked cold at 390 px and desktop, through the one-click demo, and against the repository history. A separate clean clone at `1f24ac0` completed `npm ci`, all 19 exact claim commands, `npm test` (29/29), typecheck, lint, build, and E2E (32 passed, one expected desktop-only skip).
+
+The product's first screen and isolated sample demo pass. The review remains **FAIL** with six documented issues: route-change focus remains on `body`; `/demo` and `/demo/` are duplicate canonical URLs; the 404 lacks social metadata; external GitHub links are not labelled external; two README sentences exceed 22 words; and one README sentence makes an unlisted, ambiguous public-registry statement. See `.factory/review-1.md` for exact evidence and repairs.
