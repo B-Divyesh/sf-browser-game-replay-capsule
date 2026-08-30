@@ -30,6 +30,25 @@ test('sample demo has no axe violations', async ({ page }) => {
   expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual([])
 })
 
+test('moves focus to the destination heading after document navigation', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('link', { name: 'Try it with sample data' }).click()
+  await expect(page.getByRole('heading', { level: 1, name: 'Replay a sample browser-game bug.' })).toBeFocused()
+
+  await page.goBack()
+  await expect(page.getByRole('heading', { level: 1, name: 'Replay browser-game bugs from a small file.' })).toBeFocused()
+})
+
+test('the direct ?demo=1 sandbox loads sample data with reset and real-mode controls', async ({ page }) => {
+  await page.goto('/?demo=1')
+  await expect(page.getByText('Demo — sample data, nothing is saved.')).toBeVisible()
+  await expect(page.locator('#seed-readout')).toHaveText('RC-SAMPLE-FAULT-17')
+  await expect(page.locator('#event-readout')).toHaveText('1')
+  await expect(page.getByRole('button', { name: 'Reset demo' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Start for real' })).toBeVisible()
+  expect(await page.evaluate(() => document.body.dataset.stateNamespace)).toBe('demo:replay-capsule:memory')
+})
+
 test('keyboard users can reach and activate the sample action with a visible focus ring', async ({ page }) => {
   await page.goto('/')
   await page.keyboard.press('Tab')
@@ -46,7 +65,7 @@ test('keyboard users can reach and activate the sample action with a visible foc
   })
   expect(focus).toEqual({ width: '3px', style: 'solid', color: 'rgb(164, 71, 33)' })
   await page.keyboard.press('Enter')
-  await expect(page).toHaveURL(/\/demo\/$/)
+  await expect(page).toHaveURL(/\/demo\/?$/)
 })
 
 test('reduced motion and 200% text keep the interface usable', async ({ page }, testInfo) => {
@@ -70,7 +89,7 @@ test('reduced motion and 200% text keep the interface usable', async ({ page }, 
 test('@claim:sample-demo loads isolated sample data in one click and can reset or exit', async ({ page }) => {
   await page.goto('/')
   await page.getByRole('link', { name: 'Try it with sample data' }).click()
-  await expect(page).toHaveURL(/\/demo\/$/)
+  await expect(page).toHaveURL(/\/demo\/?$/)
   await expect(page).toHaveTitle('Demo — Replay Capsule')
   await expect(page.getByText('Demo — sample data, nothing is saved.')).toBeVisible()
   await expect(page.locator('#seed-readout')).toHaveText('RC-SAMPLE-FAULT-17')
@@ -147,7 +166,7 @@ test('keeps the visible import control focused for keyboard users', async ({ pag
 test('keeps compact navigation, footer links, and code actions at 44px targets on mobile', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile', 'Target dimensions are a compact-layout regression.')
   await page.goto('/')
-  for (const selector of ['.wordmark', '.copy-code', 'footer a[href="/demo/"]']) {
+  for (const selector of ['.wordmark', '.copy-code', 'footer a[href="/demo"]']) {
     const box = await page.locator(selector).boundingBox()
     expect(box, `${selector} should have a measurable target`).not.toBeNull()
     expect(box!.width).toBeGreaterThanOrEqual(44)

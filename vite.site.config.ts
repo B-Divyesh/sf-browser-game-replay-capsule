@@ -17,4 +17,21 @@ export default defineConfig({
       },
     },
   },
+  plugins: [
+    {
+      name: 'canonical-demo-preview-route',
+      configurePreviewServer(server) {
+        server.middlewares.use((request, response, next) => {
+          const pathname = new URL(request.url ?? '/', 'http://preview.local').pathname
+          if (pathname === '/demo/') {
+            response.writeHead(302, { Location: '/demo' })
+            response.end()
+            return
+          }
+          if (pathname === '/demo') request.url = '/demo/index.html'
+          next()
+        })
+      },
+    },
+  ],
 })

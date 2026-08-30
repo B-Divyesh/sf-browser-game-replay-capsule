@@ -88,7 +88,7 @@ async function startReleaseModuleServer(modulePath: string): Promise<{ origin: s
 
 type StaticWebAppConfig = {
   globalHeaders?: Record<string, string>
-  routes?: Array<{ route?: string; rewrite?: string; headers?: Record<string, string> }>
+  routes?: Array<{ route?: string; rewrite?: string; redirect?: string; headers?: Record<string, string> }>
   responseOverrides?: Record<string, { rewrite?: string; statusCode?: number }>
 }
 
@@ -114,6 +114,7 @@ describe('static deployment response policy', () => {
     expect(headers['Content-Security-Policy']).toContain("frame-ancestors 'none'")
     expect(config.responseOverrides?.['404']).toEqual({ rewrite: '/404.html' })
     expect(config.routes?.find((route) => route.route === '/demo')?.rewrite).toBe('/demo/index.html')
+    expect(config.routes?.find((route) => route.route === '/demo/')?.redirect).toBe('/demo')
   })
 
   it('marks the scoped package for public factory publication', () => {
@@ -222,16 +223,35 @@ describe('static deployment response policy', () => {
     const terms = readFileSync('site/terms/index.html', 'utf8')
     const notFound = readFileSync('site/404.html', 'utf8')
 
-    for (const page of [landing, demo, privacy, terms]) {
+    for (const page of [landing, demo, privacy, terms, notFound]) {
       expect(page).toContain('rel="canonical"')
       expect(page).toContain('rel="apple-touch-icon"')
       expect(page).toContain('name="twitter:card"')
+      expect(page).toContain('property="og:url"')
+      expect(page).toContain('property="og:image:width"')
+      expect(page).toContain('property="og:image:height"')
     }
     expect(landing).toContain('property="og:image"')
     expect(demo).toContain('<title>Demo — Replay Capsule</title>')
-    expect(notFound).toContain('<h1>That page was not found.</h1>')
+    expect(notFound).toContain('<h1 tabindex="-1">That page was not found.</h1>')
     expect(existsSync('site/public/assets/replay-capsule-social.png')).toBe(true)
     expect(existsSync('site/public/apple-touch-icon.png')).toBe(true)
+  })
+
+  it('keeps external GitHub links visibly and accessibly marked as external', () => {
+    const pages = [
+      readFileSync('site/index.html', 'utf8'),
+      readFileSync('site/demo/index.html', 'utf8'),
+      readFileSync('site/privacy/index.html', 'utf8'),
+      readFileSync('site/terms/index.html', 'utf8'),
+      readFileSync('site/404.html', 'utf8'),
+    ]
+    const githubLinks = pages.flatMap((page) => [...page.matchAll(/<a href="https:\/\/github\.com\/B-Divyesh\/sf-browser-game-replay-capsule"[^>]*>([\s\S]*?)<\/a>/g)])
+    expect(githubLinks.length).toBeGreaterThan(0)
+    for (const link of githubLinks) {
+      expect(link[0]).toContain('external site')
+      expect(link[1]).toContain('↗')
+    }
   })
 
   it('keeps every listed claim mapped to exactly one tagged regression', () => {

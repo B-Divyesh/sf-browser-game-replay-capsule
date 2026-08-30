@@ -14,7 +14,7 @@ Open [the sample demo](https://browser-game-replay-capsule.sociobot.in/demo), or
 npm install https://browser-game-replay-capsule.sociobot.in/releases/sociobot-replay-capsule-0.1.6.tgz
 ```
 
-This versioned npm tarball is available now. The factory release owner publishes the same package to the public npm registry.
+This versioned npm tarball is available now.
 
 ## Record
 
@@ -69,7 +69,7 @@ await player.play()
 
 The repository includes [a small Phaser 3 scene](examples/phaser-seeded-failure.ts) that records from Phaser's canvas and replays an imported file through the scene's input adapter. Its deterministic game model lives beside it so the behavior is easy to audit without bundling Phaser into this dependency-free package.
 
-`tests/phaser-fixture.test.ts` imports 20 generated replay files into that model and reproduces all 20 seeded fault outcomes (the researched target is at least 18/20, or 90%). Run it with the full test suite:
+`tests/phaser-fixture.test.ts` imports 20 generated replay files. It reproduces all 20 seeded fault outcomes. The target is 18 of 20 (90%). Run it with the full test suite:
 
 ```sh
 npm test
@@ -87,7 +87,7 @@ The package exports ESM, CommonJS, and declarations. The `ReplayEvent`, `ReplayC
 
 ## Limits and browser behavior
 
-- Default cap: 128 KB; supported range: 4 KB–1 MB. The recorder stops before an event would cross the cap and reports `limit-reached`. It also rechecks the cap when final timing metadata changes on `stop()` or `export()`; it preserves whole retained entries and finalizes at the last retained timestamp when necessary. Accounting and the downloaded file use the same compact JSON bytes, so a capped recorder export stays importable.
+- Default cap: 128 KB; supported range: 4 KB–1 MB. The recorder stops before an event would cross the cap and reports `limit-reached`. On `stop()` or `export()`, the recorder rechecks the cap after timing changes. It keeps only whole entries that fit. Accounting and the downloaded file use the same compact JSON bytes, so a capped recorder export stays importable.
 - Pointer coordinates are normalized to the configured target when possible.
 - Key identity uses `KeyboardEvent.code`, not typed characters. Text-entry events are ignored in light, open-shadow, and closed-shadow DOM. Ambiguous events retargeted from a possible closed-shadow host fail closed.
 - Gamepads are sampled once per animation frame, but browser gamepad timestamps are inconsistent. Replay Capsule timestamps the sample at observation time and stores the browser timestamp only as optional diagnostic metadata.

@@ -8,6 +8,10 @@
   },
   "routes": [
     {
+      "route": "/demo/",
+      "redirect": "/demo"
+    },
+    {
       "route": "/demo",
       "rewrite": "/demo/index.html"
     },
