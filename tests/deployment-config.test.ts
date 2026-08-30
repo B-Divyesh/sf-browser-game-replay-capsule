@@ -1,9 +1,90 @@
-import { execFileSync } from 'node:child_process'
-import { createRequire } from 'node:module'
+import { execFile } from 'node:child_process'
+import { createServer } from 'node:http'
 import { existsSync, readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
-import { pathToFileURL } from 'node:url'
+import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join, resolve } from 'node:path'
+import { promisify } from 'node:util'
+import { chromium, type Browser, type BrowserContext } from '@playwright/test'
 import { describe, expect, it } from 'vitest'
+
+const execFileAsync = promisify(execFile)
+const root = resolve('.')
+const releaseTimeout = 30_000
+
+async function runReleaseProcess(command: string, args: string[], cwd: string, timeout = releaseTimeout): Promise<string> {
+  const { stdout } = await execFileAsync(command, args, {
+    cwd,
+    encoding: 'utf8',
+    timeout,
+    maxBuffer: 1_000_000,
+  })
+  return stdout
+}
+
+async function waitForReleaseOutputs(paths: string[], timeout = 10_000): Promise<void> {
+  const deadline = Date.now() + timeout
+  while (Date.now() < deadline) {
+    const ready = await Promise.all(paths.map(async (path) => {
+      try {
+        return (await stat(path)).size > 0
+      } catch {
+        return false
+      }
+    }))
+    if (ready.every(Boolean)) return
+    await new Promise((resolve) => setTimeout(resolve, 50))
+  }
+  throw new Error(`Timed out waiting for release outputs: ${paths.join(', ')}`)
+}
+
+async function startReleaseModuleServer(modulePath: string): Promise<{ origin: string; close: () => Promise<void> }> {
+  const server = createServer((request, response) => {
+    if (request.url === '/') {
+      response.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' })
+      response.end(`<!doctype html><title>Release format consumer</title><body><script type="module">
+        try {
+          const replay = await import('/package/dist/index.js')
+          const capsule = { format: 'replay-capsule', version: 1, createdAt: '2026-08-30T00:00:00.000Z', durationMs: 0, seed: 'release-fixture', events: [], checkpoints: [], truncated: false }
+          const validated = replay.validateCapsule(capsule)
+          if (validated.version !== 1 || typeof replay.createRecorder !== 'function' || typeof replay.createPlayer !== 'function') throw new Error('Published ESM surface is incomplete.')
+          document.body.dataset.formatStatus = 'ready'
+        } catch (error) {
+          document.body.dataset.formatStatus = 'failed'
+          document.body.dataset.formatError = String(error)
+        }
+      </script></body>`)
+      return
+    }
+    if (request.url === '/package/dist/index.js') {
+      void readFile(modulePath).then((source) => {
+        response.writeHead(200, { 'Content-Type': 'text/javascript; charset=utf-8', 'Cache-Control': 'no-store' })
+        response.end(source)
+      }).catch(() => {
+        response.writeHead(500)
+        response.end('Could not read the packaged ESM entry point.')
+      })
+      return
+    }
+    response.writeHead(404)
+    response.end()
+  })
+
+  await new Promise<void>((resolve, reject) => {
+    server.once('error', reject)
+    server.listen(0, '127.0.0.1', () => {
+      server.off('error', reject)
+      resolve()
+    })
+  })
+  const address = server.address()
+  if (!address || typeof address === 'string') throw new Error('Release module server did not bind to a TCP address.')
+
+  return {
+    origin: `http://127.0.0.1:${address.port}`,
+    close: () => new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve())),
+  }
+}
 
 type StaticWebAppConfig = {
   globalHeaders?: Record<string, string>
@@ -46,22 +127,85 @@ describe('static deployment response policy', () => {
     expect(manifest.dependencies ?? {}).toEqual({})
   })
 
-  it('@claim:package-formats exports working ESM, CommonJS, and TypeScript declarations', async () => {
-    execFileSync('npm', ['run', 'build:lib'], { stdio: 'pipe' })
+  it('@claim:package-formats exports working ESM, CommonJS, and TypeScript declarations from the published release artifact', async () => {
     const manifest = JSON.parse(readFileSync('package.json', 'utf8')) as {
+      version: string
       exports?: { '.'?: { import?: string; require?: string; types?: string } }
     }
     const rootExport = manifest.exports?.['.']
     expect(rootExport).toEqual({ types: './dist/index.d.ts', import: './dist/index.js', require: './dist/index.cjs' })
 
-    const esm = await import(`${pathToFileURL(resolve(rootExport!.import!)).href}?claim=package-formats`)
-    const cjs = createRequire(import.meta.url)(resolve(rootExport!.require!)) as typeof esm
-    expect(typeof esm.createRecorder).toBe('function')
-    expect(typeof cjs.createPlayer).toBe('function')
-    const declarations = readFileSync(resolve(rootExport!.types!), 'utf8')
-    expect(declarations).toContain('declare function createRecorder')
-    expect(declarations).toContain('createPlayer, createRecorder, downloadCapsule, importCapsule, validateCapsule')
-  })
+    // Build in its own process and wait for every output instead of racing Vitest's
+    // default five-second test window or reading a partially-written release.
+    await runReleaseProcess('npm', ['run', 'build:lib'], root)
+    const builtFiles = ['index.js', 'index.cjs', 'index.d.ts'].map((file) => resolve('dist', file))
+    await waitForReleaseOutputs(builtFiles)
+
+    const tarball = resolve(`site/public/releases/sociobot-replay-capsule-${manifest.version}.tgz`)
+    expect(existsSync(tarball)).toBe(true)
+    const consumer = await mkdtemp(join(tmpdir(), 'replay-capsule-formats-'))
+    let server: Awaited<ReturnType<typeof startReleaseModuleServer>> | undefined
+    let browser: Browser | undefined
+    let context: BrowserContext | undefined
+
+    try {
+      await writeFile(join(consumer, 'package.json'), '{"name":"replay-capsule-format-consumer","private":true,"type":"module"}')
+      await runReleaseProcess('npm', ['install', '--ignore-scripts', '--omit=dev', '--no-audit', '--no-fund', '--offline', tarball], consumer)
+
+      const installed = join(consumer, 'node_modules', '@sociobot', 'replay-capsule')
+      const publishedManifest = JSON.parse(await readFile(join(installed, 'package.json'), 'utf8')) as {
+        exports?: { '.'?: { import?: string; require?: string; types?: string } }
+      }
+      expect(publishedManifest.exports?.['.']).toEqual(rootExport)
+
+      for (const file of ['index.js', 'index.cjs', 'index.d.ts']) {
+        expect(await readFile(join(installed, 'dist', file), 'utf8')).toBe(await readFile(resolve('dist', file), 'utf8'))
+      }
+
+      const commonJs = await runReleaseProcess(process.execPath, ['-e', [
+        "const replay = require('@sociobot/replay-capsule')",
+        "const capsule = {format:'replay-capsule',version:1,createdAt:'2026-08-30T00:00:00.000Z',durationMs:0,seed:'release-fixture',events:[],checkpoints:[],truncated:false}",
+        "process.stdout.write(typeof replay.createPlayer + ':' + replay.validateCapsule(capsule).format)",
+      ].join(';')], consumer)
+      expect(commonJs).toBe('function:replay-capsule')
+
+      const esm = await runReleaseProcess(process.execPath, ['--input-type=module', '-e', [
+        "import * as replay from '@sociobot/replay-capsule'",
+        "const capsule = {format:'replay-capsule',version:1,createdAt:'2026-08-30T00:00:00.000Z',durationMs:0,seed:'release-fixture',events:[],checkpoints:[],truncated:false}",
+        "process.stdout.write(typeof replay.createRecorder + ':' + replay.validateCapsule(capsule).version)",
+      ].join(';')], consumer)
+      expect(esm).toBe('function:1')
+
+      await writeFile(join(consumer, 'consumer.ts'), [
+        "import { createPlayer, createRecorder, validateCapsule, type ReplayCapsule } from '@sociobot/replay-capsule'",
+        "const capsule: ReplayCapsule = { format: 'replay-capsule', version: 1, createdAt: '2026-08-30T00:00:00.000Z', durationMs: 0, seed: 'release-fixture', events: [], checkpoints: [], truncated: false }",
+        'validateCapsule(capsule)',
+        'createRecorder({ seed: capsule.seed, target: new EventTarget(), keyTarget: new EventTarget(), captureGamepads: false })',
+        'createPlayer(capsule, { onEvent: () => {} })',
+      ].join('\n'))
+      await runReleaseProcess(resolve('node_modules/.bin/tsc'), ['--noEmit', '--strict', '--target', 'ES2022', '--module', 'NodeNext', '--moduleResolution', 'NodeNext', 'consumer.ts'], consumer)
+
+      // The packaged ESM file also runs in an explicitly-created browser/context.
+      // Each resource is closed here so this claim cannot leak a context or process
+      // into another test run.
+      server = await startReleaseModuleServer(join(installed, 'dist', 'index.js'))
+      browser = await chromium.launch({ headless: true })
+      context = await browser.newContext()
+      const page = await context.newPage()
+      const pageErrors: string[] = []
+      page.on('pageerror', (error) => pageErrors.push(error.message))
+      await page.goto(server.origin, { waitUntil: 'domcontentloaded' })
+      await page.waitForFunction(() => document.body.dataset.formatStatus !== undefined, undefined, { timeout: 10_000 })
+      expect(await page.locator('body').getAttribute('data-format-status')).toBe('ready')
+      expect(await page.locator('body').getAttribute('data-format-error')).toBeNull()
+      expect(pageErrors).toEqual([])
+    } finally {
+      await context?.close()
+      await browser?.close()
+      await server?.close()
+      await rm(consumer, { recursive: true, force: true })
+    }
+  }, 45_000)
 
   it('@claim:mit-license ships the package under MIT terms', () => {
     const manifest = JSON.parse(readFileSync('package.json', 'utf8')) as PackageManifest & { license?: string }
