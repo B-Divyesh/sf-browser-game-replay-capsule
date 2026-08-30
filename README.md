@@ -4,6 +4,10 @@ Replay Capsule is a tiny, dependency-free TypeScript library for reproducible br
 
 It is for solo developers shipping plain Canvas, Phaser, Kaplay, Pixi, or similarly small 2D browser games. It is not video recording, analytics, session tracking, server playback, or anti-cheat.
 
+## Try the sample demo
+
+Open [the sample demo](https://browser-game-replay-capsule.sociobot.in/demo), or select **Try it with sample data** on the landing page. It loads a seeded fault capsule with one pointer input and checkpoint. The demo is isolated in `demo:replay-capsule:memory`, writes no browser storage, and is discarded when you reset or leave it.
+
 ## Install
 
 ```sh
@@ -97,7 +101,9 @@ npm ci
 npm test
 npm run build       # library -> dist/, site -> dist/site/
 npm run typecheck
+npm run lint
+npm run test:e2e
 npm pack --dry-run  # inspect the publishable package
 ```
 
-Deploy `dist/site` as the static root. Package publication is intentionally left to the factory.
+Deploy `dist/site` as the static root. Run every command listed in [.factory/claims.json](.factory/claims.json) when changing a listed product claim. Package publication is intentionally left to the factory release workflow; use `npm pack` to prepare its artifact.

@@ -10,19 +10,60 @@ test('landing page is semantic, clean, and accessible', async ({ page }, testInf
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
   await expect(page.locator('main')).toHaveCount(1)
   await expect(page.locator('h1')).toHaveCount(1)
-  await expect(page.locator('img')).toHaveAttribute('alt', /flight recorder/)
-  await expect(page.getByRole('heading', { name: 'Make the bug play itself.' })).toBeVisible()
+  await expect(page.locator('img')).toHaveAttribute('alt', /cream and petrol recorder/)
+  await expect(page.getByRole('heading', { name: 'Replay browser-game bugs from a small file.' })).toBeVisible()
   expect(errors).toEqual([])
 
   // axe bundles its own Playwright peer types; runtime is pinned by this project.
   const results = await new AxeBuilder({ page: page as never }).analyze()
-  const serious = results.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? ''))
-  expect(serious, JSON.stringify(serious, null, 2)).toEqual([])
+  expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual([])
 
   if (testInfo.project.name === 'mobile') {
     const dimensions = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }))
     expect(dimensions.scroll).toBeLessThanOrEqual(dimensions.client)
   }
+})
+
+test('sample demo has no axe violations', async ({ page }) => {
+  await page.goto('/demo/')
+  const results = await new AxeBuilder({ page: page as never }).analyze()
+  expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual([])
+})
+
+test('@claim:sample-demo loads isolated sample data in one click and can reset or exit', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('link', { name: 'Try it with sample data' }).click()
+  await expect(page).toHaveURL(/\/demo\/$/)
+  await expect(page).toHaveTitle('Demo — Replay Capsule')
+  await expect(page.getByText('Demo — sample data, nothing is saved.')).toBeVisible()
+  await expect(page.locator('#seed-readout')).toHaveText('RC-SAMPLE-FAULT-17')
+  await expect(page.locator('#event-readout')).toHaveText('1')
+  expect(await page.evaluate(() => ({ local: Object.keys(localStorage), session: Object.keys(sessionStorage), namespace: document.body.dataset.stateNamespace }))).toEqual({ local: [], session: [], namespace: 'demo:replay-capsule:memory' })
+  await page.getByRole('button', { name: 'Reset demo' }).click()
+  await expect(page.locator('#seed-readout')).toHaveText('RC-SAMPLE-FAULT-17')
+  await page.getByRole('link', { name: 'Start for real' }).click()
+  await expect(page).toHaveURL(/\/$/)
+  await expect(page.locator('#demo-banner')).toBeHidden()
+})
+
+test('@claim:no-network-calls uses only same-origin assets and makes no API calls', async ({ page }) => {
+  const requests: string[] = []
+  page.on('request', (request) => requests.push(request.url()))
+  await page.goto('/demo/')
+  await page.getByRole('button', { name: 'Replay capsule' }).click()
+  await expect(page.locator('#demo-message')).toContainText('Replay complete')
+  const origin = new URL(page.url()).origin
+  expect(requests).not.toEqual([])
+  expect(requests.every((url) => new URL(url).origin === origin)).toBe(true)
+})
+
+test('@claim:opt-in-recording captures nothing before the person starts recording', async ({ page }) => {
+  await page.goto('/demo/')
+  await page.keyboard.press('ArrowRight')
+  await expect(page.locator('#event-readout')).toHaveText('1')
+  await page.getByRole('button', { name: 'Arm & start' }).click()
+  await page.keyboard.press('ArrowRight')
+  await expect(page.locator('#event-readout')).toHaveText('2')
 })
 
 test('records, exports, and replays a real input capsule', async ({ page }) => {
@@ -78,7 +119,7 @@ test('invalid imports explain how to recover', async ({ page }) => {
   await expect(page.locator('#demo-message')).toContainText('under 1 MB')
 })
 
-test('never records text-field keystrokes', async ({ page }) => {
+test('@claim:text-entry-excluded never records text-field keystrokes', async ({ page }) => {
   await page.goto('/#demo')
   await page.getByRole('button', { name: 'Arm & start' }).click()
   await page.evaluate(() => {
@@ -88,6 +129,16 @@ test('never records text-field keystrokes', async ({ page }) => {
     input.focus()
   })
   await page.keyboard.type('never capture this')
+  await expect(page.locator('#event-readout')).toHaveText('0')
+
+  await page.evaluate(() => {
+    const editable = document.createElement('div')
+    editable.contentEditable = 'true'
+    editable.setAttribute('aria-label', 'Private editable text test')
+    document.body.append(editable)
+    editable.focus()
+  })
+  await page.keyboard.type('also private')
   await expect(page.locator('#event-readout')).toHaveText('0')
 })
 
@@ -138,23 +189,30 @@ test('never records text-entry events through an open Shadow DOM path', async ({
   }
 })
 
-test('continues to record offline without browser persistence', async ({ page, context }) => {
-  await page.goto('/#demo')
-  expect(await page.evaluate(() => ({ local: Object.keys(localStorage), session: Object.keys(sessionStorage) }))).toEqual({ local: [], session: [] })
-  expect(await context.cookies()).toEqual([])
+test('@claim:offline-demo continues to record offline without browser persistence', async ({ browser }) => {
+  const offlineContext = await browser.newContext()
+  const offlinePage = await offlineContext.newPage()
+  try {
+    await offlinePage.goto('http://127.0.0.1:4173/demo/')
+    expect(await offlinePage.evaluate(() => ({ local: Object.keys(localStorage), session: Object.keys(sessionStorage) }))).toEqual({ local: [], session: [] })
+    expect(await offlineContext.cookies()).toEqual([])
 
-  await context.setOffline(true)
-  await page.evaluate(() => window.dispatchEvent(new Event('offline')))
-  await expect(page.getByText('You are offline.')).toBeVisible()
-  await page.getByRole('button', { name: 'Arm & start' }).click()
-  await page.keyboard.press('ArrowRight')
-  await expect(page.locator('#event-readout')).toHaveText('2')
-  await context.setOffline(false)
+    await offlineContext.setOffline(true)
+    await offlinePage.evaluate(() => window.dispatchEvent(new Event('offline')))
+    await expect(offlinePage.getByText('You are offline.')).toBeVisible()
+    await offlinePage.getByRole('button', { name: 'Arm & start' }).click()
+    await offlinePage.keyboard.press('ArrowRight')
+    await expect(offlinePage.locator('#event-readout')).toHaveText('2')
+  } finally {
+    await offlineContext.close()
+  }
 })
 
 test('legal pages are reachable', async ({ page }) => {
   await page.goto('/privacy/')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Privacy, by construction.')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Privacy for Replay Capsule.')
   await page.goto('/terms/')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Plain terms for a small tool.')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Terms for Replay Capsule.')
+  await page.goto('/404.html')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('That page was not found.')
 })

@@ -366,7 +366,10 @@ export function validateCapsule(value: unknown): ReplayCapsule {
   for (const [index, raw] of capsule.checkpoints.entries()) {
     if (!raw || typeof raw !== 'object') throw new CapsuleError(`Checkpoint ${index} is invalid.`, 'invalid')
     const checkpoint = raw as Record<string, unknown>
-    if (typeof checkpoint.label !== 'string' || !checkpoint.label || !isTimestamp(checkpoint.t) || checkpoint.t > capsule.durationMs) throw new CapsuleError(`Checkpoint ${index} is invalid.`, 'invalid')
+    // Keep imported capsules on the same public invariant as recorder.checkpoint().
+    // A whitespace-only label or one beyond the UI/API limit cannot identify a
+    // useful game state and must never slip through schema validation.
+    if (typeof checkpoint.label !== 'string' || !checkpoint.label.trim() || checkpoint.label.length > 120 || !isTimestamp(checkpoint.t) || checkpoint.t > capsule.durationMs) throw new CapsuleError(`Checkpoint ${index} is invalid.`, 'invalid')
     assertJson(checkpoint.data, `checkpoint ${index} data`)
   }
   return value as ReplayCapsule

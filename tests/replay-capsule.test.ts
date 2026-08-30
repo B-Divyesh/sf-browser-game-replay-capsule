@@ -61,6 +61,16 @@ describe('createRecorder', () => {
     expect(recorder.export().truncated).toBe(true)
   })
 
+  it('@claim:default-byte-cap stops a default recorder before 128 KB', () => {
+    const target = new EventTarget()
+    const recorder = createRecorder({ seed: 'default-cap', target, keyTarget: target, captureGamepads: false, now: () => 10 })
+    recorder.start()
+    expect(recorder.status.maxBytes).toBe(128_000)
+    expect(recorder.checkpoint('large-payload', 'x'.repeat(128_000))).toBe(false)
+    expect(recorder.state).toBe('limit-reached')
+    expect(new TextEncoder().encode(JSON.stringify(recorder.export())).byteLength).toBeLessThanOrEqual(128_000)
+  })
+
   for (const maxBytes of [4_096, 128_000, 1_000_000]) {
     it(`keeps an exactly ${maxBytes.toLocaleString()}-byte recording exportable after stop changes duration metadata`, async () => {
       let clock = 0
@@ -199,6 +209,18 @@ describe('capsule import and validation', () => {
     await expect(importCapsule(' '.repeat(4_097), 4_096)).rejects.toMatchObject({ code: 'too-large' })
   })
 
+  it('@claim:validated-import rejects blank and overlong checkpoint labels', async () => {
+    const blank = validCapsule()
+    blank.checkpoints[0]!.label = '   '
+    expect(() => validateCapsule(blank)).toThrowError(expect.objectContaining({ code: 'invalid' }))
+    await expect(importCapsule(JSON.stringify(blank))).rejects.toMatchObject({ code: 'invalid' })
+
+    const overlong = validCapsule()
+    overlong.checkpoints[0]!.label = 'x'.repeat(121)
+    expect(() => validateCapsule(overlong)).toThrowError(expect.objectContaining({ code: 'invalid' }))
+    await expect(importCapsule(JSON.stringify(overlong))).rejects.toMatchObject({ code: 'invalid' })
+  })
+
   it('rejects malformed gamepad diagnostic metadata and indexes', async () => {
     const malformedTimestamp = validCapsule()
     malformedTimestamp.events[0] = {
@@ -241,5 +263,27 @@ describe('createPlayer', () => {
     player.stop()
     await finished
     expect(player.state).toBe('stopped')
+  })
+
+  it('@claim:replay-controls pauses, resumes, stops, and can accelerate replay', async () => {
+    const capsule = validCapsule()
+    capsule.events = [{ type: 'key', action: 'down', code: 'Space', repeat: false, t: 1_000 }]
+    capsule.durationMs = 1_000
+    const player = createPlayer(capsule, { speed: 100, onEvent: () => undefined })
+    const playback = player.play()
+    player.pause()
+    expect(player.state).toBe('paused')
+    player.resume()
+    expect(player.state).toBe('playing')
+    player.stop()
+    await playback
+    expect(player.state).toBe('stopped')
+
+    const accelerated: string[] = []
+    const fastPlayer = createPlayer(capsule, { speed: 100, onEvent: (event) => accelerated.push(event.type) })
+    const started = performance.now()
+    await fastPlayer.play()
+    expect(accelerated).toEqual(['key'])
+    expect(performance.now() - started).toBeLessThan(250)
   })
 })

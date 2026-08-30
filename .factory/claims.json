@@ -1,0 +1,72 @@
+[
+  {
+    "id": "sample-demo",
+    "claim": "Try it with sample data loads a seeded replay capsule without saving browser data.",
+    "where": "landing action, /demo banner, README",
+    "test": "npm run test:e2e -- --grep @claim:sample-demo",
+    "sandbox": "fresh browser context; open landing, enter /demo, assert the sample seed/event and empty browser storage, reset, then exit"
+  },
+  {
+    "id": "no-network-calls",
+    "claim": "The library and demo make no API, analytics, or third-party runtime calls.",
+    "where": "landing facts, telemetry, privacy page, README",
+    "test": "npm run test:e2e -- --grep @claim:no-network-calls",
+    "sandbox": "fresh /demo load and replay; record every request and assert every URL is same-origin"
+  },
+  {
+    "id": "opt-in-recording",
+    "claim": "Recording begins only after the person starts it.",
+    "where": "landing flow, privacy page, README",
+    "test": "npm run test:e2e -- --grep @claim:opt-in-recording",
+    "sandbox": "fresh /demo; send game input before and after Arm & start and compare the captured-event count"
+  },
+  {
+    "id": "text-entry-excluded",
+    "claim": "Text fields and editable elements are never captured.",
+    "where": "demo message, privacy page, README",
+    "test": "npm run test:e2e -- --grep @claim:text-entry-excluded",
+    "sandbox": "fresh /demo recording; type in a light-DOM input and assert no recorder events are added"
+  },
+  {
+    "id": "default-byte-cap",
+    "claim": "The recorder uses a 128 KB default cap and stops before it crosses that cap.",
+    "where": "landing facts, demo telemetry, README",
+    "test": "npm test -- --testNamePattern @claim:default-byte-cap",
+    "sandbox": "new recorder with default options; append an oversized JSON checkpoint and measure the final serialized capsule"
+  },
+  {
+    "id": "validated-import",
+    "claim": "Imported capsules are schema-validated, including checkpoint labels.",
+    "where": "demo import message, README",
+    "test": "npm test -- --testNamePattern @claim:validated-import",
+    "sandbox": "construct valid capsules with blank and 121-character checkpoint labels and assert synchronous and async import rejection"
+  },
+  {
+    "id": "replay-controls",
+    "claim": "The public player can pause, resume, stop, and accelerate replay.",
+    "where": "landing feature copy, README",
+    "test": "npm test -- --testNamePattern @claim:replay-controls",
+    "sandbox": "new player with speed 100; play, pause, resume, stop, and observe each state"
+  },
+  {
+    "id": "seeded-failure-fixture",
+    "claim": "The Phaser fixture reproduces at least 90% of 20 seeded failures.",
+    "where": "README",
+    "test": "npm test -- --testNamePattern @claim:seeded-failure-fixture",
+    "sandbox": "import 20 generated replay capsules into the shipped deterministic Phaser model and count reproduced faults"
+  },
+  {
+    "id": "zero-runtime-dependencies",
+    "claim": "The published library has zero runtime dependencies.",
+    "where": "README",
+    "test": "npm test -- --testNamePattern @claim:zero-runtime-dependencies",
+    "sandbox": "read package.json and assert that the runtime dependencies object is empty"
+  },
+  {
+    "id": "offline-demo",
+    "claim": "The demo continues to record after its first load when the browser is offline.",
+    "where": "demo offline notice, README",
+    "test": "npm run test:e2e -- --grep @claim:offline-demo",
+    "sandbox": "new browser context; load /demo, set only that context offline, start recording, and assert a new event is captured"
+  }
+]

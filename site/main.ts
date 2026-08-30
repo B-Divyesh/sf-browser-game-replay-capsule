@@ -36,6 +36,16 @@ const timelineFill = $('#timeline-fill') as HTMLElement
 const timeline = $('.timeline') as HTMLElement
 const capGauge = $('.cap-gauge') as HTMLElement
 const offlineNote = $('#offline-note') as HTMLElement
+const demoBanner = document.querySelector<HTMLElement>('#demo-banner')
+const resetDemoButton = document.querySelector<HTMLButtonElement>('#reset-demo')
+
+const isDemo = document.body.dataset.mode === 'demo' || new URLSearchParams(window.location.search).get('demo') === '1'
+// Replay Capsule never writes browser storage. The explicit namespace still
+// makes demo and real in-memory state impossible to confuse if persistence is
+// ever added by a host application.
+const stateNamespace = isDemo ? 'demo:replay-capsule:memory' : 'real:replay-capsule:memory'
+document.body.dataset.stateNamespace = stateNamespace
+if (isDemo && demoBanner) demoBanner.hidden = false
 
 type Point = { x: number; y: number }
 type Fault = Point & { width: number; height: number }
@@ -201,6 +211,43 @@ function syncStatus() {
   resetButton.disabled = state === 'replaying'
 }
 
+function loadCapsule(next: ReplayCapsule, notice: string) {
+  capsule = next
+  recorder?.clear()
+  recorder = undefined
+  resetGame(String(capsule.seed))
+  eventReadout.textContent = String(capsule.events.length)
+  timeReadout.textContent = `${(capsule.durationMs / 1000).toFixed(2)} s`
+  const bytes = new TextEncoder().encode(JSON.stringify(capsule)).byteLength
+  const cap = isDemo ? 128_000 : 1_000_000
+  sizeReadout.textContent = `${(bytes / 1000).toFixed(1)} / ${cap / 1000} KB`
+  capFill.style.transform = `scaleX(${Math.min(1, bytes / cap)})`
+  capGauge.setAttribute('aria-valuenow', String(Math.round(Math.min(1, bytes / cap) * 100)))
+  replayButton.disabled = capsule.events.length === 0
+  exportButton.disabled = false
+  overlay.hidden = false
+  overlay.innerHTML = capsule.events.length ? '<strong>Capsule loaded</strong><span>Press “Replay capsule” to reproduce the run.</span>' : '<strong>Empty capsule</strong><span>This valid file has no input events to replay.</span>'
+  setMessage(notice)
+  syncStatus()
+}
+
+function loadDemoSample() {
+  const seed = 'RC-SAMPLE-FAULT-17'
+  resetGame(seed)
+  const fault = faults[0]!
+  loadCapsule({
+    format: 'replay-capsule',
+    version: 1,
+    createdAt: '2026-08-30T00:00:00.000Z',
+    durationMs: 640,
+    seed,
+    truncated: false,
+    events: [{ type: 'pointer', action: 'down', x: fault.x, y: fault.y, button: 0, buttons: 1, pointerId: 1, pointerType: 'mouse', pressure: .5, t: 320 }],
+    checkpoints: [{ label: 'fault-contact', data: { x: fault.x, y: fault.y }, t: 320 }],
+  }, 'Sample capsule loaded. Replay it or record a new run.')
+  overlay.innerHTML = '<strong>Sample capsule loaded</strong><span>Replay it or start a new recording.</span>'
+}
+
 recordButton.addEventListener('click', () => {
   const seed = `RC-${Date.now().toString(36).toUpperCase()}`
   capsule = undefined
@@ -235,7 +282,7 @@ resetButton.addEventListener('click', () => {
   capsule = undefined
   resetGame('RC-DEMO')
   overlay.hidden = false
-  overlay.innerHTML = '<strong>Bench ready</strong><span>Arm recording to begin a new seeded run.</span>'
+  overlay.innerHTML = '<strong>Ready to record</strong><span>Start recording to begin a seeded run.</span>'
   exportButton.disabled = true
   replayButton.disabled = true
   eventReadout.textContent = '0'
@@ -256,21 +303,8 @@ importInput.addEventListener('change', async () => {
   const file = importInput.files?.[0]
   if (!file) return
   try {
-    capsule = await importCapsule(file)
-    recorder?.clear()
-    recorder = undefined
-    resetGame(String(capsule.seed))
-    eventReadout.textContent = String(capsule.events.length)
-    timeReadout.textContent = `${(capsule.durationMs / 1000).toFixed(2)} s`
-    const bytes = new TextEncoder().encode(JSON.stringify(capsule)).byteLength
-    sizeReadout.textContent = `${(bytes / 1000).toFixed(1)} / 1000 KB`
-    capFill.style.transform = `scaleX(${bytes / 1_000_000})`
-    capGauge.setAttribute('aria-valuenow', String(Math.round(bytes / 10_000)))
-    replayButton.disabled = capsule.events.length === 0
-    exportButton.disabled = false
-    overlay.hidden = false
-    overlay.innerHTML = capsule.events.length ? '<strong>Capsule loaded</strong><span>Press “Replay capsule” to reproduce the run.</span>' : '<strong>Empty capsule</strong><span>This valid file has no input events to replay.</span>'
-    setMessage(capsule.events.length ? `Imported ${capsule.events.length} events. Seed and checkpoints validated locally.` : 'The imported capsule is valid but contains no input events.')
+    const imported = await importCapsule(file)
+    loadCapsule(imported, imported.events.length ? `Imported ${imported.events.length} events. Seed and checkpoints validated locally.` : 'The imported capsule is valid but contains no input events.')
   } catch (error) {
     capsule = undefined
     replayButton.disabled = true
@@ -340,6 +374,10 @@ for (const button of document.querySelectorAll<HTMLElement>('[data-copy-target]'
 const syncOffline = () => { offlineNote.hidden = navigator.onLine }
 window.addEventListener('online', syncOffline)
 window.addEventListener('offline', syncOffline)
+resetDemoButton?.addEventListener('click', loadDemoSample)
 syncOffline()
-resetGame('RC-DEMO')
-syncStatus()
+if (isDemo) loadDemoSample()
+else {
+  resetGame('RC-DEMO')
+  syncStatus()
+}

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.5 — 2026-08-30
+
+- Reject imported checkpoint labels that are blank after trimming or longer than 120 characters, matching the recorder API.
+- Add a one-click, in-memory sample-data demo at `/demo`, a claim manifest with exact regressions, a real 404 response, and complete route metadata.
+
 ## 0.1.4 — 2026-08-30
 
 - Exclude keyboard and pointer events that originate in input, textarea, select, or editable controls anywhere in an event's composed path, including open Shadow DOM controls.
