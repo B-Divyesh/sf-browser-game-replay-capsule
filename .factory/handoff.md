@@ -1,53 +1,41 @@
-# Replay Capsule handoff — PASS
+# Replay Capsule review 2 handoff — FAIL
 
-## Current verification status
+## Work completed
 
-**PASS** — independent verification 9 accepted candidate `a3ffc32094e766fc86fee54eb9f55880b94210fa` at https://browser-game-replay-capsule.sociobot.in on 2026-08-30 UTC. This supersedes the historical polish-1 handoff details below.
+Completed an adversarial first-read review of commit `f5a17c28fc8354f0ac7db4544edb52828fcb6f45` and the matching live deployment at https://browser-game-replay-capsule.sociobot.in on 2026-08-30 UTC.
 
-The live deployment byte-matches this candidate for the landing document, primary JS/CSS, route module, hero image, and hosted release tarball. All 19 declared claims passed from this clean checkout. Lint, typecheck, 30 Vitest tests, the exact production build, and 37 Playwright tests (one expected skip) passed. Live record/download/import/replay, malformed-import recovery, privacy request logging, 390 px mobile, keyboard/focus, reduced motion, headers, and axe checks passed. No P0–P3 defects were found.
+The complete evidence, copy inventory, claim results, prior-finding verification, and fixes required are in `.factory/review-2.md`. No product code was changed.
 
-See `.factory/verification-9.md` for exact evidence and reproduction commands. No product code was changed during this verification.
+## Verdict
 
-## Delivered
+**FAIL** with 15 findings.
 
-Final repair commit: `95861670f446783c9c2e08072492a0744060ea8c`.
+Blocking findings:
 
-The released TypeScript library and its mid-century instrument-panel demo retain all review repairs: plain first-screen copy, isolated `?demo=1` sample, 19 tested claims, real metadata/legal/404 routes, visible focus, external-link labels, mobile behavior, and privacy-first local operation.
+- F-2-1: the one-click demo's first 390 × 844 viewport does not show the seeded product UI or a replay control.
+- F-2-2: the declared 90% Phaser fixture test exercises only the framework-free model and never runs the Phaser scene.
+- F-2-3: the record/export/import/replay test accepts a completion message without verifying the replayed sequence or outcome.
 
-The static deployment issue is resolved. Azure Static Web Apps rejected the former duplicate `/demo` and `/demo/` rules, so the canonical demo is now a flat `/demo` document and the external CSP-safe route module normalizes Azure’s trailing-slash address to `/demo`.
+The remaining findings cover unlisted privacy and compatibility claims, subjective copy, missing first-screen facts, desktop first-screen layout, inconsistent route navigation, one 23-word README sentence, and four terminology/button clarity issues.
 
-## Verification
+## Verification performed
 
-Fresh clone: `/tmp/replay-capsule-final-A9ucKK` at the final repair commit.
+A clean clone at `/tmp/replay-review2-clean` was installed with `npm ci`.
 
-- `npm ci` passed; 217 packages and 0 audit vulnerabilities.
-- `npm run lint` passed.
-- `npm run check` passed: typecheck, 30/30 Vitest tests, production build, and 38 Playwright tests (one expected mobile-only skip).
-- Every declared claim passed from that clean clone: `npm test -- --testNamePattern @claim:` ran 12/12 unit/package claim tests, and `npm run test:e2e -- --grep @claim:` ran 14/14 desktop/mobile browser claim instances.
-- `npm pack --json --dry-run` passed: 7 package files, 11,123-byte tarball, no bundled dependencies.
-- The production build emits `dist/site`; main JS is 18.85 KB raw / 7.11 KB gzip and main CSS is 16.69 KB raw / 4.25 KB gzip.
+- Every one of the 19 exact commands in `.factory/claims.json` exited successfully. The two blocking adequacy gaps above remain even though their commands are green.
+- `npm run check` passed: typecheck, 30 Vitest tests, production build, and 37 Playwright tests with one expected skip.
+- `dist/` was produced. Main site JS is 18,851 bytes raw and 7,089 bytes gzip.
+- `/opt/fleet/lib/verify-url.sh` passed the live root with no console errors.
+- Live Playwright Axe scans reported zero violations on `/`, `/demo`, `/privacy/`, `/terms/`, and the designed 404.
+- Fresh 390 × 844 and 1440 × 900 contexts verified first-read copy, layout bounds, demo entry/reset/exit, real-data sentinels, request isolation, route metadata, focus restoration, touch targets, and links.
+- The live demo made only same-origin static requests. Fresh demo storage, cookies, caches, IndexedDB, and service-worker registrations were empty.
+- Live recording, download, import, replay, and malformed-import recovery completed without page or console errors.
+- Root HTML, demo HTML, main JS, and the hosted release tarball SHA-256-match the reviewed checkout/build.
 
-Live verification at `https://browser-game-replay-capsule.sociobot.in`:
+## Prior history
 
-- Fleet deployment `8b12bb59-40b4-4b1b-8ac3-371749937f95` succeeded.
-- Cold root check reports the correct title, `lang=en`, one h1, main, image alt coverage, and no console errors.
-- Live Axe scans have zero violations on `/`, `/demo`, `/privacy/`, `/terms/`, and the 404 route. The deliberate 404 response remains HTTP 404.
-- Home → Demo focuses `#demo-title`; Back focuses `#hero-title`. Visiting `/demo/` finishes at canonical `/demo`.
-- The normal demo makes only same-origin requests; local/session storage and cookies remain empty.
-- Root, demo, 404, main JS, route-focus JS, and main CSS byte-match the local build.
+All six findings from `.factory/review-1.md` remain fixed in the live site and code. The assertions in `.factory/polish-1.md` and the prior handoff were rechecked. The earlier “Known gaps: None” status is superseded by review 2.
 
-Evidence files are under `.factory/verification-artifacts/polish-1-retry1/`; the finding-by-finding record is `.factory/polish-1.md`.
+## Next steps
 
-## Run and publish
-
-```sh
-npm ci
-npm run check
-npm pack
-```
-
-Deploy `dist/site` through the factory static deployment path. Do not publish to npm from this worker; the factory release owner owns registry credentials.
-
-## Known gaps
-
-None. The package is intentionally not represented as already published to the public npm registry; the hosted, tested tarball is the current install route.
+Resolve F-2-1 through F-2-15 in `.factory/review-2.md`, add the specified regressions, and rerun every claim command plus `npm run check` and the live mobile/desktop audit. Do not mark the product PASS until the review has zero findings and no untested claim.
