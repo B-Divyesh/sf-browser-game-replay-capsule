@@ -14,6 +14,7 @@ export default defineConfig({
         privacy: 'site/privacy/index.html',
         terms: 'site/terms/index.html',
         notFound: 'site/404.html',
+        phaserFixture: 'site/phaser-fixture.html',
       },
     },
   },

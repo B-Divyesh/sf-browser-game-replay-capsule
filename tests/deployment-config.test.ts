@@ -241,7 +241,7 @@ describe('static deployment response policy', () => {
     expect(existsSync('site/public/apple-touch-icon.png')).toBe(true)
   })
 
-  it('keeps external GitHub links visibly and accessibly marked as external', () => {
+  it('keeps product navigation local and has no unmarked external GitHub links', () => {
     const pages = [
       readFileSync('site/index.html', 'utf8'),
       readFileSync('site/demo.html', 'utf8'),
@@ -250,7 +250,6 @@ describe('static deployment response policy', () => {
       readFileSync('site/404.html', 'utf8'),
     ]
     const githubLinks = pages.flatMap((page) => [...page.matchAll(/<a href="https:\/\/github\.com\/B-Divyesh\/sf-browser-game-replay-capsule"[^>]*>([\s\S]*?)<\/a>/g)])
-    expect(githubLinks.length).toBeGreaterThan(0)
     for (const link of githubLinks) {
       expect(link[0]).toContain('external site')
       expect(link[1]).toContain('↗')
@@ -264,6 +263,7 @@ describe('static deployment response policy', () => {
       readFileSync('tests/phaser-fixture.test.ts', 'utf8'),
       readFileSync('tests/deployment-config.test.ts', 'utf8'),
       readFileSync('tests/release-package.test.ts', 'utf8'),
+      readFileSync('tests/node20-runtime.test.ts', 'utf8'),
       readFileSync('tests/e2e/site.spec.ts', 'utf8'),
     ].join('\n')
     expect(claims.length).toBeGreaterThan(0)

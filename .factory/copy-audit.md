@@ -1,42 +1,39 @@
-# Landing-page copy audit
+# Copy audit
 
-Audited: 2026-08-30. This audit covers visitor-facing landing-page sentences, labels, and facts; code samples and legal text are excluded.
+Audited: 2026-08-30. Visible landing, demo, README, and legal copy was checked after polish 2. Code samples, URLs, and generated values are excluded. No listed sentence exceeds 22 words or uses a banned marketing term.
 
 | Copy | Words | Result |
 | --- | ---: | --- |
-| Local replay files for browser games | 6 | Pass |
 | Replay browser-game bugs from a small file. | 7 | Pass |
 | For solo 2D game developers who need a bug report that repeats the player’s inputs and timing. | 17 | Pass |
 | Loads a seeded bug run you can replay. | 8 | Pass |
-| Runs locally | 2 | Pass |
-| 128 KB default cap | 4 | Pass |
-| No tracking or server calls | 5 | Pass |
-| The player opts in | 4 | Pass |
-| Inputs, timing, and seed | 4 | Pass |
-| Your game applies events | 4 | Pass |
+| Works offline after this page loads | 6 | Pass; tested offline fact |
+| Free under the MIT License | 5 | Pass; tested price fact |
+| No tracking or server calls | 5 | Pass; tested privacy fact |
+| A person starts recording | 4 | Pass |
 | Start recording, steer the probe, and reach a red fault cell. | 11 | Pass |
-| Download the file or import it again to replay the path. | 12 | Pass |
-| Keep the bug report small and private. | 8 | Pass |
-| Your game adapter receives each stored event through a callback. | 10 | Pass |
-| The recorder stops before it crosses the configured cap. | 10 | Pass |
-| Replay at normal speed or faster. | 6 | Pass |
-| Pause, resume, and stop are available in the public API. | 11 | Pass |
-| Add replay capture to your game loop. | 8 | Pass |
-| This versioned npm tarball is hosted with the documentation while registry publication is pending. | 14 | Pass |
-
-No copy exceeds 22 words or contains a banned plain-words term.
-
-## Repair 1 documentation check
-
-The two README sentences flagged in review F-1-5 were split into short sentences. The ambiguous public-registry sentence flagged in F-1-6 was removed. The tested hosted tarball remains the only documented install route.
+| Download the file or import it again to replay the path. | 11 | Pass |
+| No input has been captured yet. | 6 | Pass |
+| This tab does not save your run. | 7 | Pass; tested persistence fact |
+| The default cap is 128 KB. | 6 | Pass; tested size fact |
+| Replay a sample browser-game bug. | 6 | Pass |
+| The sample already contains a seed, one pointer input, and a fault checkpoint. | 13 | Pass |
+| Replay it or record a new run. | 7 | Pass |
+| Replay Capsule schedules stored events. | 5 | Pass |
+| Your game decides what each event does. | 8 | Pass |
+| The repository includes a small Phaser 3 scene. | 8 | Pass |
+| It records from Phaser’s canvas and replays imported files through the scene adapter. | 13 | Pass |
+| If an event may come from a text field in closed Shadow DOM, the library does not record it. | 19 | Pass |
 
 ## Terminology
 
 | Concept | One term used |
 | --- | --- |
 | Exported replay JSON | capsule |
-| Game fault | bug |
 | Recording operation | recording |
-| Deterministic value supplied by the game | seed |
-| Game-owned state marker | checkpoint |
-| Isolated preloaded experience | demo |
+| Deterministic game value | seed |
+| Game-state marker | checkpoint |
+| Isolated sample experience | demo |
+| Local UI counters | capsule details |
+
+The first screen says the job, audience, first action, result, offline behavior, price, and privacy in one view. The catalog line is verb-first: “Record browser-game bugs as small local replay files.”

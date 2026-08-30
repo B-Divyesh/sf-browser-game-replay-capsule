@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { createPlayer, createRecorder, importCapsule, type ReplayCapsule, type ReplayRecorder } from '../src/index'
+import { createPlayer, createRecorder, importCapsule, type ReplayCapsule, type ReplayEvent, type ReplayRecorder } from '../src/index'
 import { createSeededFailureModel } from './seeded-failure-model'
 
 /**
@@ -10,8 +10,18 @@ import { createSeededFailureModel } from './seeded-failure-model'
 export class SeededFailureScene extends Phaser.Scene {
   private recorder: ReplayRecorder | undefined
   private seed = 'phaser-demo'
+  private model = createSeededFailureModel(this.seed)
+  private appliedEvents: ReplayEvent[] = []
 
   constructor() { super('SeededFailureScene') }
+
+  create() {
+    // This deliberately small display proves that the fixture is a running
+    // Phaser scene, while the model keeps its failure rule auditable.
+    this.add.rectangle(160, 90, 280, 120, 0x164c4a)
+    this.add.circle(160, 90, 18, 0xa44721)
+    window.dispatchEvent(new CustomEvent('replay-capsule-phaser-ready', { detail: this }))
+  }
 
   armRecording(seed: string) {
     this.seed = seed
@@ -27,9 +37,16 @@ export class SeededFailureScene extends Phaser.Scene {
 
   async replayImportedCapsule(file: File): Promise<boolean> {
     const capsule = await importCapsule(file)
-    const model = createSeededFailureModel(String(capsule.seed))
-    const player = createPlayer(capsule, { onEvent: (event) => model.apply(event) })
+    this.seed = String(capsule.seed)
+    this.model = createSeededFailureModel(this.seed)
+    this.appliedEvents = []
+    const player = createPlayer(capsule, { onEvent: (event) => {
+      this.appliedEvents.push(event)
+      this.model.apply(event)
+    } })
     await player.play()
-    return model.failed
+    return this.model.failed
   }
+
+  get replayedEvents() { return [...this.appliedEvents] }
 }

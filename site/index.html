@@ -27,9 +27,8 @@
       <a class="wordmark" href="/"><span aria-hidden="true">RC—01</span> Replay Capsule</a>
       <nav aria-label="Main navigation">
         <a href="/demo">Demo</a>
-        <a href="#install">Install</a>
         <a href="/privacy/">Privacy</a>
-        <a href="https://github.com/B-Divyesh/sf-browser-game-replay-capsule" aria-label="Source on GitHub (external site)">Source <span aria-hidden="true">↗</span></a>
+        <a href="/terms/">Terms</a>
       </nav>
     </header>
     <section class="demo-banner" id="demo-banner" hidden aria-label="Demo controls">
@@ -50,8 +49,8 @@
           </div>
           <p class="copy-result" role="status" aria-live="polite"></p>
           <ul class="trust-line" aria-label="Product properties">
-            <li>Runs locally</li>
-            <li>128 KB default cap</li>
+            <li>Works offline after this page loads</li>
+            <li>Free under the MIT License</li>
             <li>No tracking or server calls</li>
           </ul>
         </div>
@@ -63,7 +62,7 @@
       </section>
 
       <section class="signal-strip" aria-label="Replay flow">
-        <div><span>01</span><strong>Start</strong><small>The player opts in</small></div>
+        <div><span>01</span><strong>Start</strong><small>A person starts recording</small></div>
         <div><span>02</span><strong>Capture</strong><small>Inputs, timing, and seed</small></div>
         <div><span>03</span><strong>Replay</strong><small>Your game applies events</small></div>
       </section>
@@ -92,7 +91,7 @@
             <p class="key-hint"><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd> steer · pointer moves probe · avoid fault cells</p>
 
             <div class="button-row">
-              <button class="button primary" id="record" type="button">Arm &amp; start</button>
+              <button class="button primary" id="record" type="button">Start recording</button>
               <button class="button" id="stop" type="button" disabled>Stop recording</button>
               <button class="button" id="reset" type="button">Reset run</button>
             </div>
@@ -104,11 +103,11 @@
             </div>
 
             <div class="timeline" role="progressbar" aria-label="Replay progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="timeline-fill"></span></div>
-            <p class="demo-message" id="demo-message" role="status" aria-live="polite">No input has been captured yet. Your run stays only in this tab until you download it.</p>
+            <p class="demo-message" id="demo-message" role="status" aria-live="polite">No input has been captured yet. This tab does not save your run.</p>
           </section>
 
           <section class="telemetry" aria-labelledby="telemetry-title">
-            <h3 id="telemetry-title">Capsule telemetry</h3>
+            <h3 id="telemetry-title">Capsule details</h3>
             <dl>
               <div><dt>Seed</dt><dd id="seed-readout">—</dd></div>
               <div><dt>Events</dt><dd id="event-readout">0</dd></div>
@@ -118,7 +117,7 @@
             </dl>
             <div class="cap-gauge" role="progressbar" aria-label="Capsule capacity used" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="cap-fill"></span></div>
             <p><strong>Captured:</strong> key codes, pointer positions, changed gamepad samples, your seed, and checkpoints.</p>
-            <p><strong>Not captured:</strong> typed text, video, DOM content, identity, cookies, or network traffic.</p>
+            <p><strong>Not captured:</strong> typed text, DOM content, identity, cookies, or network traffic.</p>
           </section>
         </div>
         <div class="offline-note" id="offline-note" hidden role="status"><strong>You are offline.</strong> Good news: recording, import, and replay still work. The library never needs a server.</div>
@@ -131,7 +130,7 @@
         </div>
         <div class="explain-grid">
           <article><span aria-hidden="true">⌁</span><h3>Use your game adapter</h3><p>Your game adapter receives each stored event through a callback.</p></article>
-          <article><span aria-hidden="true">◉</span><h3>Stay inside the byte cap</h3><p>The recorder stops before it crosses the configured cap. Capped files stay small enough to share.</p></article>
+          <article><span aria-hidden="true">◉</span><h3>Stay inside the byte cap</h3><p>The recorder stops before it crosses the configured cap. The default cap is 128 KB.</p></article>
           <article><span aria-hidden="true">↺</span><h3>Control replay timing</h3><p>Replay at normal speed or faster. Pause, resume, and stop are available in the public API.</p></article>
         </div>
       </section>
@@ -160,8 +159,8 @@ downloadCapsule(recorder.export())</code></pre>
     </main>
 
     <footer>
-      <div><strong>Replay Capsule</strong><p>Local replay files for browser-game debugging.</p><p class="build-id">Built by Param Factory · v0.1.6 · polish-1</p></div>
-      <nav aria-label="Legal"><a href="/demo">Demo</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="https://github.com/B-Divyesh/sf-browser-game-replay-capsule" aria-label="GitHub (external site)">GitHub <span aria-hidden="true">↗</span></a></nav>
+      <div><strong>Replay Capsule</strong><p>Local replay files for browser-game debugging.</p><p class="build-id">Built by Param Factory · v0.1.6 · polish-2</p></div>
+      <nav aria-label="Legal"><a href="/demo">Demo</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></nav>
     </footer>
     <script type="module" src="/route-focus.ts"></script>
     <script type="module" src="/main.ts"></script>

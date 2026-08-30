@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
+import { seededFault } from '../../examples/seeded-failure-model'
 
 test('landing page is semantic, clean, and accessible', async ({ page }, testInfo) => {
   const errors: string[] = []
@@ -30,6 +31,26 @@ test('sample demo has no axe violations', async ({ page }) => {
   expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual([])
 })
 
+test('shows seeded product controls in the first mobile demo viewport', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile', 'This is a phone first-screen regression.')
+  await page.goto('/demo')
+  for (const locator of [page.locator('.demo-quick-action'), page.getByRole('button', { name: 'Replay sample' })]) {
+    const box = await locator.boundingBox()
+    expect(box).not.toBeNull()
+    expect(box!.y + box!.height).toBeLessThanOrEqual(844)
+  }
+  await expect(page.locator('.demo-quick-action')).toContainText('RC-SAMPLE-FAULT-17')
+})
+
+test('keeps all first-screen facts visible on desktop', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'This is a desktop first-screen regression.')
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  const box = await page.locator('.trust-line').boundingBox()
+  expect(box).not.toBeNull()
+  expect(box!.y + box!.height).toBeLessThanOrEqual(900)
+})
+
 test('the trailing demo URL resolves to the canonical demo URL', async ({ page }) => {
   await page.goto('/demo/')
   await page.waitForURL('**/demo')
@@ -47,6 +68,7 @@ test('moves focus to the destination heading after document navigation', async (
 
 test('the direct ?demo=1 sandbox loads sample data with reset and real-mode controls', async ({ page }) => {
   await page.goto('/?demo=1')
+  await page.waitForURL('**/demo')
   await expect(page.getByText('Demo — sample data, nothing is saved.')).toBeVisible()
   await expect(page.locator('#seed-readout')).toHaveText('RC-SAMPLE-FAULT-17')
   await expect(page.locator('#event-readout')).toHaveText('1')
@@ -123,14 +145,59 @@ test('@claim:opt-in-recording captures nothing before the person starts recordin
   await page.goto('/demo')
   await page.keyboard.press('ArrowRight')
   await expect(page.locator('#event-readout')).toHaveText('1')
-  await page.getByRole('button', { name: 'Arm & start' }).click()
+  await page.getByRole('button', { name: 'Start recording' }).click()
   await page.keyboard.press('ArrowRight')
   await expect(page.locator('#event-readout')).toHaveText('2')
 })
 
-test('@claim:record-export-replay records, exports, imports, and replays a real input capsule', async ({ page }) => {
+test('@claim:no-browser-persistence keeps a real run in memory and leaves existing browser data untouched', async ({ page, context }) => {
+  await context.addCookies([{ name: 'host-sentinel', value: 'keep', url: 'http://127.0.0.1:4173/' }])
+  await page.goto('/')
+  await page.evaluate(() => {
+    localStorage.setItem('host-sentinel', 'keep')
+    sessionStorage.setItem('host-sentinel', 'keep')
+  })
+  await page.getByRole('button', { name: 'Start recording' }).click()
+  await page.keyboard.press('ArrowRight')
+  await page.getByRole('button', { name: 'Stop recording' }).click()
+  const downloadPromise = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Download capsule' }).click()
+  const download = await downloadPromise
+  await page.locator('#import').setInputFiles((await download.path())!)
+  await page.getByRole('button', { name: 'Replay capsule' }).click()
+  await expect(page.locator('#demo-message')).toContainText('Replay complete')
+  await page.reload()
+  expect(await page.evaluate(async () => ({
+    local: Object.entries(localStorage), session: Object.entries(sessionStorage),
+    databases: (await indexedDB.databases()).map((database) => database.name),
+    caches: await caches.keys(), registrations: (await navigator.serviceWorker.getRegistrations()).length,
+  }))).toEqual({ local: [['host-sentinel', 'keep']], session: [['host-sentinel', 'keep']], databases: [], caches: [], registrations: 0 })
+  expect((await context.cookies()).map(({ name, value }) => [name, value])).toEqual([['host-sentinel', 'keep']])
+})
+
+test('@claim:capture-surface keeps page, identity, cookie, and network values out of exported capsules', async ({ page }) => {
   await page.goto('/#demo')
-  await page.getByRole('button', { name: 'Arm & start' }).click()
+  await page.evaluate(async () => {
+    document.body.dataset.privateDomValue = 'dom-secret-480'
+    document.cookie = 'identity=person-480'
+    await fetch('/robots.txt')
+  })
+  await page.getByRole('button', { name: 'Start recording' }).click()
+  await page.keyboard.press('ArrowRight')
+  await page.getByRole('button', { name: 'Stop recording' }).click()
+  const downloadPromise = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Download capsule' }).click()
+  const download = await downloadPromise
+  const downloadPath = await download.path()
+  expect(downloadPath).not.toBeNull()
+  const capsule = JSON.parse(await (await import('node:fs/promises')).readFile(downloadPath!, 'utf8'))
+  expect(Object.keys(capsule).sort()).toEqual(['checkpoints', 'createdAt', 'durationMs', 'events', 'format', 'seed', 'truncated', 'version'])
+  expect(JSON.stringify(capsule)).not.toMatch(/dom-secret-480|person-480|robots\.txt/)
+})
+
+test('@claim:record-export-replay records, exports, imports, and replays the exact input sequence', async ({ page }) => {
+  await page.goto('/#demo')
+  await page.getByRole('button', { name: 'Start recording' }).click()
   await expect(page.getByText('Recording', { exact: true })).toBeVisible()
   await page.keyboard.press('ArrowRight')
   await page.keyboard.press('ArrowUp')
@@ -144,16 +211,20 @@ test('@claim:record-export-replay records, exports, imports, and replays a real 
 
   const downloadPath = await download.path()
   expect(downloadPath).not.toBeNull()
+  const capsule = JSON.parse(await (await import('node:fs/promises')).readFile(downloadPath!, 'utf8'))
+  expect(capsule.events).toHaveLength(4)
   await page.locator('#import').setInputFiles(downloadPath!)
   await expect(page.locator('#demo-message')).toContainText('Imported 4 events')
 
   await page.getByRole('button', { name: 'Replay capsule' }).click()
-  await expect(page.locator('#demo-message')).toContainText('Replay complete')
+  await expect(page.locator('#demo-message')).toHaveText('Replay complete: the same 4 recorded events were applied.')
+  expect(await page.evaluate(() => JSON.parse(document.body.dataset.replayedEvents ?? '[]'))).toEqual(capsule.events)
+  expect(await page.locator('body').getAttribute('data-replay-outcome')).toBe('recorded-sequence-applied')
 })
 
 test('keeps the visible import control focused for keyboard users', async ({ page }) => {
   await page.goto('/#demo')
-  await page.getByRole('button', { name: 'Arm & start' }).click()
+  await page.getByRole('button', { name: 'Start recording' }).click()
   await page.keyboard.press('ArrowRight')
   await page.getByRole('button', { name: 'Stop recording' }).click()
   await page.getByRole('button', { name: 'Download capsule' }).focus()
@@ -189,7 +260,7 @@ test('invalid imports explain how to recover', async ({ page }) => {
 
 test('@claim:text-entry-excluded never records text-field keystrokes', async ({ page }) => {
   await page.goto('/#demo')
-  await page.getByRole('button', { name: 'Arm & start' }).click()
+  await page.getByRole('button', { name: 'Start recording' }).click()
   await page.evaluate(() => {
     const input = document.createElement('input')
     input.setAttribute('aria-label', 'Private text test')
@@ -246,7 +317,7 @@ test('@claim:text-entry-excluded never records text-field keystrokes', async ({ 
 
 test('@claim:pointer-normalization stores target-relative pointer coordinates', async ({ page }) => {
   await page.goto('/#demo')
-  await page.getByRole('button', { name: 'Arm & start' }).click()
+  await page.getByRole('button', { name: 'Start recording' }).click()
   await page.locator('#game').evaluate((canvas) => {
     const box = canvas.getBoundingClientRect()
     canvas.dispatchEvent(new PointerEvent('pointerdown', {
@@ -270,7 +341,7 @@ test('@claim:pointer-normalization stores target-relative pointer coordinates', 
 
 test('never records text-entry events through an open Shadow DOM path', async ({ page }) => {
   await page.goto('/#demo')
-  await page.getByRole('button', { name: 'Arm & start' }).click()
+  await page.getByRole('button', { name: 'Start recording' }).click()
 
   for (const kind of ['textarea', 'select', 'editable'] as const) {
     await page.evaluate((controlKind) => {
@@ -306,11 +377,47 @@ test('@claim:offline-demo continues to record offline without browser persistenc
     await offlineContext.setOffline(true)
     await offlinePage.evaluate(() => window.dispatchEvent(new Event('offline')))
     await expect(offlinePage.getByText('You are offline.')).toBeVisible()
-    await offlinePage.getByRole('button', { name: 'Arm & start' }).click()
+    await offlinePage.getByRole('button', { name: 'Start recording' }).click()
     await offlinePage.keyboard.press('ArrowRight')
     await expect(offlinePage.locator('#event-readout')).toHaveText('2')
   } finally {
     await offlineContext.close()
+  }
+})
+
+test('@claim:seeded-failure-fixture runs 20 imported capsules through the shipped Phaser scene', async ({ page }) => {
+  await page.goto('/phaser-fixture.html')
+  await expect(page.locator('#status')).toHaveText('Phaser scene ready.')
+  await expect(page.locator('canvas')).toBeVisible()
+  let reproduced = 0
+  for (let index = 0; index < 20; index += 1) {
+    const seed = `phaser-seeded-failure-${index}`
+    const fault = seededFault(seed)
+    const capsule = {
+      format: 'replay-capsule', version: 1, createdAt: '2026-08-30T00:00:00.000Z', durationMs: 0, seed, truncated: false,
+      events: [{ type: 'pointer', action: 'down', x: fault.x, y: fault.y, button: 0, buttons: 1, pointerId: 1, pointerType: 'mouse', pressure: .5, t: 0 }],
+      checkpoints: [{ label: 'seeded-fault', data: { x: fault.x, y: fault.y }, t: 0 }],
+    }
+    const result = await page.evaluate(async (input) => {
+      const runner = (window as Window & { runPhaserReplay?: (value: unknown) => Promise<{ failed: boolean; events: unknown[] }> }).runPhaserReplay
+      if (!runner) throw new Error('The Phaser fixture did not initialize.')
+      return runner(input)
+    }, capsule)
+    expect(result.events).toEqual(capsule.events)
+    if (result.failed) reproduced += 1
+  }
+  expect(reproduced).toBeGreaterThanOrEqual(18)
+  expect(reproduced).toBe(20)
+})
+
+test('keeps the same header and legal navigation on every route', async ({ page }, testInfo) => {
+  for (const route of ['/', '/demo', '/privacy/', '/terms/', '/404.html']) {
+    await page.goto(route)
+    const headerLinks = await page.locator('header nav a').allTextContents()
+    const footerLinks = await page.locator('footer nav a').allTextContents()
+    expect(headerLinks).toEqual(['Demo', 'Privacy', 'Terms'])
+    expect(footerLinks).toEqual(['Demo', 'Privacy', 'Terms'])
+    if (testInfo.project.name === 'mobile') await expect(page.locator('header nav')).toBeVisible()
   }
 })
 

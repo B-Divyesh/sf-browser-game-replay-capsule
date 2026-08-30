@@ -18,7 +18,7 @@
     "claim": "Recording begins only after the person starts it.",
     "where": "landing flow, privacy page, README",
     "test": "npm run test:e2e -- --grep @claim:opt-in-recording",
-    "sandbox": "fresh /demo; send game input before and after Arm & start and compare the captured-event count"
+    "sandbox": "fresh /demo; send game input before and after Start recording and compare the captured-event count"
   },
   {
     "id": "text-entry-excluded",
@@ -32,7 +32,21 @@
     "claim": "The demo records timed keyboard input with a seed, downloads JSON, imports it, and replays the same event sequence.",
     "where": "landing headline and demo, README overview",
     "test": "npm run test:e2e -- --grep @claim:record-export-replay",
-    "sandbox": "fresh demo; record four key events, download the capsule, import that file, replay, and assert completion"
+    "sandbox": "fresh demo; record four key events, download and parse the capsule, import it, replay, and compare the exact applied sequence and result"
+  },
+  {
+    "id": "no-browser-persistence",
+    "claim": "A real demo run stays in memory and does not write browser storage, cookies, caches, or service workers.",
+    "where": "landing, privacy page, README",
+    "test": "npm run test:e2e -- --grep @claim:no-browser-persistence",
+    "sandbox": "fresh real-mode browser context with local, session, and cookie sentinels; record, reset, download, import, replay, reload, and assert every sentinel and storage surface"
+  },
+  {
+    "id": "capture-surface",
+    "claim": "Capsules contain documented replay fields, not page content, identity values, cookies, or network traffic.",
+    "where": "demo capsule details, privacy page",
+    "test": "npm run test:e2e -- --grep @claim:capture-surface",
+    "sandbox": "set DOM, identity-like, cookie, and same-origin network values while recording; inspect downloaded capsule fields and serialized content"
   },
   {
     "id": "checkpoint-capture",
@@ -131,5 +145,12 @@
     "where": "terms page, README license",
     "test": "npm test -- --testNamePattern @claim:mit-license",
     "sandbox": "assert package.json declares MIT and the shipped LICENSE contains the MIT License text"
+  },
+  {
+    "id": "node-20-runtime",
+    "claim": "The published ESM and CommonJS package works in Node.js 20.",
+    "where": "README development requirements, package engines",
+    "test": "npm test -- --testNamePattern @claim:node-20-runtime",
+    "sandbox": "build the library, install a packed artifact in a fresh project, and execute import and require with pinned node@20"
   }
 ]

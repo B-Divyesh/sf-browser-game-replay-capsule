@@ -17,7 +17,7 @@ const capsuleForSeed = (seed: string): ReplayCapsule => {
 }
 
 describe('Phaser seeded-failure fixture', () => {
-  it('@claim:seeded-failure-fixture reproduces at least 90% of 20 seeded failures from imported capsules', async () => {
+  it('keeps the deterministic fixture data valid for the browser Phaser scene', async () => {
     let reproduced = 0
     for (let index = 0; index < 20; index += 1) {
       const seed = `phaser-seeded-failure-${index}`

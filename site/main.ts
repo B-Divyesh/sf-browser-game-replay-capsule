@@ -9,6 +9,12 @@ import {
   type ReplayRecorder,
 } from '../src/index'
 
+// Keep the documented query entry point, but make its destination the compact
+// demo application so a direct link never lands on an unseeded marketing view.
+if (window.location.pathname === '/' && new URLSearchParams(window.location.search).get('demo') === '1') {
+  window.location.replace('/demo')
+}
+
 const $ = <T extends Element>(selector: string) => {
   const element = document.querySelector<T>(selector)
   if (!element) throw new Error(`Missing element: ${selector}`)
@@ -23,6 +29,7 @@ const resetButton = $('#reset') as HTMLButtonElement
 const exportButton = $('#export') as HTMLButtonElement
 const importInput = $('#import') as HTMLInputElement
 const replayButton = $('#replay') as HTMLButtonElement
+const replayFirstScreenButton = document.querySelector<HTMLButtonElement>('#replay-first-screen')
 const stateText = $('#record-state')
 const statePill = $('.record-state') as HTMLElement
 const message = $('#demo-message') as HTMLElement
@@ -57,6 +64,7 @@ let recorder: ReplayRecorder | undefined
 let capsule: ReplayCapsule | undefined
 let runEnded = false
 let replaying = false
+let replayedEvents: ReplayEvent[] = []
 
 const hashSeed = (value: string) => {
   let hash = 2166136261
@@ -88,6 +96,8 @@ function resetGame(seed = activeSeed || 'RC-DEMO') {
   seedReadout.textContent = seed
   timelineFill.style.transform = 'scaleX(0)'
   timeline.setAttribute('aria-valuenow', '0')
+  delete document.body.dataset.replayedEvents
+  delete document.body.dataset.replayOutcome
   drawGame()
 }
 
@@ -209,6 +219,7 @@ function syncStatus() {
   recordButton.disabled = state === 'recording' || state === 'replaying'
   stopButton.disabled = state !== 'recording'
   resetButton.disabled = state === 'replaying'
+  if (replayFirstScreenButton) replayFirstScreenButton.disabled = replayButton.disabled || state === 'replaying'
 }
 
 function loadCapsule(next: ReplayCapsule, notice: string) {
@@ -289,7 +300,7 @@ resetButton.addEventListener('click', () => {
   timeReadout.textContent = '0.00 s'
   sizeReadout.textContent = '0 / 128 KB'
   capFill.style.transform = 'scaleX(0)'
-  setMessage('No input has been captured yet. Your run stays only in this tab until you download it.')
+  setMessage('No input has been captured yet. This tab does not save your run.')
   syncStatus()
 })
 
@@ -316,9 +327,10 @@ importInput.addEventListener('change', async () => {
   }
 })
 
-replayButton.addEventListener('click', async () => {
+async function replayCapsule() {
   if (!capsule || capsule.events.length === 0) return
   replaying = true
+  replayedEvents = []
   runEnded = false
   resetGame(String(capsule.seed))
   overlay.hidden = true
@@ -326,7 +338,10 @@ replayButton.addEventListener('click', async () => {
   syncStatus()
   const replay = createPlayer(capsule, {
     speed: 2,
-    onEvent: applyEvent,
+    onEvent: (event) => {
+      replayedEvents.push(event)
+      applyEvent(event)
+    },
     onProgress: (elapsed, duration) => {
       const progress = duration ? Math.min(1, elapsed / duration) : 1
       timelineFill.style.transform = `scaleX(${progress})`
@@ -337,9 +352,14 @@ replayButton.addEventListener('click', async () => {
   replaying = false
   timelineFill.style.transform = 'scaleX(1)'
   timeline.setAttribute('aria-valuenow', '100')
-  setMessage(runEnded ? 'Replay complete: the recorded outcome was reproduced.' : 'Replay complete. Your game can compare checkpoints to verify its state.', 'success')
+  document.body.dataset.replayedEvents = JSON.stringify(replayedEvents)
+  document.body.dataset.replayOutcome = runEnded ? 'recorded-outcome-reproduced' : 'recorded-sequence-applied'
+  setMessage(runEnded ? 'Replay complete: the recorded outcome was reproduced.' : `Replay complete: the same ${replayedEvents.length} recorded events were applied.`, 'success')
   syncStatus()
-})
+}
+
+replayButton.addEventListener('click', () => { void replayCapsule() })
+replayFirstScreenButton?.addEventListener('click', () => { void replayCapsule() })
 
 window.addEventListener('keydown', (event) => {
   if (recorder?.state !== 'recording' || !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'KeyW', 'KeyA', 'KeyS', 'KeyD'].includes(event.code)) return

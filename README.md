@@ -2,7 +2,7 @@
 
 Replay Capsule is a dependency-free TypeScript library for reproducible browser-game bug reports. It records keyboard, pointer, and gamepad inputs with timing, a deterministic seed, and small checkpoints. It then exports one capped JSON file your game can replay.
 
-It is for solo developers shipping small 2D browser games. It is not video recording, analytics, session tracking, server playback, or anti-cheat.
+It is for solo developers shipping small 2D browser games. It does not record typed text or send data to a service.
 
 ## Try the sample demo
 
@@ -43,7 +43,7 @@ document.querySelector('#export')!.addEventListener('click', () => {
 
 ## Import and replay
 
-The player owns scheduling; your game owns meaning. `onEvent` receives the same normalized event shape stored in the capsule.
+Replay Capsule schedules stored events. Your game decides what each event does. `onEvent` receives the same normalized event shape stored in the capsule.
 
 ```ts
 import { createPlayer, importCapsule } from '@sociobot/replay-capsule'
@@ -67,7 +67,7 @@ await player.play()
 
 ## Phaser integration fixture
 
-The repository includes [a small Phaser 3 scene](examples/phaser-seeded-failure.ts) that records from Phaser's canvas and replays an imported file through the scene's input adapter. Its deterministic game model lives beside it so the behavior is easy to audit without bundling Phaser into this dependency-free package.
+The repository includes [a small Phaser 3 scene](examples/phaser-seeded-failure.ts). It records from Phaser’s canvas and replays imported files through the scene adapter. Its deterministic game model lives beside it for auditing without bundling Phaser into this package.
 
 `tests/phaser-fixture.test.ts` imports 20 generated replay files. It reproduces all 20 seeded fault outcomes. The target is 18 of 20 (90%). Run it with the full test suite:
 
@@ -89,7 +89,7 @@ The package exports ESM, CommonJS, and declarations. The `ReplayEvent`, `ReplayC
 
 - Default cap: 128 KB; supported range: 4 KB–1 MB. The recorder stops before an event would cross the cap and reports `limit-reached`. On `stop()` or `export()`, the recorder rechecks the cap after timing changes. It keeps only whole entries that fit. Accounting and the downloaded file use the same compact JSON bytes, so a capped recorder export stays importable.
 - Pointer coordinates are normalized to the configured target when possible.
-- Key identity uses `KeyboardEvent.code`, not typed characters. Text-entry events are ignored in light, open-shadow, and closed-shadow DOM. Ambiguous events retargeted from a possible closed-shadow host fail closed.
+- Key identity uses `KeyboardEvent.code`, not typed characters. Text-entry events are ignored in light, open-shadow, and closed-shadow DOM. If an event may come from a text field in closed Shadow DOM, the library does not record it.
 - Gamepads are sampled once per animation frame, but browser gamepad timestamps are inconsistent. Replay Capsule timestamps the sample at observation time and stores the browser timestamp only as optional diagnostic metadata.
 - Capsule imports are schema-validated and reject malformed, unsupported, or over-limit files.
 - No network requests, persistence, telemetry, cookies, or third-party runtime dependencies.
