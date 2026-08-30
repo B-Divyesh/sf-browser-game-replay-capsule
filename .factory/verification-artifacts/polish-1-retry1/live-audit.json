@@ -1,0 +1,56 @@
+{
+  "routes": {
+    "/": {
+      "status": 200,
+      "title": "Replay Capsule — replay browser-game bugs",
+      "h1": 1,
+      "violations": 0,
+      "errors": []
+    },
+    "/demo": {
+      "status": 200,
+      "title": "Demo — Replay Capsule",
+      "h1": 1,
+      "violations": 0,
+      "errors": []
+    },
+    "/privacy/": {
+      "status": 200,
+      "title": "Privacy — Replay Capsule",
+      "h1": 1,
+      "violations": 0,
+      "errors": []
+    },
+    "/terms/": {
+      "status": 200,
+      "title": "Terms — Replay Capsule",
+      "h1": 1,
+      "violations": 0,
+      "errors": []
+    },
+    "/not-a-real-route": {
+      "status": 404,
+      "title": "Page not found — Replay Capsule",
+      "h1": 1,
+      "violations": 0,
+      "errors": []
+    }
+  },
+  "focus": {
+    "demo": "demo-title",
+    "back": "hero-title"
+  },
+  "canonical": {
+    "finalUrl": "https://browser-game-replay-capsule.sociobot.in/demo",
+    "title": "Demo — Replay Capsule"
+  },
+  "privacy": {
+    "sameOrigin": true,
+    "requestCount": 8,
+    "storage": {
+      "local": 0,
+      "session": 0,
+      "cookies": ""
+    }
+  }
+}
