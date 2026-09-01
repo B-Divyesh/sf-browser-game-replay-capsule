@@ -56,11 +56,25 @@
     "sandbox": "new recorder with a controlled clock; assert pre-start exclusion and the exact exported seed, key event, timing, and checkpoint"
   },
   {
+    "id": "key-filter",
+    "claim": "The shouldCaptureKey option keeps rejected control keys out of the replay stream.",
+    "where": "README limits and browser behavior",
+    "test": "npm test -- --testNamePattern @claim:key-filter",
+    "sandbox": "new recorder with a controlled EventTarget; reject Enter, allow ArrowRight, and assert that only ArrowRight is exported"
+  },
+  {
     "id": "default-byte-cap",
     "claim": "The recorder uses a 128 KB default cap and stops before it crosses that cap.",
     "where": "landing facts, demo telemetry, README",
     "test": "npm test -- --testNamePattern @claim:default-byte-cap",
     "sandbox": "new recorder with default options; append an oversized JSON checkpoint and measure the final serialized capsule"
+  },
+  {
+    "id": "capped-export-import",
+    "claim": "A near-cap recorder download stays within its configured cap and can be imported unchanged.",
+    "where": "README limits and browser behavior",
+    "test": "npm test -- --testNamePattern @claim:capped-export-import",
+    "sandbox": "create a near-128 KB recording, download the exact compact JSON Blob, measure its bytes, and import that same Blob"
   },
   {
     "id": "custom-cap-range",
@@ -110,6 +124,13 @@
     "where": "README",
     "test": "npm run test:e2e -- --grep @claim:seeded-failure-fixture",
     "sandbox": "load the shipped Phaser scene under the deployment CSP, import 20 generated replay capsules, and count reproduced faults"
+  },
+  {
+    "id": "phaser-recording",
+    "claim": "The Phaser fixture records normalized pointer input from its canvas with the configured seed.",
+    "where": "README Phaser integration fixture",
+    "test": "npm run test:e2e -- --grep @claim:phaser-recording",
+    "sandbox": "load the running Phaser scene, arm recording, click its real canvas at 25% by 75%, export, and assert the seed and normalized pointer event"
   },
   {
     "id": "package-formats",

@@ -109,4 +109,4 @@ npm run test:e2e
 npm pack --dry-run  # inspect the publishable package
 ```
 
-Deploy `dist/site` as the static root. Run every command listed in [.factory/claims.json](.factory/claims.json) when changing a listed product claim. Package registry publication is left to the factory release workflow; `npm run build` also prepares the versioned tarball served by the site.
+Deploy `dist/site` as the static root. Run every command listed in [.factory/claims.json](.factory/claims.json) when changing a listed product claim. `npm run build` prepares the versioned tarball served by the site.

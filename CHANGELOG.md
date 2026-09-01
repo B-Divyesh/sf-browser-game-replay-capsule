@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.7 polish 4 — 2026-09-01
+
+- Keep every shared route within a 390 px viewport when text is enlarged to 200% after local fonts load.
+- Add claim-gated Phaser canvas recording, key filtering, and capped download/import checks.
+- State the current hosted install and build facts without implying an undefined registry status.
+
 ## 0.1.7 — 2026-09-01
 
 - Allow Phaser's self-generated `data:` images under the fixture's otherwise self-only image policy, and run the browser fixture under that deployment CSP.

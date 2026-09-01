@@ -114,6 +114,7 @@ test('keyboard users can reach and activate the sample action with a visible foc
 test('reduced motion and 200% text keep the interface usable', async ({ page }, testInfo) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
+  await page.evaluate(() => document.fonts.ready)
   const motion = await page.evaluate(() => ({
     scrollBehavior: getComputedStyle(document.documentElement).scrollBehavior,
     animationDuration: getComputedStyle(document.querySelector('.hero-copy')!).animationDuration,
@@ -122,9 +123,22 @@ test('reduced motion and 200% text keep the interface usable', async ({ page }, 
   expect(Number.parseFloat(motion.animationDuration)).toBeLessThanOrEqual(0.00001)
 
   if (testInfo.project.name === 'mobile') {
-    await page.evaluate(() => { document.documentElement.style.fontSize = '200%' })
-    const dimensions = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }))
-    expect(dimensions.scroll).toBeLessThanOrEqual(dimensions.client)
+    for (const route of ['/', '/demo', '/privacy/', '/terms/', '/404.html']) {
+      await page.goto(route)
+      await page.evaluate(() => document.fonts.ready)
+      await page.evaluate(() => { document.documentElement.style.fontSize = '200%' })
+      const dimensions = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }))
+      expect(dimensions.scroll, `${route} should not scroll sideways after fonts load at 200% text`).toBeLessThanOrEqual(dimensions.client)
+      const headerLinks = page.locator('header nav a')
+      for (let index = 0; index < await headerLinks.count(); index += 1) {
+        const box = await headerLinks.nth(index).boundingBox()
+        expect(box, `${route} header link ${index} should have a box`).not.toBeNull()
+        expect(box!.x, `${route} header link ${index} should start inside the viewport`).toBeGreaterThanOrEqual(0)
+        expect(box!.x + box!.width, `${route} header link ${index} should end inside the viewport`).toBeLessThanOrEqual(390)
+      }
+    }
+
+    await page.goto('/')
     await expect(page.getByRole('link', { name: 'Try it with sample data' })).toBeVisible()
   }
 })
@@ -467,6 +481,32 @@ test('@claim:seeded-failure-fixture runs 20 imported capsules through the shippe
   expect(reproduced).toBeGreaterThanOrEqual(18)
   expect(reproduced).toBe(20)
   expect(errors).toEqual([])
+})
+
+test('@claim:phaser-recording records normalized pointer input from the Phaser canvas', async ({ page }) => {
+  await page.goto('/phaser-fixture.html')
+  await expect(page.locator('#status')).toHaveText('Phaser scene ready.')
+  const canvas = page.locator('canvas')
+  const box = await canvas.boundingBox()
+  expect(box).not.toBeNull()
+
+  await page.evaluate(() => {
+    const arm = (window as Window & { armPhaserRecording?: (seed: string) => void }).armPhaserRecording
+    if (!arm) throw new Error('The Phaser recording fixture did not initialize.')
+    arm('phaser-recording-proof')
+  })
+  await page.mouse.click(box!.x + box!.width * .25, box!.y + box!.height * .75)
+
+  const capsule = await page.evaluate(() => {
+    const exportRecording = (window as Window & { exportPhaserRecording?: () => unknown }).exportPhaserRecording
+    if (!exportRecording) throw new Error('The Phaser recording export is unavailable.')
+    return exportRecording()
+  }) as { seed: string; events: Array<{ type: string; action: string; x: number; y: number }> }
+
+  expect(capsule.seed).toBe('phaser-recording-proof')
+  expect(capsule.events).toEqual(expect.arrayContaining([
+    expect.objectContaining({ type: 'pointer', action: 'down', x: .25, y: .75 }),
+  ]))
 })
 
 test('keeps the same header and legal navigation on every route', async ({ page }, testInfo) => {

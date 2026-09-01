@@ -51,6 +51,28 @@ describe('createRecorder', () => {
     })
   })
 
+  it('@claim:key-filter keeps rejected control keys out of the replay stream', () => {
+    vi.stubGlobal('KeyboardEvent', TestKeyboardEvent)
+    const target = new EventTarget()
+    const recorder = createRecorder({
+      seed: 'key-filter',
+      target,
+      keyTarget: target,
+      captureGamepads: false,
+      shouldCaptureKey: (event) => event.code === 'ArrowRight',
+      now: () => 10,
+    })
+
+    recorder.start()
+    target.dispatchEvent(new TestKeyboardEvent('keydown', { code: 'Enter' }))
+    target.dispatchEvent(new TestKeyboardEvent('keydown', { code: 'ArrowRight' }))
+    recorder.stop()
+
+    expect(recorder.export().events).toEqual([
+      { type: 'key', action: 'down', code: 'ArrowRight', repeat: false, t: 0 },
+    ])
+  })
+
   it('stops before crossing the strict byte cap', () => {
     const target = new EventTarget()
     const recorder = createRecorder({ seed: 42, target, keyTarget: target, captureGamepads: false, maxBytes: 4_096, now: () => 10 })
@@ -169,7 +191,7 @@ describe('createRecorder', () => {
     await expect(importCapsule(JSON.stringify(capsule), 4_096)).resolves.toEqual(capsule)
   })
 
-  it('keeps a near-cap recorder download within the same cap and importable', async () => {
+  it('@claim:capped-export-import keeps a near-cap download within the configured cap and importable', async () => {
     const target = new EventTarget()
     const recorder = createRecorder({ seed: 'near-cap', target, keyTarget: target, captureGamepads: false, maxBytes: 128_000, now: () => 10 })
     recorder.start()
