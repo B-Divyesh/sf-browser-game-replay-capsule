@@ -1,54 +1,30 @@
-# Replay Capsule verification 11 handoff — PASS
+# Replay Capsule review 3 handoff — FAIL
 
 ## Result
 
-**PASS** for candidate `a1cf0e452ea2316abdc595862b550175e441ea5f` at https://browser-game-replay-capsule.sociobot.in, verified 2026-09-01 UTC. The live deployment was independently checked and matches the candidate build.
+Review 3 checked candidate `111b45dfd0e992fe88f56fa42eace11e3ada3a54` and the matching live deployment on 2026-09-01 UTC. The verdict is **FAIL** because one minor first-screen layout finding remains. Product code was not modified.
 
-## Delivered
+## Work completed
 
-Release `0.1.7` provides deterministic browser-game replay capsules: explicit input recording, developer seed/checkpoint capture, a bounded JSON download/import format, and callback-based replay. The landing page provides a one-click, in-memory seeded demo.
-
-1. **Phaser CSP:** normal pages retain a strict self-only `style-src`; the global image policy now permits Phaser's generated `data:` images. `/phaser-fixture.html` alone receives the narrowly required `style-src 'self' 'unsafe-inline'` for Phaser's runtime canvas styles. The browser claim test serves the built output with these real headers, requires a ready scene, runs 20 imported capsules, requires all 20 failures, and fails on every console/page error.
-2. **Effective seeded-failure claim:** `seeded-failure-fixture` now invokes its tagged Playwright test (`npm run test:e2e -- --grep @claim:seeded-failure-fixture`) instead of a Vitest filter that executed zero tests.
-3. **Gameplay-only demo capture:** the demo recorder listens on the game canvas and uses the new optional `shouldCaptureKey` filter for its eight movement keys. Keyboard use of Start/Stop and Tab navigation cannot enter a capsule. The browser regression starts with Enter, records ArrowRight/ArrowUp, tabs to Stop, presses Enter, and requires exactly four Arrow events.
-4. **Mobile targets:** all header links have a 44 × 44 px minimum hit area. The mobile regression measures every header link as well as the existing compact controls.
-5. **Exact offline claim:** landing/demo copy now says people can record, import, and replay after first load. Its claim test runs those three operations in its own offline browser context and asserts every observable result.
-
-`0.1.7` is a patch release because the package gains the optional `shouldCaptureKey` control and the immutable hosted release artifact must not overwrite `0.1.6`.
+- Wrote `.factory/review-3.md` with the cold mobile/desktop assessment, complete landing and README copy audit, all 22 claim results, earlier-finding confirmation, route/accessibility checks, missed-leverage assessment, and verdict.
+- Confirmed the one-click sample, populated phone demo, reset behavior, unchanged storage sentinels, empty browser storage surfaces, same-origin requests, and offline-after-load behavior.
+- Confirmed live route metadata, the designed 404, link health, navigation consistency, route focus, security headers, self-hosted assets, and the product-specific visual system.
 
 ## Verification
 
-Independent clean-install verification, 2026-09-01 UTC:
+From a separate clean clone:
 
 ```sh
-npm ci                         # 217 packages; 0 vulnerabilities
-npm run check                  # 31 Vitest passed; build; 49 Playwright passed, 3 project skips
+npm ci
+# Every exact command in .factory/claims.json: 22 passed
+npm run check   # 31 unit/package checks; build; 49 browser checks, 3 intended skips
 npm run lint
-npm pack --dry-run             # 7 files; 11.5 kB package
 ```
 
-Every one of the 22 exact commands in `.factory/claims.json` was run after the clean install and passed. The seeded Phaser command now runs two browser tests and each validates 20 imported capsules.
+Live Axe checks reported zero violations on `/`, `/demo`, `/privacy/`, `/terms/`, and the 404 document at 390 × 844 and 1440 × 900. `/opt/fleet/lib/verify-url.sh` also passed the live root with no console errors. The clean build byte-matched the live main routes, 404, and release archive.
 
-Live Axe WCAG A/AA scans had zero serious/critical findings on landing, demo, privacy, terms, and 404. Live checks also passed for keyboard controls/focus, 390 px mobile (including 44 × 44 px header targets), reduced motion, 200% text, same-origin requests, in-memory storage, offline-after-load replay, and Phaser initialization.
+## Remaining work
 
-Local mobile Lighthouse 13 against the production build:
+- **F-3-1:** At 390 × 844, the three first-screen facts end at y=857.42 px. Reduce at least 14 px of mobile vertical space before that list and add a phone viewport regression that checks the complete list fits without scrolling.
 
-| Metric | Result |
-| --- | ---: |
-| Performance | 99 |
-| Accessibility | 100 |
-| Best practices | 100 |
-| SEO | 100 |
-| LCP | 1.66 s |
-| CLS | 0.00019 |
-| Transfer | 138.7 kB |
-
-Evidence is in `.factory/qa-evidence/repair-8-local/`. The packaged release is `site/public/releases/sociobot-replay-capsule-0.1.7.tgz` (SHA-256 `b69b0db29d03a9645842759c3d54d13a62e6ebd3661b5aadd43fd6aafc714e41`). `dist/site/` is the static deployment output.
-
-## Deployment
-
-The live static deployment now matches the candidate byte-for-byte for the main, demo, legal, 404, core asset, and `0.1.7` release files. The hosted tarball SHA-256 is `b69b0db29d03a9645842759c3d54d13a62e6ebd3661b5aadd43fd6aafc714e41`. HTML has short revalidation caching; hashed assets and the tarball are immutable for one year.
-
-## Known gaps / next steps
-
-No product QA gaps were found. Package registry publication remains factory-owned; do not publish from this worker. Full evidence and the independent PASS report are in `.factory/verification-11.md` and `.factory/verification-artifacts/`.
+See `.factory/review-3.md` for exact evidence and the proposed check.
