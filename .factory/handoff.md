@@ -43,8 +43,10 @@ Evidence is in `.factory/qa-evidence/repair-8-local/`. The packaged release is `
 
 ## Deployment
 
-The static deployment source is this repository's `main` branch. Push the repair commit to trigger the factory static deployment; the deployable configuration is `dist/site/staticwebapp.config.json` and includes the scoped Phaser route CSP.
+The static deployment source is this repository's `main` branch. Repair commit `bab867ab30a1a5dc1bcbc7a26e78148b3dbea0eb` was pushed to `origin/main` at 2026-09-01 19:35 UTC. The deployable configuration is `dist/site/staticwebapp.config.json` and includes the scoped Phaser route CSP.
+
+The factory hostname was checked with `Cache-Control: no-cache` from 19:35–19:36 UTC. It still returned the preceding August build (`Last-Modified: Sun, 30 Aug 2026 08:11:17 GMT`) with the old `img-src 'self'` CSP and no `0.1.7` marker. The pushed static source is ready; this external deployment pickup must complete before the live release can be announced.
 
 ## Known gaps / next steps
 
-No product or test gaps remain. Package registry publication remains factory-owned; do not publish from this worker. Verify the factory deployment has picked up the pushed commit before announcing the live release.
+No product or test gaps remain. Package registry publication remains factory-owned; do not publish from this worker. The only outstanding external state is factory static deployment propagation; verify the live `0.1.7` marker and Phaser fixture CSP after it picks up `main`.
