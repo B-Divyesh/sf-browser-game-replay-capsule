@@ -1,38 +1,35 @@
-# Replay Capsule independent QA handoff — PASS
+# Replay Capsule product QA handoff — FAIL
 
 ## Result
 
-**PASS** for candidate `d09cadba4af40b037e385ffc7135f2d084ae5b25` at https://browser-game-replay-capsule.sociobot.in, verified on 2026-09-01 UTC.
+Review 4 checked commit `3852de27a6b106bcb128c12b158a20c904daa01b` against https://browser-game-replay-capsule.sociobot.in on 2026-09-01 UTC. No product code was changed.
 
-The deployed library and demo satisfy the researched brief. The live build byte-matches the candidate, every listed claim passed, the hosted package works from fresh ESM and CommonJS consumers, and no release-blocking, high, medium, or low defect was found. No product code was changed during verification.
+The cold first read, one-click sample, demo isolation, offline behavior, listed claims, routes, metadata, normal-size accessibility, and earlier fixes pass. The verdict remains **FAIL** because the loaded-font 200% text view expands to 521 px in a 390 px viewport and clips header navigation. Three README capabilities and one registry-status clause also lack claim entries.
 
-## How it was verified
+Full details and exact fixes are in [review-4.md](review-4.md).
 
-From the clean candidate:
+## How to verify
+
+From a clean clone:
 
 ```sh
 npm ci
-# Every exact command in .factory/claims.json
+# Run every exact command in .factory/claims.json
+npm run check
 npm run lint
-npm run typecheck
-npm test
-npm run build
-npm run test:e2e
 npm pack --dry-run
 ```
 
-Results: 22/22 claims passed, 31/31 unit/package tests passed, 50 browser tests passed with four expected project-specific skips, and the exact production build completed. A fresh temporary project installed the live `0.1.7` tarball and exercised both module formats and the public record/import/replay surface.
+All 22 claim commands passed individually. Unit/package checks passed 31/31, build and lint passed, and the package dry run produced an 11.5 KB tarball. The full browser phase reported 49 passes, four expected skips, and one failure in the 200% text check.
 
-Live checks covered the cold first screen, one-click sample, normal record/download/import/replay, malformed input and recovery, 4 KB–1 MB limit boundaries, seeded Phaser reproduction, offline operation after load, desktop and 390 px layouts, keyboard use, focus, 200% text, reduced motion, Axe, console/page errors, outgoing requests, browser storage, security headers, caching, response status, asset budgets, and candidate-to-live hashes.
+For F-4-1, open `/` at 390 × 844, await `document.fonts.ready`, set the root text size to 200%, and compare `document.documentElement.scrollWidth` with `clientWidth`. The current result is 521 versus 390. The live header navigation reaches x=520.61 px.
 
-Mobile Lighthouse scored 100 performance, 100 accessibility, 100 best practices, and 100 SEO. LCP was 1.37 s and CLS was 0.00019. The live Phaser fixture reproduced 20/20 seeded cases.
+Live checks also confirmed that all observed requests are same-origin; local/session storage, cookies, IndexedDB, Cache Storage, and service workers remain empty; and replay plus recording work after the browser context goes offline following initial load.
 
-Full evidence and exact hashes are in [.factory/verification-12.md](verification-12.md). Visual and Lighthouse artifacts are under `.factory/verification-artifacts/live-12-*`.
+## Remaining work
 
-## Product boundaries
-
-The product is static and has no server-side endpoint, product-unlock call, sign-in, analytics, or third-party runtime request. Request allowance/429 and Entra checks are not applicable. It is not a PWA and claims only offline operation after the current page has loaded; no service worker is registered.
-
-## Known gaps
-
-None.
+- F-4-1: make the shared header reflow at 200% text and make its regression wait for loaded fonts.
+- F-4-2: list and test Phaser canvas recording, or narrow the README sentence.
+- F-4-3: list and test `shouldCaptureKey`.
+- F-4-4: list and tag the near-cap download/import behavior.
+- F-4-5: replace undefined registry-status wording with current install/build facts.
