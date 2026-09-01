@@ -1,0 +1,57 @@
+{
+  "routeStatus": {
+    "/": 200,
+    "/demo": 200,
+    "/privacy/": 200,
+    "/terms/": 200,
+    "/404.html": 200
+  },
+  "axe": {
+    "/": [],
+    "/demo": [],
+    "/privacy/": [],
+    "/terms/": [],
+    "/404.html": []
+  },
+  "skipFocused": true,
+  "focus": {
+    "active": true,
+    "outline": "3px solid rgb(164, 71, 33)"
+  },
+  "motion": {
+    "scroll": "auto",
+    "animation": "1e-05s"
+  },
+  "mobileLayout": {
+    "scroll": 390,
+    "client": 390
+  },
+  "firstAction": {
+    "x": 216,
+    "y": 485.53125,
+    "width": 140,
+    "height": 50.796875
+  },
+  "targets": [
+    {
+      "text": "Demo",
+      "width": 44,
+      "height": 44
+    },
+    {
+      "text": "Privacy",
+      "width": 44,
+      "height": 44
+    },
+    {
+      "text": "Terms",
+      "width": 44,
+      "height": 44
+    }
+  ],
+  "zoom": {
+    "scroll": 390,
+    "client": 390,
+    "visible": true
+  }
+}

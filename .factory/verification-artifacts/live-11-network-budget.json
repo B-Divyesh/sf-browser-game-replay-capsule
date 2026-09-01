@@ -1,0 +1,82 @@
+{
+  "entries": [
+    {
+      "url": "https://browser-game-replay-capsule.sociobot.in/",
+      "mime": "text/html",
+      "status": 200,
+      "encoded": 4116
+    },
+    {
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/index-DdRIcvdq.js",
+      "mime": "text/javascript",
+      "status": 200,
+      "encoded": 3871
+    },
+    {
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/replay-instrument-600-kwAaNgdf.webp",
+      "mime": "image/webp",
+      "status": 200,
+      "encoded": 13310
+    },
+    {
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/main-V0pMKYxP.js",
+      "mime": "text/javascript",
+      "status": 200,
+      "encoded": 4015
+    },
+    {
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/route-focus-NNJLyGYl.js",
+      "mime": "text/javascript",
+      "status": 200,
+      "encoded": 351
+    },
+    {
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/modulepreload-polyfill-B5Qt9EMX.js",
+      "mime": "text/javascript",
+      "status": 200,
+      "encoded": 403
+    },
+    {
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/main-CbcC_6ui.css",
+      "mime": "text/css",
+      "status": 200,
+      "encoded": 4625
+    },
+    {
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-700-normal-mWgeinG7.woff2",
+      "mime": "font/woff2",
+      "status": 200,
+      "encoded": 16793
+    },
+    {
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-700-normal-BriLmxM2.woff2",
+      "mime": "font/woff2",
+      "status": 200,
+      "encoded": 17674
+    },
+    {
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-400-normal-BKTgBNmI.woff2",
+      "mime": "font/woff2",
+      "status": 200,
+      "encoded": 17242
+    },
+    {
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-400-normal-Rg4St2Dn.woff2",
+      "mime": "font/woff2",
+      "status": 200,
+      "encoded": 16578
+    }
+  ],
+  "totals": {
+    "total": 98978,
+    "other": 4116,
+    "js": 8640,
+    "images": 13310,
+    "css": 4625,
+    "fonts": 68287
+  },
+  "dimensions": {
+    "scroll": 390,
+    "client": 390
+  }
+}

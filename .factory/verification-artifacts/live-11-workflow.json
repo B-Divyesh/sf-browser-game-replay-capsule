@@ -1,0 +1,86 @@
+{
+  "rootStatus": 200,
+  "rootHeaders": {
+    "cache-control": "public, must-revalidate, max-age=30",
+    "content-encoding": "br",
+    "content-security-policy": "default-src 'self'; base-uri 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests",
+    "content-type": "text/html",
+    "date": "Tue, 01 Sep 2026 19:54:26 GMT",
+    "etag": "\"76873794\"",
+    "last-modified": "Tue, 01 Sep 2026 19:38:51 GMT",
+    "permissions-policy": "camera=(), microphone=(), geolocation=()",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "strict-transport-security": "max-age=10886400; includeSubDomains; preload",
+    "vary": "Accept-Encoding",
+    "x-content-type-options": "nosniff",
+    "x-dns-prefetch-control": "off",
+    "x-frame-options": "DENY",
+    "x-xss-protection": "1; mode=block"
+  },
+  "demoBanner": true,
+  "eventCount": "4",
+  "capsuleEvents": [
+    {
+      "type": "key",
+      "action": "down",
+      "code": "ArrowRight"
+    },
+    {
+      "type": "key",
+      "action": "up",
+      "code": "ArrowRight"
+    },
+    {
+      "type": "key",
+      "action": "down",
+      "code": "ArrowUp"
+    },
+    {
+      "type": "key",
+      "action": "up",
+      "code": "ArrowUp"
+    }
+  ],
+  "invalid": "Capsule is not valid JSON. Choose a Replay Capsule JSON file under 1 MB.",
+  "imported": "Imported 4 events. Seed and checkpoints validated locally.",
+  "replay": "Replay complete: the same 4 recorded events were applied.",
+  "surfaces": {
+    "local": [],
+    "session": [],
+    "cookies": "",
+    "db": [],
+    "caches": [],
+    "workers": 0,
+    "namespace": "demo:replay-capsule:memory"
+  },
+  "requestCount": 21,
+  "allSameOrigin": true,
+  "errors": [],
+  "keyCount": "4",
+  "keyEvents": [
+    {
+      "type": "key",
+      "action": "down",
+      "code": "ArrowRight"
+    },
+    {
+      "type": "key",
+      "action": "up",
+      "code": "ArrowRight"
+    },
+    {
+      "type": "key",
+      "action": "down",
+      "code": "ArrowUp"
+    },
+    {
+      "type": "key",
+      "action": "up",
+      "code": "ArrowUp"
+    }
+  ],
+  "phaserStatus": "Phaser scene ready.",
+  "phaserCsp": "default-src 'self'; base-uri 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests",
+  "phaserReproduced": 20,
+  "phaserErrors": []
+}

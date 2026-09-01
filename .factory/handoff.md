@@ -1,8 +1,12 @@
-# Replay Capsule repair 8 handoff — PASS
+# Replay Capsule verification 11 handoff — PASS
+
+## Result
+
+**PASS** for candidate `a1cf0e452ea2316abdc595862b550175e441ea5f` at https://browser-game-replay-capsule.sociobot.in, verified 2026-09-01 UTC. The live deployment was independently checked and matches the candidate build.
 
 ## Delivered
 
-Repair release: `0.1.7` in the final `fix: repair replay capsule release blockers` commit. It repairs every release-blocking item in independent verification 10 while preserving the researched library and its in-memory demo.
+Release `0.1.7` provides deterministic browser-game replay capsules: explicit input recording, developer seed/checkpoint capture, a bounded JSON download/import format, and callback-based replay. The landing page provides a one-click, in-memory seeded demo.
 
 1. **Phaser CSP:** normal pages retain a strict self-only `style-src`; the global image policy now permits Phaser's generated `data:` images. `/phaser-fixture.html` alone receives the narrowly required `style-src 'self' 'unsafe-inline'` for Phaser's runtime canvas styles. The browser claim test serves the built output with these real headers, requires a ready scene, runs 20 imported capsules, requires all 20 failures, and fails on every console/page error.
 2. **Effective seeded-failure claim:** `seeded-failure-fixture` now invokes its tagged Playwright test (`npm run test:e2e -- --grep @claim:seeded-failure-fixture`) instead of a Vitest filter that executed zero tests.
@@ -14,18 +18,18 @@ Repair release: `0.1.7` in the final `fix: repair replay capsule release blocker
 
 ## Verification
 
-Clean install and complete local gate, 2026-09-01 UTC:
+Independent clean-install verification, 2026-09-01 UTC:
 
 ```sh
 npm ci                         # 217 packages; 0 vulnerabilities
-npm run check                  # 31/31 Vitest; build; 49 Playwright passed, 3 project skips
+npm run check                  # 31 Vitest passed; build; 49 Playwright passed, 3 project skips
 npm run lint
 npm pack --dry-run             # 7 files; 11.5 kB package
 ```
 
-Every one of the 22 exact commands in `.factory/claims.json` was run after the clean install and passed. In particular, the repaired Phaser command ran two desktop/mobile browser projects with the deployed CSP headers and each imported 20 capsules.
+Every one of the 22 exact commands in `.factory/claims.json` was run after the clean install and passed. The seeded Phaser command now runs two browser tests and each validates 20 imported capsules.
 
-The local built-site verification passed for `/` and `/demo` via `/opt/fleet/lib/verify-url.sh`: each has a title, `lang=en`, one h1, main landmark, complete image alt text, labeled controls, and zero console/page errors. Playwright Axe scans passed with zero violations on landing, demo, privacy, terms, and 404. The full browser suite covers desktop, 390px mobile, keyboard operation, reduced motion, 200% text, privacy/same-origin requests, offline behavior, route focus, and CSP-backed Phaser initialization.
+Live Axe WCAG A/AA scans had zero serious/critical findings on landing, demo, privacy, terms, and 404. Live checks also passed for keyboard controls/focus, 390 px mobile (including 44 × 44 px header targets), reduced motion, 200% text, same-origin requests, in-memory storage, offline-after-load replay, and Phaser initialization.
 
 Local mobile Lighthouse 13 against the production build:
 
@@ -43,10 +47,8 @@ Evidence is in `.factory/qa-evidence/repair-8-local/`. The packaged release is `
 
 ## Deployment
 
-The static deployment source is this repository's `main` branch. Repair commit `bab867ab30a1a5dc1bcbc7a26e78148b3dbea0eb` was pushed to `origin/main` at 2026-09-01 19:35 UTC. The deployable configuration is `dist/site/staticwebapp.config.json` and includes the scoped Phaser route CSP.
-
-The factory hostname was checked with `Cache-Control: no-cache` from 19:35–19:37 UTC. It still returned the preceding August build (`Last-Modified: Sun, 30 Aug 2026 08:11:17 GMT`) with the old `img-src 'self'` CSP and no `0.1.7` marker. The pushed static source is ready; this external deployment pickup must complete before the live release can be announced.
+The live static deployment now matches the candidate byte-for-byte for the main, demo, legal, 404, core asset, and `0.1.7` release files. The hosted tarball SHA-256 is `b69b0db29d03a9645842759c3d54d13a62e6ebd3661b5aadd43fd6aafc714e41`. HTML has short revalidation caching; hashed assets and the tarball are immutable for one year.
 
 ## Known gaps / next steps
 
-No product or test gaps remain. Package registry publication remains factory-owned; do not publish from this worker. The only outstanding external state is factory static deployment propagation; verify the live `0.1.7` marker and Phaser fixture CSP after it picks up `main`.
+No product QA gaps were found. Package registry publication remains factory-owned; do not publish from this worker. Full evidence and the independent PASS report are in `.factory/verification-11.md` and `.factory/verification-artifacts/`.

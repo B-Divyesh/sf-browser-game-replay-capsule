@@ -1,0 +1,40 @@
+{
+  "url": "https://browser-game-replay-capsule.sociobot.in/",
+  "title": "Replay Capsule — replay browser-game bugs",
+  "h1": [
+    "Replay browser-game bugs from a small file."
+  ],
+  "body": "Skip to main content\nRC—01\nReplay Capsule\nDemo\nPrivacy\nTerms\n\n LOCAL REPLAY FILES FOR BROWSER GAMES\n\nReplay browser-game bugs from a small file.\n\nFor solo 2D game developers who need a bug report that repeats the player’s inputs and timing.\n\nTry it with sample data\nLoads a seeded bug run you can replay.\nCopy install command\n\nRecord, import, and replay offline after this page loads\nFree under the MIT License\nNo tracking or server calls\nINPUT SEQUENCE\nSAME SEQUENCE\nSeed, inputs, and timing in one capped file.\n01\nStart\nA person starts recording\n02\nCapture\nInputs, timing, and seed\n03\nReplay\nYour game applies events\n\nLIVE PACKAGE DEMO\n\nRecord and replay a sample bug.\n\nStart recording, steer the probe, and reach a red fault cell. Download the file or import it again to replay the path.\n\nCapture controls\nREADY\nReady to record\nStart recording to begin a seeded run.\n\n↑←↓→ steer · pointer moves probe · avoid fault cells\n\nStart recording\nStop recording\nReset run\nDownload capsule\nImport capsule\nReplay capsule\n\nNo input has been captured yet. This tab does not save your run.\n\nCapsule details\nSeed\nRC-DEMO\nEvents\n0\nElapsed\n0.00 s\nPayload\n0 / 128 KB\nNetwork\nNone\n\nCaptured: key codes, pointer positions, changed gamepad samples, your seed, and checkpoints.\n\nNot captured: typed text, DOM content, identity, cookies, or network traffic.\n\nWHAT THE LIBRARY DOES\n\nKeep the bug report small and private.\n⌁\nUse your game adapter\n\nYour game adapter receives each stored event through a callback.\n\n◉\nStay inside the byte cap\n\nThe recorder stops before it crosses the configured cap. The default cap is 128 KB.\n\n↺\nControl replay timing\n\nReplay at normal speed or faster. Pause, resume, and stop are available in the public API.\n\nINSTALL THE LIBRARY\n\nAdd replay capture to your game loop.\nrecorder.ts\nCopy code\nimport { createRecorder, downloadCapsule } from '@sociobot/replay-capsule'\n\nconst recorder = createRecorder({\n  seed: world.seed,\n  target: game.canvas,\n  maxBytes: 128_000\n})\n\nreportButton.onclick = () => recorder.start()\nrecorder.checkpoint('level-loaded', { level: 7 })\ndownloadCapsule(recorder.export())\n\nThis versioned npm tarball is hosted with the documentation while registry publication is pending.\n\nReplay Capsule\n\nLocal replay files for browser-game debugging.\n\nBuilt by Param Factory · v0.1.7 · repair-8\n\nDemo\nPrivacy\nTerms",
+  "requests": [
+    "https://browser-game-replay-capsule.sociobot.in/",
+    "https://browser-game-replay-capsule.sociobot.in/assets/modulepreload-polyfill-B5Qt9EMX.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/route-focus-NNJLyGYl.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/index-DdRIcvdq.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-V0pMKYxP.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-CbcC_6ui.css",
+    "https://browser-game-replay-capsule.sociobot.in/assets/replay-instrument-600-kwAaNgdf.webp",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-400-normal-BKTgBNmI.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-700-normal-mWgeinG7.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-700-normal-BriLmxM2.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-400-normal-Rg4St2Dn.woff2"
+  ],
+  "errors": [],
+  "status": 200,
+  "headers": {
+    "cache-control": "public, must-revalidate, max-age=30",
+    "content-encoding": "br",
+    "content-security-policy": "default-src 'self'; base-uri 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests",
+    "content-type": "text/html",
+    "date": "Tue, 01 Sep 2026 19:47:27 GMT",
+    "etag": "\"76873794\"",
+    "last-modified": "Tue, 01 Sep 2026 19:38:51 GMT",
+    "permissions-policy": "camera=(), microphone=(), geolocation=()",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "strict-transport-security": "max-age=10886400; includeSubDomains; preload",
+    "vary": "Accept-Encoding",
+    "x-content-type-options": "nosniff",
+    "x-dns-prefetch-control": "off",
+    "x-frame-options": "DENY",
+    "x-xss-protection": "1; mode=block"
+  }
+}

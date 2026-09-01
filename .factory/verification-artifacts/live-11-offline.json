@@ -1,0 +1,5 @@
+{
+  "note": "You are offline. You can record, import, and replay after this page loads.",
+  "imported": "Imported 1 events. Seed and checkpoints validated locally.",
+  "replay": "Replay complete: the same 1 recorded events were applied."
+}

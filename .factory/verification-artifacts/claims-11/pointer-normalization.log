@@ -1,0 +1,8 @@
+
+> @sociobot/replay-capsule@0.1.7 test:e2e
+> playwright test --grep @claim:pointer-normalization
+
+
+Running 2 tests using 2 workers
+··
+  2 passed (17.8s)

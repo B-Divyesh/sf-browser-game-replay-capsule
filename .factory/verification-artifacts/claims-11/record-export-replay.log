@@ -1,0 +1,8 @@
+
+> @sociobot/replay-capsule@0.1.7 test:e2e
+> playwright test --grep @claim:record-export-replay
+
+
+Running 2 tests using 2 workers
+··
+  2 passed (19.2s)
