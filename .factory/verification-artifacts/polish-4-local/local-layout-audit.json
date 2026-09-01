@@ -1,0 +1,39 @@
+{
+  "normal": {
+    "scrollWidth": 390,
+    "clientWidth": 390,
+    "factsBottom": 821.421875
+  },
+  "enlarged": {
+    "scrollWidth": 390,
+    "clientWidth": 390,
+    "links": [
+      {
+        "text": "Demo",
+        "x": 16,
+        "right": 83,
+        "width": 67
+      },
+      {
+        "text": "Privacy",
+        "x": 91,
+        "right": 177,
+        "width": 86
+      },
+      {
+        "text": "Terms",
+        "x": 185,
+        "right": 256,
+        "width": 71
+      }
+    ]
+  },
+  "demo": {
+    "url": "http://127.0.0.1:4173/demo",
+    "banner": "Demo — sample data, nothing is saved. This run stays in memory and is discarded when you leave. Reset demoStart for real",
+    "namespace": "demo:replay-capsule:memory",
+    "seed": "RC-SAMPLE-FAULT-17",
+    "events": "1",
+    "quickActionBottom": 548.328125
+  }
+}

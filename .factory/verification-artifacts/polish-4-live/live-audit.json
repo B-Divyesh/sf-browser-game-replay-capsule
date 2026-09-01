@@ -1,0 +1,395 @@
+{
+  "base": "https://browser-game-replay-capsule.sociobot.in",
+  "checkedAt": "2026-09-01T22:06:20.314Z",
+  "routes": {
+    "/": {
+      "status": 200,
+      "title": "Replay Capsule — replay browser-game bugs",
+      "lang": "en",
+      "h1": 1,
+      "main": 1,
+      "description": true,
+      "canonical": true,
+      "og": 7,
+      "twitter": 4,
+      "headerLinks": [
+        "Demo",
+        "Privacy",
+        "Terms"
+      ],
+      "footerLinks": [
+        "Demo",
+        "Privacy",
+        "Terms"
+      ],
+      "externalLinks": 0,
+      "enlarged": {
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "links": [
+          {
+            "text": "Demo",
+            "x": 16,
+            "right": 83
+          },
+          {
+            "text": "Privacy",
+            "x": 91,
+            "right": 177
+          },
+          {
+            "text": "Terms",
+            "x": 185,
+            "right": 256
+          }
+        ]
+      }
+    },
+    "/demo": {
+      "status": 200,
+      "title": "Demo — Replay Capsule",
+      "lang": "en",
+      "h1": 1,
+      "main": 1,
+      "description": true,
+      "canonical": true,
+      "og": 7,
+      "twitter": 4,
+      "headerLinks": [
+        "Demo",
+        "Privacy",
+        "Terms"
+      ],
+      "footerLinks": [
+        "Demo",
+        "Privacy",
+        "Terms"
+      ],
+      "externalLinks": 0,
+      "enlarged": {
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "links": [
+          {
+            "text": "Demo",
+            "x": 16,
+            "right": 83
+          },
+          {
+            "text": "Privacy",
+            "x": 91,
+            "right": 177
+          },
+          {
+            "text": "Terms",
+            "x": 185,
+            "right": 256
+          }
+        ]
+      }
+    },
+    "/privacy/": {
+      "status": 200,
+      "title": "Privacy — Replay Capsule",
+      "lang": "en",
+      "h1": 1,
+      "main": 1,
+      "description": true,
+      "canonical": true,
+      "og": 7,
+      "twitter": 4,
+      "headerLinks": [
+        "Demo",
+        "Privacy",
+        "Terms"
+      ],
+      "footerLinks": [
+        "Demo",
+        "Privacy",
+        "Terms"
+      ],
+      "externalLinks": 0,
+      "enlarged": {
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "links": [
+          {
+            "text": "Demo",
+            "x": 16,
+            "right": 83
+          },
+          {
+            "text": "Privacy",
+            "x": 91,
+            "right": 177
+          },
+          {
+            "text": "Terms",
+            "x": 185,
+            "right": 256
+          }
+        ]
+      }
+    },
+    "/terms/": {
+      "status": 200,
+      "title": "Terms — Replay Capsule",
+      "lang": "en",
+      "h1": 1,
+      "main": 1,
+      "description": true,
+      "canonical": true,
+      "og": 7,
+      "twitter": 4,
+      "headerLinks": [
+        "Demo",
+        "Privacy",
+        "Terms"
+      ],
+      "footerLinks": [
+        "Demo",
+        "Privacy",
+        "Terms"
+      ],
+      "externalLinks": 0,
+      "enlarged": {
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "links": [
+          {
+            "text": "Demo",
+            "x": 16,
+            "right": 83
+          },
+          {
+            "text": "Privacy",
+            "x": 91,
+            "right": 177
+          },
+          {
+            "text": "Terms",
+            "x": 185,
+            "right": 256
+          }
+        ]
+      }
+    },
+    "/not-a-real-route-polish-4": {
+      "status": 404,
+      "title": "Page not found — Replay Capsule",
+      "lang": "en",
+      "h1": 1,
+      "main": 1,
+      "description": true,
+      "canonical": true,
+      "og": 7,
+      "twitter": 4,
+      "headerLinks": [
+        "Demo",
+        "Privacy",
+        "Terms"
+      ],
+      "footerLinks": [
+        "Demo",
+        "Privacy",
+        "Terms"
+      ],
+      "externalLinks": 0,
+      "enlarged": {
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "links": [
+          {
+            "text": "Demo",
+            "x": 16,
+            "right": 83
+          },
+          {
+            "text": "Privacy",
+            "x": 91,
+            "right": 177
+          },
+          {
+            "text": "Terms",
+            "x": 185,
+            "right": 256
+          }
+        ]
+      }
+    }
+  },
+  "axe": {
+    "/": [],
+    "/demo": [],
+    "/privacy/": [],
+    "/terms/": [],
+    "/not-a-real-route-polish-4": []
+  },
+  "errors": [],
+  "expected404Errors": [
+    "Failed to load resource: the server responded with a status of 404 ()"
+  ],
+  "requests": [
+    "https://browser-game-replay-capsule.sociobot.in/",
+    "https://browser-game-replay-capsule.sociobot.in/assets/modulepreload-polyfill-B5Qt9EMX.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/route-focus-NNJLyGYl.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/index-DdRIcvdq.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-sIeC5FTr.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-BgR9BW87.css",
+    "https://browser-game-replay-capsule.sociobot.in/assets/replay-instrument-600-kwAaNgdf.webp",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-400-normal-BKTgBNmI.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-700-normal-mWgeinG7.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-700-normal-BriLmxM2.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-400-normal-Rg4St2Dn.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/demo",
+    "https://browser-game-replay-capsule.sociobot.in/assets/modulepreload-polyfill-B5Qt9EMX.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/route-focus-NNJLyGYl.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/index-DdRIcvdq.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-sIeC5FTr.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-BgR9BW87.css",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-400-normal-BKTgBNmI.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-700-normal-BriLmxM2.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-400-normal-Rg4St2Dn.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-700-normal-mWgeinG7.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/",
+    "https://browser-game-replay-capsule.sociobot.in/assets/modulepreload-polyfill-B5Qt9EMX.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/route-focus-NNJLyGYl.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/index-DdRIcvdq.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-sIeC5FTr.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-BgR9BW87.css",
+    "https://browser-game-replay-capsule.sociobot.in/assets/replay-instrument-600-kwAaNgdf.webp",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-400-normal-BKTgBNmI.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-700-normal-BriLmxM2.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-400-normal-Rg4St2Dn.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-700-normal-mWgeinG7.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/",
+    "https://browser-game-replay-capsule.sociobot.in/assets/modulepreload-polyfill-B5Qt9EMX.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/route-focus-NNJLyGYl.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/index-DdRIcvdq.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-sIeC5FTr.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-BgR9BW87.css",
+    "https://browser-game-replay-capsule.sociobot.in/assets/replay-instrument-600-kwAaNgdf.webp",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-400-normal-BKTgBNmI.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-700-normal-BriLmxM2.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-400-normal-Rg4St2Dn.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-700-normal-mWgeinG7.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/demo",
+    "https://browser-game-replay-capsule.sociobot.in/assets/modulepreload-polyfill-B5Qt9EMX.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/route-focus-NNJLyGYl.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/index-DdRIcvdq.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-sIeC5FTr.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-BgR9BW87.css",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-400-normal-BKTgBNmI.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-700-normal-BriLmxM2.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-400-normal-Rg4St2Dn.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-700-normal-mWgeinG7.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/",
+    "https://browser-game-replay-capsule.sociobot.in/assets/modulepreload-polyfill-B5Qt9EMX.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/route-focus-NNJLyGYl.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/index-DdRIcvdq.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-sIeC5FTr.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-BgR9BW87.css",
+    "https://browser-game-replay-capsule.sociobot.in/assets/replay-instrument-600-kwAaNgdf.webp",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-400-normal-BKTgBNmI.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-700-normal-BriLmxM2.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-400-normal-Rg4St2Dn.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-700-normal-mWgeinG7.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/",
+    "https://browser-game-replay-capsule.sociobot.in/assets/modulepreload-polyfill-B5Qt9EMX.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/route-focus-NNJLyGYl.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/index-DdRIcvdq.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-sIeC5FTr.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-BgR9BW87.css",
+    "https://browser-game-replay-capsule.sociobot.in/assets/replay-instrument-600-kwAaNgdf.webp",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-400-normal-BKTgBNmI.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-700-normal-BriLmxM2.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-400-normal-Rg4St2Dn.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-700-normal-mWgeinG7.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/demo",
+    "https://browser-game-replay-capsule.sociobot.in/assets/modulepreload-polyfill-B5Qt9EMX.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/route-focus-NNJLyGYl.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/index-DdRIcvdq.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-sIeC5FTr.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-BgR9BW87.css",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-400-normal-BKTgBNmI.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-700-normal-BriLmxM2.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-400-normal-Rg4St2Dn.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-700-normal-mWgeinG7.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/privacy/",
+    "https://browser-game-replay-capsule.sociobot.in/assets/modulepreload-polyfill-B5Qt9EMX.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/route-focus-NNJLyGYl.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/legal-jHNUIQik.css",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-400-normal-BKTgBNmI.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-700-normal-BriLmxM2.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-400-normal-Rg4St2Dn.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-700-normal-mWgeinG7.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/terms/",
+    "https://browser-game-replay-capsule.sociobot.in/assets/modulepreload-polyfill-B5Qt9EMX.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/route-focus-NNJLyGYl.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/legal-jHNUIQik.css",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-400-normal-BKTgBNmI.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-700-normal-BriLmxM2.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-400-normal-Rg4St2Dn.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-700-normal-mWgeinG7.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/not-a-real-route-polish-4",
+    "https://browser-game-replay-capsule.sociobot.in/assets/modulepreload-polyfill-B5Qt9EMX.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/route-focus-NNJLyGYl.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/legal-jHNUIQik.css",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-400-normal-BKTgBNmI.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-700-normal-BriLmxM2.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-400-normal-Rg4St2Dn.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-700-normal-mWgeinG7.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/demo/",
+    "https://browser-game-replay-capsule.sociobot.in/assets/modulepreload-polyfill-B5Qt9EMX.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/route-focus-NNJLyGYl.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/index-DdRIcvdq.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-sIeC5FTr.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-BgR9BW87.css",
+    "https://browser-game-replay-capsule.sociobot.in/demo",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-400-normal-BKTgBNmI.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-700-normal-BriLmxM2.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-400-normal-Rg4St2Dn.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-700-normal-mWgeinG7.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/modulepreload-polyfill-B5Qt9EMX.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/route-focus-NNJLyGYl.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/index-DdRIcvdq.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-sIeC5FTr.js",
+    "https://browser-game-replay-capsule.sociobot.in/assets/main-BgR9BW87.css",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-400-normal-BKTgBNmI.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-700-normal-BriLmxM2.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-400-normal-Rg4St2Dn.woff2",
+    "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-700-normal-mWgeinG7.woff2"
+  ],
+  "landing": {
+    "title": "Replay Capsule — replay browser-game bugs",
+    "lang": "en",
+    "h1": 1,
+    "main": 1,
+    "width": 390,
+    "factsBottom": 821.421875,
+    "heading": "Replay browser-game bugs from a small file.",
+    "externalLinks": 0
+  },
+  "demo": {
+    "title": "Demo — Replay Capsule",
+    "banner": "Demo — sample data, nothing is saved. This run stays in memory and is discarded when you leave. Reset demoStart for real",
+    "namespace": "demo:replay-capsule:memory",
+    "seed": "RC-SAMPLE-FAULT-17",
+    "events": "1",
+    "quickActionBottom": 548.328125,
+    "local": [],
+    "session": [],
+    "databases": [],
+    "caches": [],
+    "registrations": 0
+  },
+  "offlineMessage": "Replay complete: the recorded outcome was reproduced.",
+  "requestOrigins": [
+    "https://browser-game-replay-capsule.sociobot.in"
+  ],
+  "phaser": {
+    "recordingSeed": "live-phaser-recording-proof",
+    "pointerEvents": 3,
+    "reproduced": 20
+  }
+}

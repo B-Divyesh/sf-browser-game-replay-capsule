@@ -1,35 +1,55 @@
-# Replay Capsule product QA handoff — FAIL
+# Replay Capsule polish 4 handoff — PASS
 
 ## Result
 
-Review 4 checked commit `3852de27a6b106bcb128c12b158a20c904daa01b` against https://browser-game-replay-capsule.sociobot.in on 2026-09-01 UTC. No product code was changed.
+All findings in `.factory/review-1.md` through `.factory/review-4.md` are resolved. The TypeScript npm library still ships ESM, CommonJS, declarations, and a static documentation/demo site. Repair code is commit `5dd6b77abca5ddda3ca5edb0df32eed5720d6e03`.
 
-The cold first read, one-click sample, demo isolation, offline behavior, listed claims, routes, metadata, normal-size accessibility, and earlier fixes pass. The verdict remains **FAIL** because the loaded-font 200% text view expands to 521 px in a 390 px viewport and clips header navigation. Three README capabilities and one registry-status clause also lack claim entries.
+The current round:
 
-Full details and exact fixes are in [review-4.md](review-4.md).
+- wraps the shared phone header when loaded text is enlarged to 200%, without changing the normal first-screen composition;
+- adds exact claims and outcome tests for Phaser canvas recording, `shouldCaptureKey`, and near-cap download/import;
+- maps every README capability to claim evidence in `.factory/copy-audit.md`;
+- replaces undefined registry language with the current hosted 0.1.7 install and build facts;
+- updates the catalog line and all route build labels for polish 4.
 
-## How to verify
+The one-click demo remains available at `/?demo=1` and canonical `/demo`. It uses `demo:replay-capsule:memory`, shows the persistent sample-data banner, resets to `RC-SAMPLE-FAULT-17`, and exits to the separate real-mode namespace.
 
-From a clean clone:
+## Verification
+
+A fresh clone ran:
 
 ```sh
 npm ci
-# Run every exact command in .factory/claims.json
+# Every exact command in .factory/claims.json
 npm run check
 npm run lint
 npm pack --dry-run
 ```
 
-All 22 claim commands passed individually. Unit/package checks passed 31/31, build and lint passed, and the package dry run produced an 11.5 KB tarball. The full browser phase reported 49 passes, four expected skips, and one failure in the 200% text check.
+Results:
 
-For F-4-1, open `/` at 390 × 844, await `document.fonts.ready`, set the root text size to 200%, and compare `document.documentElement.scrollWidth` with `clientWidth`. The current result is 521 versus 390. The live header navigation reaches x=520.61 px.
+- All 25 exact claim commands passed separately. Logs are in `.factory/verification-artifacts/polish-4-clean/`.
+- `npm run check` passed 32 unit/package tests and 52 browser tests, with four intentional cross-project skips.
+- Browser tests cover routing, titles, metadata, route focus, real HTTP 404, keyboard use, touch targets, reduced motion, loaded-font 200% text, Axe, privacy, and offline operation.
+- `npm pack --dry-run` produced the seven-file, 11.6 KB `@sociobot/replay-capsule@0.1.7` package.
+- Local Lighthouse: performance 99, accessibility 100, best practices 100, SEO 100; LCP 1.7 s, CLS 0, TBT 0 ms.
+- Live Lighthouse: 100/100/100/100; LCP 1.4 s, CLS 0, TBT 0 ms, 97 KiB total transfer.
+- At 390×844 with fonts loaded, the normal facts end at 821.422 px. At 200% text, every checked route remains 390 px wide and every header link stays inside the viewport.
+- Live Axe found zero violations on `/`, `/demo`, `/privacy/`, `/terms/`, and the designed HTTP-404 route.
+- The cold live flow used only the product origin, wrote no browser storage, replayed offline after first load, and produced no normal-route console errors.
+- The live Phaser fixture recorded a normalized real canvas click and reproduced 20 of 20 imported seeded failures.
+- All 41 checked public files byte-match `dist/site`. The hosted tarball also installs and runs through both ESM and CommonJS.
 
-Live checks also confirmed that all observed requests are same-origin; local/session storage, cookies, IndexedDB, Cache Storage, and service workers remain empty; and replay plus recording work after the browser context goes offline following initial load.
+Primary evidence is in `.factory/polish-4.md`, `.factory/verification-artifacts/polish-4-clean/`, `polish-4-local/`, and `polish-4-live/`.
 
-## Remaining work
+## Deployment
 
-- F-4-1: make the shared header reflow at 200% text and make its regression wait for loaded fonts.
-- F-4-2: list and test Phaser canvas recording, or narrow the README sentence.
-- F-4-3: list and test `shouldCaptureKey`.
-- F-4-4: list and tag the near-cap download/import behavior.
-- F-4-5: replace undefined registry-status wording with current install/build facts.
+- URL: `https://browser-game-replay-capsule.sociobot.in`
+- Scoped resource: `sf-browser-game-replay-capsule`
+- Static deployment ID: `8f4b60f4-2c5f-4a77-84c3-da8ae781f135`
+- Deployed root: `dist/site`
+- Security policy: self-only CSP, `frame-ancestors 'none'`, `X-Frame-Options: DENY`, nosniff, strict referrer policy, and disabled camera/microphone/geolocation.
+
+## Known gaps and next steps
+
+None. Registry publication remains outside this worker’s scope and is not presented as an available or pending user path. The tested hosted tarball is the current install route.

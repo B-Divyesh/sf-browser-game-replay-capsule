@@ -1,0 +1,375 @@
+{
+  "checked": 41,
+  "mismatches": [],
+  "results": [
+    {
+      "file": "404.html",
+      "url": "https://browser-game-replay-capsule.sociobot.in/404.html",
+      "status": 200,
+      "bytes": 2657,
+      "localSha256": "c5a608b191a9f3d5f7f5742d4cc52c1c7ffb92315a3c5e6bbf2ebe892f919a43",
+      "liveSha256": "c5a608b191a9f3d5f7f5742d4cc52c1c7ffb92315a3c5e6bbf2ebe892f919a43",
+      "match": true
+    },
+    {
+      "file": "apple-touch-icon.png",
+      "url": "https://browser-game-replay-capsule.sociobot.in/apple-touch-icon.png",
+      "status": 200,
+      "bytes": 28466,
+      "localSha256": "8ea4e0901a801609ea906cace1527c33170a9fe894c6f7ac74c62435008ddb3d",
+      "liveSha256": "8ea4e0901a801609ea906cace1527c33170a9fe894c6f7ac74c62435008ddb3d",
+      "match": true
+    },
+    {
+      "file": "assets/atkinson-hyperlegible-latin-400-normal-BKTgBNmI.woff2",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-400-normal-BKTgBNmI.woff2",
+      "status": 200,
+      "bytes": 17184,
+      "localSha256": "b09653e3ba9d95e26da5c408979f40451990a4573ce5f96abe6982e2fcb09e6c",
+      "liveSha256": "b09653e3ba9d95e26da5c408979f40451990a4573ce5f96abe6982e2fcb09e6c",
+      "match": true
+    },
+    {
+      "file": "assets/atkinson-hyperlegible-latin-400-normal-DDbeQdWO.woff",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-400-normal-DDbeQdWO.woff",
+      "status": 200,
+      "bytes": 14068,
+      "localSha256": "16be4dc43b963f8e169453b4f06f9f65d3eacc31f21b30df4b3b561bbe48da40",
+      "liveSha256": "16be4dc43b963f8e169453b4f06f9f65d3eacc31f21b30df4b3b561bbe48da40",
+      "match": true
+    },
+    {
+      "file": "assets/atkinson-hyperlegible-latin-700-normal-BriLmxM2.woff2",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-700-normal-BriLmxM2.woff2",
+      "status": 200,
+      "bytes": 17616,
+      "localSha256": "d8e8b1e0e929651439e25e23ade4b9d6cac073f2444aadb8e8b85431726c2036",
+      "liveSha256": "d8e8b1e0e929651439e25e23ade4b9d6cac073f2444aadb8e8b85431726c2036",
+      "match": true
+    },
+    {
+      "file": "assets/atkinson-hyperlegible-latin-700-normal-CVvOgo6s.woff",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-700-normal-CVvOgo6s.woff",
+      "status": 200,
+      "bytes": 14264,
+      "localSha256": "b794b92b615988c107909da5d5d7db2eb35e4b41d46eb720952f26ac6cfc04be",
+      "liveSha256": "b794b92b615988c107909da5d5d7db2eb35e4b41d46eb720952f26ac6cfc04be",
+      "match": true
+    },
+    {
+      "file": "assets/atkinson-hyperlegible-latin-ext-400-normal--EtKVqC7.woff",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-ext-400-normal--EtKVqC7.woff",
+      "status": 200,
+      "bytes": 7336,
+      "localSha256": "b008c93f07e998da8d39fefaccc4d13b6481147dd70802627601d2850605ef0e",
+      "liveSha256": "b008c93f07e998da8d39fefaccc4d13b6481147dd70802627601d2850605ef0e",
+      "match": true
+    },
+    {
+      "file": "assets/atkinson-hyperlegible-latin-ext-400-normal-Dwzd0TKx.woff2",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-ext-400-normal-Dwzd0TKx.woff2",
+      "status": 200,
+      "bytes": 9328,
+      "localSha256": "c98c35da484b425641ddbf886f46345a6d1f2ea3f3b750a3f6fe17348e829c2b",
+      "liveSha256": "c98c35da484b425641ddbf886f46345a6d1f2ea3f3b750a3f6fe17348e829c2b",
+      "match": true
+    },
+    {
+      "file": "assets/atkinson-hyperlegible-latin-ext-700-normal-DXKoNrs9.woff",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-ext-700-normal-DXKoNrs9.woff",
+      "status": 200,
+      "bytes": 7344,
+      "localSha256": "3f50e805471878af8155073a180866038fd8d498a16f438003c45da8fa22b158",
+      "liveSha256": "3f50e805471878af8155073a180866038fd8d498a16f438003c45da8fa22b158",
+      "match": true
+    },
+    {
+      "file": "assets/atkinson-hyperlegible-latin-ext-700-normal-DkTWoOHj.woff2",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-ext-700-normal-DkTWoOHj.woff2",
+      "status": 200,
+      "bytes": 9392,
+      "localSha256": "5e9c826c0db36b8d150c1cfa05d5df42e6a274400ceacf4aaaf31cc438c20ddd",
+      "liveSha256": "5e9c826c0db36b8d150c1cfa05d5df42e6a274400ceacf4aaaf31cc438c20ddd",
+      "match": true
+    },
+    {
+      "file": "assets/index-DdRIcvdq.js",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/index-DdRIcvdq.js",
+      "status": 200,
+      "bytes": 9594,
+      "localSha256": "2485bf44e7da65d759ac7c386c7bb4456ea83c3d4c13e4806f21d0410b66bb46",
+      "liveSha256": "2485bf44e7da65d759ac7c386c7bb4456ea83c3d4c13e4806f21d0410b66bb46",
+      "match": true
+    },
+    {
+      "file": "assets/legal-jHNUIQik.css",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/legal-jHNUIQik.css",
+      "status": 200,
+      "bytes": 17909,
+      "localSha256": "3c1915832ecdfa1752d84dd6104291bb3033586e2e102edfc7faa460c283e629",
+      "liveSha256": "3c1915832ecdfa1752d84dd6104291bb3033586e2e102edfc7faa460c283e629",
+      "match": true
+    },
+    {
+      "file": "assets/main-BgR9BW87.css",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/main-BgR9BW87.css",
+      "status": 200,
+      "bytes": 17627,
+      "localSha256": "84309ecfe9b9872987aa92d6fb5cc29c1973cba897abade83e15007ce07f973c",
+      "liveSha256": "84309ecfe9b9872987aa92d6fb5cc29c1973cba897abade83e15007ce07f973c",
+      "match": true
+    },
+    {
+      "file": "assets/main-sIeC5FTr.js",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/main-sIeC5FTr.js",
+      "status": 200,
+      "bytes": 9835,
+      "localSha256": "a68d83b3b99f3b69eb660312fe1821dbb2dac9e4f36f7fe48b537b64b356fa0d",
+      "liveSha256": "a68d83b3b99f3b69eb660312fe1821dbb2dac9e4f36f7fe48b537b64b356fa0d",
+      "match": true
+    },
+    {
+      "file": "assets/modulepreload-polyfill-B5Qt9EMX.js",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/modulepreload-polyfill-B5Qt9EMX.js",
+      "status": 200,
+      "bytes": 711,
+      "localSha256": "d2a32840421496e872ade591618d2fa5c33797605d1aec04301717e5a90757d0",
+      "liveSha256": "d2a32840421496e872ade591618d2fa5c33797605d1aec04301717e5a90757d0",
+      "match": true
+    },
+    {
+      "file": "assets/phaserFixture-CT4Fb5Gf.js",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/phaserFixture-CT4Fb5Gf.js",
+      "status": 200,
+      "bytes": 1210235,
+      "localSha256": "63f5eb814f91272cd33e3e4ea06e4ec975dda6908279c343ae5a91c4ccd002a5",
+      "liveSha256": "63f5eb814f91272cd33e3e4ea06e4ec975dda6908279c343ae5a91c4ccd002a5",
+      "match": true
+    },
+    {
+      "file": "assets/replay-capsule-social.png",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/replay-capsule-social.png",
+      "status": 200,
+      "bytes": 457592,
+      "localSha256": "68991a142d2a942eb494dbbe10d9a312a209c70567bb3a554ef7c7c329241ba8",
+      "liveSha256": "68991a142d2a942eb494dbbe10d9a312a209c70567bb3a554ef7c7c329241ba8",
+      "match": true
+    },
+    {
+      "file": "assets/replay-instrument-600-kwAaNgdf.webp",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/replay-instrument-600-kwAaNgdf.webp",
+      "status": 200,
+      "bytes": 13250,
+      "localSha256": "00b303ddd7558421684649d60746068a31644ddf84002fa7bb6c5d81db7418ff",
+      "liveSha256": "00b303ddd7558421684649d60746068a31644ddf84002fa7bb6c5d81db7418ff",
+      "match": true
+    },
+    {
+      "file": "assets/route-focus-NNJLyGYl.js",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/route-focus-NNJLyGYl.js",
+      "status": 200,
+      "bytes": 535,
+      "localSha256": "4d45df5d1f33bfc8465cd6d1892c66df0ae69486048a9fd35ef15b6616d2747f",
+      "liveSha256": "4d45df5d1f33bfc8465cd6d1892c66df0ae69486048a9fd35ef15b6616d2747f",
+      "match": true
+    },
+    {
+      "file": "assets/space-mono-latin-400-normal-Rg4St2Dn.woff2",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-400-normal-Rg4St2Dn.woff2",
+      "status": 200,
+      "bytes": 16520,
+      "localSha256": "fb4a81a2d0a893e5c38c394a7e716a1cef0b24610a0af49c96f6d529bd66bf2b",
+      "liveSha256": "fb4a81a2d0a893e5c38c394a7e716a1cef0b24610a0af49c96f6d529bd66bf2b",
+      "match": true
+    },
+    {
+      "file": "assets/space-mono-latin-400-normal-_3DlpgIW.woff",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-400-normal-_3DlpgIW.woff",
+      "status": 200,
+      "bytes": 12312,
+      "localSha256": "d9d02a663d01b5d0a75eea2dce0ac220c0eb94aa0144f1191d0e7faff759716c",
+      "liveSha256": "d9d02a663d01b5d0a75eea2dce0ac220c0eb94aa0144f1191d0e7faff759716c",
+      "match": true
+    },
+    {
+      "file": "assets/space-mono-latin-700-normal-D7A851RN.woff",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-700-normal-D7A851RN.woff",
+      "status": 200,
+      "bytes": 12416,
+      "localSha256": "8cdde79ffa85d2b11cd81a8c8f8fee3708607f76acd07172150b9851723fdd0e",
+      "liveSha256": "8cdde79ffa85d2b11cd81a8c8f8fee3708607f76acd07172150b9851723fdd0e",
+      "match": true
+    },
+    {
+      "file": "assets/space-mono-latin-700-normal-mWgeinG7.woff2",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-700-normal-mWgeinG7.woff2",
+      "status": 200,
+      "bytes": 16724,
+      "localSha256": "2d46bd159b53f55c41167a4f1540a074649464194fd1e416f5b4694a6c0f282c",
+      "liveSha256": "2d46bd159b53f55c41167a4f1540a074649464194fd1e416f5b4694a6c0f282c",
+      "match": true
+    },
+    {
+      "file": "assets/space-mono-latin-ext-400-normal-D4cJI_B-.woff",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-ext-400-normal-D4cJI_B-.woff",
+      "status": 200,
+      "bytes": 12608,
+      "localSha256": "b0d1e7f54b1b37ba20c8f72349b93fef97284e5cc14b46bf73cfb6291da2a03c",
+      "liveSha256": "b0d1e7f54b1b37ba20c8f72349b93fef97284e5cc14b46bf73cfb6291da2a03c",
+      "match": true
+    },
+    {
+      "file": "assets/space-mono-latin-ext-400-normal-DTLbW2xa.woff2",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-ext-400-normal-DTLbW2xa.woff2",
+      "status": 200,
+      "bytes": 15832,
+      "localSha256": "44ad50c760fa8f5b62da3d489edb40adebabaf97988b9b0adbbc3f0be859050a",
+      "liveSha256": "44ad50c760fa8f5b62da3d489edb40adebabaf97988b9b0adbbc3f0be859050a",
+      "match": true
+    },
+    {
+      "file": "assets/space-mono-latin-ext-700-normal-B2s3bDs2.woff2",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-ext-700-normal-B2s3bDs2.woff2",
+      "status": 200,
+      "bytes": 15808,
+      "localSha256": "52edd9a8959ec3e68d618e2a4757182c0e61bfeea61679850cad8744a68cadf3",
+      "liveSha256": "52edd9a8959ec3e68d618e2a4757182c0e61bfeea61679850cad8744a68cadf3",
+      "match": true
+    },
+    {
+      "file": "assets/space-mono-latin-ext-700-normal-B_E7P90g.woff",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-ext-700-normal-B_E7P90g.woff",
+      "status": 200,
+      "bytes": 12484,
+      "localSha256": "cdd942f81bf6156a40ece4e19f1d66d0916e51b2d6fcd823032155ad1fcd5ed6",
+      "liveSha256": "cdd942f81bf6156a40ece4e19f1d66d0916e51b2d6fcd823032155ad1fcd5ed6",
+      "match": true
+    },
+    {
+      "file": "assets/space-mono-vietnamese-400-normal-B0PMp_xB.woff",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-vietnamese-400-normal-B0PMp_xB.woff",
+      "status": 200,
+      "bytes": 5412,
+      "localSha256": "244cca0de3abfffb55be745275012e2f4f2aaa8cff7e1f53040e08b0c6c2cebc",
+      "liveSha256": "244cca0de3abfffb55be745275012e2f4f2aaa8cff7e1f53040e08b0c6c2cebc",
+      "match": true
+    },
+    {
+      "file": "assets/space-mono-vietnamese-400-normal-BNOj0Qhp.woff2",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-vietnamese-400-normal-BNOj0Qhp.woff2",
+      "status": 200,
+      "bytes": 7272,
+      "localSha256": "a748973d5d192a27d69862f5af5f9182d4420d3a924e7b992ae82182e9b12cd8",
+      "liveSha256": "a748973d5d192a27d69862f5af5f9182d4420d3a924e7b992ae82182e9b12cd8",
+      "match": true
+    },
+    {
+      "file": "assets/space-mono-vietnamese-700-normal-D-KrLuLr.woff",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-vietnamese-700-normal-D-KrLuLr.woff",
+      "status": 200,
+      "bytes": 5448,
+      "localSha256": "9a88ac43284c16fbdb7317fe887442000a5aad8d11055ac3478911bc86253c6c",
+      "liveSha256": "9a88ac43284c16fbdb7317fe887442000a5aad8d11055ac3478911bc86253c6c",
+      "match": true
+    },
+    {
+      "file": "assets/space-mono-vietnamese-700-normal-DWQgDHuA.woff2",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-vietnamese-700-normal-DWQgDHuA.woff2",
+      "status": 200,
+      "bytes": 7332,
+      "localSha256": "97f6df0559c6393b851812484ae859b7c539815d5fcdab7d17234492480fa16c",
+      "liveSha256": "97f6df0559c6393b851812484ae859b7c539815d5fcdab7d17234492480fa16c",
+      "match": true
+    },
+    {
+      "file": "demo.html",
+      "url": "https://browser-game-replay-capsule.sociobot.in/demo",
+      "status": 200,
+      "bytes": 6581,
+      "localSha256": "d0c85e901b4b09f2c753571a05a8c1da30b50f82c88fb5cee754c6c19566710f",
+      "liveSha256": "d0c85e901b4b09f2c753571a05a8c1da30b50f82c88fb5cee754c6c19566710f",
+      "match": true
+    },
+    {
+      "file": "favicon.svg",
+      "url": "https://browser-game-replay-capsule.sociobot.in/favicon.svg",
+      "status": 200,
+      "bytes": 407,
+      "localSha256": "3ed77f0d4a35d4b3f09dec8c7d11b910bde0b57ae52d51517e88e911eed5655c",
+      "liveSha256": "3ed77f0d4a35d4b3f09dec8c7d11b910bde0b57ae52d51517e88e911eed5655c",
+      "match": true
+    },
+    {
+      "file": "index.html",
+      "url": "https://browser-game-replay-capsule.sociobot.in/",
+      "status": 200,
+      "bytes": 10879,
+      "localSha256": "c502c923054783b81561ce8502647130f464f0fa7dcebb3d911bda32cd816062",
+      "liveSha256": "c502c923054783b81561ce8502647130f464f0fa7dcebb3d911bda32cd816062",
+      "match": true
+    },
+    {
+      "file": "phaser-fixture.html",
+      "url": "https://browser-game-replay-capsule.sociobot.in/phaser-fixture.html",
+      "status": 200,
+      "bytes": 547,
+      "localSha256": "aa8f76e2a70078169e371cd4feaae6cffe35b341f9e7ec1dce7e9c5b292027c3",
+      "liveSha256": "aa8f76e2a70078169e371cd4feaae6cffe35b341f9e7ec1dce7e9c5b292027c3",
+      "match": true
+    },
+    {
+      "file": "privacy/index.html",
+      "url": "https://browser-game-replay-capsule.sociobot.in/privacy/",
+      "status": 200,
+      "bytes": 3597,
+      "localSha256": "ff7e8443ecccb779736a67bef53518841ff27b727c9870bb01bca7db7722bbb0",
+      "liveSha256": "ff7e8443ecccb779736a67bef53518841ff27b727c9870bb01bca7db7722bbb0",
+      "match": true
+    },
+    {
+      "file": "releases/sociobot-replay-capsule-0.1.6.tgz",
+      "url": "https://browser-game-replay-capsule.sociobot.in/releases/sociobot-replay-capsule-0.1.6.tgz",
+      "status": 200,
+      "bytes": 11114,
+      "localSha256": "87a7e529f884fcd30d925d5850163a5654c689f7442a26a16cf16bfad038d007",
+      "liveSha256": "87a7e529f884fcd30d925d5850163a5654c689f7442a26a16cf16bfad038d007",
+      "match": true
+    },
+    {
+      "file": "releases/sociobot-replay-capsule-0.1.7.tgz",
+      "url": "https://browser-game-replay-capsule.sociobot.in/releases/sociobot-replay-capsule-0.1.7.tgz",
+      "status": 200,
+      "bytes": 11631,
+      "localSha256": "a1156c75080b556d4fa0d34a6d36ce7e8772e69538b46c3325e351dfd44c859b",
+      "liveSha256": "a1156c75080b556d4fa0d34a6d36ce7e8772e69538b46c3325e351dfd44c859b",
+      "match": true
+    },
+    {
+      "file": "robots.txt",
+      "url": "https://browser-game-replay-capsule.sociobot.in/robots.txt",
+      "status": 200,
+      "bytes": 93,
+      "localSha256": "202570edd374dc0ce6843ca6608576495a49ada937135942d621129b8f403611",
+      "liveSha256": "202570edd374dc0ce6843ca6608576495a49ada937135942d621129b8f403611",
+      "match": true
+    },
+    {
+      "file": "sitemap.xml",
+      "url": "https://browser-game-replay-capsule.sociobot.in/sitemap.xml",
+      "status": 200,
+      "bytes": 420,
+      "localSha256": "0e7e1d831bf9e0797c3816ddab14c1c9a07a5eeadf26c9fba0303a5660b72e43",
+      "liveSha256": "0e7e1d831bf9e0797c3816ddab14c1c9a07a5eeadf26c9fba0303a5660b72e43",
+      "match": true
+    },
+    {
+      "file": "terms/index.html",
+      "url": "https://browser-game-replay-capsule.sociobot.in/terms/",
+      "status": 200,
+      "bytes": 3395,
+      "localSha256": "8f7b2feb466e77f03f1d4ff50052edbb54dc2310a6c4491c09f93c01669406a7",
+      "liveSha256": "8f7b2feb466e77f03f1d4ff50052edbb54dc2310a6c4491c09f93c01669406a7",
+      "match": true
+    }
+  ]
+}
