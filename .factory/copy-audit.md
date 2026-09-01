@@ -1,6 +1,6 @@
 # Copy audit
 
-Audited: 2026-09-01 after polish 4. Visible landing, demo-state, README, and legal copy was checked. Code samples, URLs, and generated values are excluded. No sentence exceeds 22 words or uses a banned marketing term.
+Audited: 2026-09-01 after polish 5. Visible landing, demo-state, README, and legal copy was checked. Code samples, URLs, and generated values are excluded. No sentence exceeds 22 words or uses a banned marketing term.
 
 ## Landing page
 
@@ -17,7 +17,7 @@ Audited: 2026-09-01 after polish 4. Visible landing, demo-state, README, and leg
 | Copy install command | 3 | Pass — result-naming action |
 | Record, import, and replay offline after this page loads | 9 | Pass — `offline-demo` |
 | Free under the MIT License | 5 | Pass — `mit-license` |
-| No tracking or server calls | 5 | Pass — `no-network-calls` |
+| No tracking or API calls | 5 | Pass — `no-network-calls` |
 | Input sequence / Same sequence | 4 | Pass — diagram labels |
 | An illustrated cream and petrol recorder passing the same sequence of game-event shapes from one side to the other. | 19 | Pass — image alternative |
 | Seed, inputs, and timing in one capped file. | 8 | Pass |
@@ -128,7 +128,7 @@ Every README capability is tied to an exact claim regression. Audience descripti
 | Demo records, imports, and replays after first load while offline | `offline-demo` |
 | Changed gamepad samples use observation time and optional browser timestamps | `gamepad-sampling` |
 | Imports reject malformed, unsupported, and over-limit files | `validated-import` |
-| No persistence, cookies, telemetry, network requests, or runtime dependencies | `no-browser-persistence`, `no-network-calls`, `zero-runtime-dependencies` |
+| No API or tracking calls; demo uses only known same-origin static files | `no-network-calls` |
 | Node.js 20 runs both package formats | `node-20-runtime` |
 | MIT license | `mit-license` |
 | `npm run build` prepares the served tarball | Full `npm run build`; `installable-release` installs that artifact |

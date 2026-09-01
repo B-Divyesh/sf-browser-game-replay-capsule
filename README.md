@@ -93,7 +93,7 @@ The package exports ESM, CommonJS, and declarations. The `ReplayEvent`, `ReplayC
 - After its first load, the demo can record, import, and replay while the browser is offline. It does not claim that an offline reload works.
 - Gamepads are sampled once per animation frame, but browser gamepad timestamps are inconsistent. Replay Capsule timestamps the sample at observation time and stores the browser timestamp only as optional diagnostic metadata.
 - Capsule imports are schema-validated and reject malformed, unsupported, or over-limit files.
-- No network requests, persistence, telemetry, cookies, or third-party runtime dependencies.
+- The library makes no API or tracking calls. The demo uses only known same-origin static files.
 
 ## Development
 

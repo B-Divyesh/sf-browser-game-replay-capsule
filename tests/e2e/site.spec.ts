@@ -60,7 +60,7 @@ test('keeps all first-screen facts visible at the exact 390 by 844 phone edge', 
   const facts = page.locator('.trust-line')
   await expect(facts).toContainText('Record, import, and replay offline after this page loads')
   await expect(facts).toContainText('Free under the MIT License')
-  await expect(facts).toContainText('No tracking or server calls')
+  await expect(facts).toContainText('No tracking or API calls')
   const box = await facts.boundingBox()
   expect(box).not.toBeNull()
   expect(box!.y + box!.height).toBeLessThanOrEqual(844)
@@ -159,15 +159,34 @@ test('@claim:sample-demo loads isolated sample data in one click and can reset o
   await expect(page.locator('#demo-banner')).toBeHidden()
 })
 
-test('@claim:no-network-calls uses only same-origin assets and makes no API calls', async ({ page }) => {
-  const requests: string[] = []
-  page.on('request', (request) => requests.push(request.url()))
+test('@claim:no-network-calls permits only known same-origin static requests and no API or tracking calls', async ({ page }) => {
+  const requests: Array<{ method: string; resourceType: string; url: string }> = []
+  page.on('request', (request) => requests.push({
+    method: request.method(),
+    resourceType: request.resourceType(),
+    url: request.url(),
+  }))
   await page.goto('/demo')
+  await page.evaluate(() => document.fonts.ready)
   await page.getByRole('button', { name: 'Replay capsule' }).click()
   await expect(page.locator('#demo-message')).toContainText('Replay complete')
   const origin = new URL(page.url()).origin
+
+  const isKnownStaticPath = (pathname: string) => pathname === '/demo'
+    || pathname === '/favicon.svg'
+    || pathname === '/apple-touch-icon.png'
+    || /^\/assets\/[a-zA-Z0-9_-]+\.(?:css|js|woff2|png|svg|webp)$/.test(pathname)
+
   expect(requests).not.toEqual([])
-  expect(requests.every((url) => new URL(url).origin === origin)).toBe(true)
+  for (const request of requests) {
+    const url = new URL(request.url)
+    expect(url.origin, `${request.method} ${request.url} must stay on this origin`).toBe(origin)
+    expect(request.method, `${request.url} must be a static GET`).toBe('GET')
+    expect(['document', 'script', 'stylesheet', 'font', 'image'], `${request.url} must be a static resource type`).toContain(request.resourceType)
+    expect(url.search, `${request.url} must not send request data`).toBe('')
+    expect(isKnownStaticPath(url.pathname), `${request.resourceType} ${url.pathname} is not an approved static path`).toBe(true)
+    expect(url.pathname, `${url.pathname} must not be an API, analytics, tracking, or telemetry path`).not.toMatch(/^\/(?:api|analytics|track|tracking|collect|events|telemetry)(?:\/|$)/i)
+  }
 })
 
 test('@claim:opt-in-recording captures nothing before the person starts recording', async ({ page }) => {

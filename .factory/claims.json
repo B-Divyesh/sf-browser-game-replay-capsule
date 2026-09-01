@@ -8,10 +8,10 @@
   },
   {
     "id": "no-network-calls",
-    "claim": "The library makes no network calls; the demo uses only same-origin static files and no API, analytics, or third-party runtime service.",
+    "claim": "The library makes no API or tracking calls; the demo uses only known same-origin static files.",
     "where": "landing facts, demo telemetry, privacy page, README",
     "test": "npm run test:e2e -- --grep @claim:no-network-calls",
-    "sandbox": "fresh /demo load and replay; record every request and assert every URL is same-origin"
+    "sandbox": "fresh /demo load and replay; record every request and allow only same-origin GET document, script, stylesheet, font, and image requests at known static paths; reject API, analytics, tracking, telemetry, data-bearing, and third-party requests"
   },
   {
     "id": "opt-in-recording",
