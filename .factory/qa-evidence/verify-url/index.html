@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Replay browser-game bugs from a small local file with inputs, timing, a seed, and checkpoints.">
+    <meta name="theme-color" content="#e7dfca">
+    <link rel="canonical" href="https://browser-game-replay-capsule.sociobot.in/">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Replay Capsule — replay browser-game bugs">
+    <meta property="og:description" content="Capture inputs, timing, a seed, and checkpoints in one local replay file.">
+    <meta property="og:url" content="https://browser-game-replay-capsule.sociobot.in/">
+    <meta property="og:image" content="https://browser-game-replay-capsule.sociobot.in/assets/replay-capsule-social.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Replay Capsule — replay browser-game bugs">
+    <meta name="twitter:description" content="Capture inputs, timing, a seed, and checkpoints in one local replay file.">
+    <meta name="twitter:image" content="https://browser-game-replay-capsule.sociobot.in/assets/replay-capsule-social.png">
+    <title>Replay Capsule — replay browser-game bugs</title>
+    <script type="module" crossorigin src="/assets/modulepreload-polyfill-B5Qt9EMX.js"></script>
+    <script type="module" crossorigin src="/assets/route-focus-NNJLyGYl.js"></script>
+    <script type="module" crossorigin src="/assets/index-BYGb439p.js"></script>
+    <script type="module" crossorigin src="/assets/main-CbQnEBVy.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/main-CRc6bC0B.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <header class="site-header">
+      <a class="wordmark" href="/"><span aria-hidden="true">RC—01</span> Replay Capsule</a>
+      <nav aria-label="Main navigation">
+        <a href="/demo">Demo</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+      </nav>
+    </header>
+    <section class="demo-banner" id="demo-banner" hidden aria-label="Demo controls">
+      <p><strong>Demo — sample data, nothing is saved.</strong> This run stays in memory and is discarded when you leave.</p>
+      <div><button class="button" id="reset-demo" type="button">Reset demo</button><a class="button" id="start-real" href="/">Start for real</a></div>
+    </section>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="status-lamp" aria-hidden="true"></span> Local replay files for browser games</p>
+          <h1 id="hero-title" tabindex="-1">Replay browser-game bugs from a small file.</h1>
+          <p class="lede">For solo 2D game developers who need a bug report that repeats the player’s inputs and timing.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="/demo">Try it with sample data</a>
+            <span class="action-note">Loads a seeded bug run you can replay.</span>
+            <button class="button copy-install" type="button" data-copy="npm install https://browser-game-replay-capsule.sociobot.in/releases/sociobot-replay-capsule-0.1.6.tgz">Copy install command</button>
+          </div>
+          <p class="copy-result" role="status" aria-live="polite"></p>
+          <ul class="trust-line" aria-label="Product properties">
+            <li>Works offline after this page loads</li>
+            <li>Free under the MIT License</li>
+            <li>No tracking or server calls</li>
+          </ul>
+        </div>
+        <figure class="hero-figure">
+          <div class="figure-label"><span>Input sequence</span><span>Same sequence</span></div>
+          <img src="/assets/replay-instrument-600-kwAaNgdf.webp" width="600" height="400" fetchpriority="high" alt="An illustrated cream and petrol recorder passing the same sequence of game-event shapes from one side to the other.">
+          <figcaption>Seed, inputs, and timing in one capped file.</figcaption>
+        </figure>
+      </section>
+
+      <section class="signal-strip" aria-label="Replay flow">
+        <div><span>01</span><strong>Start</strong><small>A person starts recording</small></div>
+        <div><span>02</span><strong>Capture</strong><small>Inputs, timing, and seed</small></div>
+        <div><span>03</span><strong>Replay</strong><small>Your game applies events</small></div>
+      </section>
+
+      <section class="demo-section" id="demo" aria-labelledby="demo-title">
+        <div class="section-intro">
+          <p class="eyebrow">Live package demo</p>
+          <h2 id="demo-title">Record and replay a sample bug.</h2>
+          <p>Start recording, steer the probe, and reach a red fault cell. Download the file or import it again to replay the path.</p>
+        </div>
+
+        <div class="workbench">
+          <section class="control-bank" aria-labelledby="control-title">
+            <div class="panel-heading">
+              <h3 id="control-title">Capture controls</h3>
+              <div class="record-state" data-state="idle"><span class="lamp" aria-hidden="true"></span><span id="record-state">Ready</span></div>
+            </div>
+
+            <div class="scope-wrap">
+              <canvas id="game" width="720" height="400" tabindex="0" aria-label="Probe navigation game. Use arrow keys or click to move; avoid striped fault cells and reach the round beacon."></canvas>
+              <div class="scope-overlay" id="scope-overlay">
+                <strong>Ready to record</strong>
+                <span>Start recording to begin a seeded run.</span>
+              </div>
+            </div>
+            <p class="key-hint"><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd> steer · pointer moves probe · avoid fault cells</p>
+
+            <div class="button-row">
+              <button class="button primary" id="record" type="button">Start recording</button>
+              <button class="button" id="stop" type="button" disabled>Stop recording</button>
+              <button class="button" id="reset" type="button">Reset run</button>
+            </div>
+            <div class="button-row secondary-row">
+              <button class="button" id="export" type="button" disabled>Download capsule</button>
+              <input id="import" type="file" accept="application/json,.json" class="visually-hidden">
+              <label class="button file-button" id="import-label" for="import">Import capsule</label>
+              <button class="button" id="replay" type="button" disabled>Replay capsule</button>
+            </div>
+
+            <div class="timeline" role="progressbar" aria-label="Replay progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="timeline-fill"></span></div>
+            <p class="demo-message" id="demo-message" role="status" aria-live="polite">No input has been captured yet. This tab does not save your run.</p>
+          </section>
+
+          <section class="telemetry" aria-labelledby="telemetry-title">
+            <h3 id="telemetry-title">Capsule details</h3>
+            <dl>
+              <div><dt>Seed</dt><dd id="seed-readout">—</dd></div>
+              <div><dt>Events</dt><dd id="event-readout">0</dd></div>
+              <div><dt>Elapsed</dt><dd id="time-readout">0.00 s</dd></div>
+              <div><dt>Payload</dt><dd id="size-readout">0 / 128 KB</dd></div>
+              <div><dt>Network</dt><dd>None</dd></div>
+            </dl>
+            <div class="cap-gauge" role="progressbar" aria-label="Capsule capacity used" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="cap-fill"></span></div>
+            <p><strong>Captured:</strong> key codes, pointer positions, changed gamepad samples, your seed, and checkpoints.</p>
+            <p><strong>Not captured:</strong> typed text, DOM content, identity, cookies, or network traffic.</p>
+          </section>
+        </div>
+        <div class="offline-note" id="offline-note" hidden role="status"><strong>You are offline.</strong> Good news: recording, import, and replay still work. The library never needs a server.</div>
+      </section>
+
+      <section class="explain" aria-labelledby="why-title">
+        <div class="section-intro">
+          <p class="eyebrow">What the library does</p>
+          <h2 id="why-title">Keep the bug report small and private.</h2>
+        </div>
+        <div class="explain-grid">
+          <article><span aria-hidden="true">⌁</span><h3>Use your game adapter</h3><p>Your game adapter receives each stored event through a callback.</p></article>
+          <article><span aria-hidden="true">◉</span><h3>Stay inside the byte cap</h3><p>The recorder stops before it crosses the configured cap. The default cap is 128 KB.</p></article>
+          <article><span aria-hidden="true">↺</span><h3>Control replay timing</h3><p>Replay at normal speed or faster. Pause, resume, and stop are available in the public API.</p></article>
+        </div>
+      </section>
+
+      <section class="install-section" id="install" aria-labelledby="install-title">
+        <div class="section-intro">
+          <p class="eyebrow">Install the library</p>
+          <h2 id="install-title">Add replay capture to your game loop.</h2>
+        </div>
+        <div class="code-panel">
+          <div class="code-title"><span>recorder.ts</span><button type="button" class="copy-code" data-copy-target="install-code">Copy code</button></div>
+          <pre id="install-code" tabindex="0" aria-label="TypeScript recorder example"><code><span class="code-key">import</span> { createRecorder, downloadCapsule } <span class="code-key">from</span> <span class="code-str">'@sociobot/replay-capsule'</span>
+
+<span class="code-key">const</span> recorder = createRecorder({
+  seed: world.seed,
+  target: game.canvas,
+  maxBytes: <span class="code-num">128_000</span>
+})
+
+reportButton.onclick = () =&gt; recorder.start()
+recorder.checkpoint(<span class="code-str">'level-loaded'</span>, { level: <span class="code-num">7</span> })
+downloadCapsule(recorder.export())</code></pre>
+        </div>
+        <p class="release-note">This versioned npm tarball is hosted with the documentation while registry publication is pending.</p>
+      </section>
+    </main>
+
+    <footer>
+      <div><strong>Replay Capsule</strong><p>Local replay files for browser-game debugging.</p><p class="build-id">Built by Param Factory · v0.1.6 · polish-2</p></div>
+      <nav aria-label="Legal"><a href="/demo">Demo</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></nav>
+    </footer>
+  </body>
+</html>

@@ -1,36 +1,49 @@
-# Replay Capsule polish 2 handoff
+# Replay Capsule verification 10 handoff — FAIL
 
-## Delivered
+## Result
 
-Repair commit: `3847829c9346243d8b5ba0df2d185db7c10ee936` (`fix: close replay capsule polish findings`), pushed to `origin/main`.
+**FAIL** for candidate `2d6af00c47fe220f3585c8155cbbb098676c2f09` at https://browser-game-replay-capsule.sociobot.in, verified 2026-09-01 UTC.
 
-All 15 review-2 findings are repaired. The product keeps its mid-century instrument-panel identity while the direct demo becomes a compact, seeded application view. `/demo` and `?demo=1` show the isolated sample banner, seed `RC-SAMPLE-FAULT-17`, one event, a `fault-contact` checkpoint, and an immediate replay action on a 390×844 phone.
+The live deployment is byte-identical to the candidate for routed HTML, the core assets, and the hosted `0.1.6` package. The visible demo and package APIs work, but release-blocking defects remain:
 
-The repair adds two privacy claims (real-mode browser persistence and capture surface), a pinned Node 20 package-runtime claim, exact replay-sequence/outcome proof, and a browser-running Phaser scene claim that imports 20 capsules and reproduces 20 failures. Navigation, legal links, titles, route focus, 404, copy, metadata, and first-screen facts were also rechecked. Details are mapped in `.factory/polish-2.md`.
+1. The live Phaser acceptance fixture does not initialize under the deployed CSP. It stays at “Starting Phaser,” logs blocked `data:` images and a page error, and cannot run the 20 seeded capsules.
+2. The exact `seeded-failure-fixture` command in `.factory/claims.json` executes zero tests; all 31 Vitest tests are skipped by that filter.
+3. Keyboard-only recording stores the demo controls' Enter and Tab events. Two gameplay keys produced an eight-event capsule.
+4. Mobile header links are only 33–41 px wide, below the 44 × 44 px target baseline.
+5. Offline import/replay copy is stronger than the recording-only assertion in its listed claim test.
 
-## Run and verify
+Full evidence and reproduction details are in [.factory/verification-10.md](verification-10.md). Screenshots and the Lighthouse report are under `.factory/qa-evidence/`.
+
+## What passed
+
+- Cold first-read and one-click sample demo
+- `npm ci` with zero audit vulnerabilities
+- `npm run lint`
+- `npm run typecheck`
+- `npm test` — 31/31
+- `npm run build`
+- `npm run test:e2e` — 47 passed, 3 expected skips
+- `npm pack --dry-run` — 11.1 kB, seven files
+- Live normal recording, export, valid/invalid import recovery, and replay
+- Hosted-package install in clean CommonJS and ESM consumers
+- Same-origin request/privacy checks and secure response headers
+- Axe on landing, demo, legal, and 404 pages
+- Lighthouse mobile: 94 performance, 100 accessibility, 100 best practices, 100 SEO; LCP 1.38 s; CLS 0.00051
+- 390 px layout, reduced motion, 200% text, and visible focus
+
+## Reproduce
 
 ```sh
 npm ci
-npm run check
+npm run lint
+npm run typecheck
+npm test
+npm run build
+npm run test:e2e
+npm pack --dry-run
+npm test -- --testNamePattern @claim:seeded-failure-fixture
 ```
 
-`npm run check` runs typecheck, the 31-unit/package-test suite, production build, and 50 Playwright desktop/mobile tests. Every exact command in `.factory/claims.json` was also run from fresh clone `/tmp/replay-capsule-clean-zJPqAJ` after `npm ci`; all passed. The clean clone then passed `npm run check`.
+Open the live `/phaser-fixture.html` with the console visible to reproduce the deployed CSP failure. Use only the keyboard on `/`: start recording with Enter, press two Arrow keys, Tab to Stop, and press Enter; the capsule contains eight events instead of four gameplay events.
 
-Build output is `dist/` and the documentation site is `dist/site/`. Use `npm pack --dry-run` to inspect the publishable package; do not publish from this worker.
-
-## Evidence
-
-- Local `npm run check`: pass.
-- Fresh clone `npm run check`: pass (31 unit/package tests; 50 browser tests).
-- All claim commands: pass, including `@claim:seeded-failure-fixture`, `@claim:record-export-replay`, `@claim:no-browser-persistence`, `@claim:capture-surface`, and `@claim:node-20-runtime`.
-- Axe browser scans on landing, demo, legal pages, and 404: zero violations. Browser regressions check title, `lang`, one h1, main, alt text, focus, mobile targets, routing, and console errors.
-- [Local desktop demo evidence](verification-artifacts/polish-2-local/demo-desktop.png) and [390×844 demo evidence](verification-artifacts/polish-2-local/demo-mobile.png).
-
-## Deployment status
-
-The static deployment source was pushed to `origin/main`. At 2026-08-30 08:08 UTC, the public hostname still served the preceding `polish-1` build (`ETag "65239227"`), so it has not yet been possible to truthfully record a successful cold live recheck. The deployment configuration is not present in this repository and no scoped Static Web App deployment command completed from the worker. Once the factory static deploy has picked up `3847829`, open `https://browser-game-replay-capsule.sociobot.in/demo` cold at 390×844 and 1440×900, then run the same live Axe/basic checks before declaring the release live.
-
-## Known gaps
-
-No code or test gaps remain. The only outstanding external state is the static host serving the pushed commit; the prior live build is still cached/deployed as noted above.
+No product code was modified during verification.
