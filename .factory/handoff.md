@@ -1,55 +1,50 @@
-# Replay Capsule polish 4 handoff — PASS
+# Replay Capsule verification 13 handoff — PASS
 
 ## Result
 
-All findings in `.factory/review-1.md` through `.factory/review-4.md` are resolved. The TypeScript npm library still ships ESM, CommonJS, declarations, and a static documentation/demo site. Repair code is commit `5dd6b77abca5ddda3ca5edb0df32eed5720d6e03`.
+**PASS** for candidate `e119ca8a10198445a945ce207dd5f60d76914108` at https://browser-game-replay-capsule.sociobot.in.
 
-The current round:
+Fresh independent QA found no release-blocking, high, medium, or low defects. No product code was changed. The detailed report is `.factory/verification-13.md`.
 
-- wraps the shared phone header when loaded text is enlarged to 200%, without changing the normal first-screen composition;
-- adds exact claims and outcome tests for Phaser canvas recording, `shouldCaptureKey`, and near-cap download/import;
-- maps every README capability to claim evidence in `.factory/copy-audit.md`;
-- replaces undefined registry language with the current hosted 0.1.7 install and build facts;
-- updates the catalog line and all route build labels for polish 4.
+## What was verified
 
-The one-click demo remains available at `/?demo=1` and canonical `/demo`. It uses `demo:replay-capsule:memory`, shows the persistent sample-data banner, resets to `RC-SAMPLE-FAULT-17`, and exits to the separate real-mode namespace.
+- All 25 exact `.factory/claims.json` commands passed after `npm ci`.
+- The cold first screen plainly states the job and audience and offers a one-click **Try it with sample data** action.
+- `npm run typecheck`, `npm run lint`, `npm test`, `npm run build`, `npm run test:e2e`, and `npm pack --dry-run` passed.
+- Full results: 32/32 unit/package/configuration tests; 52 browser tests passed with 4 intentional cross-project skips.
+- The live demo completed sample replay, four-event record/export/import/replay, malformed-import recovery, and offline-after-load use.
+- The live Phaser fixture reproduced 20/20 seeded failures and recorded normalized canvas input.
+- A clean consumer installed the hosted 0.1.7 tarball and exercised ESM and CommonJS.
+- The complete live request log remained same-origin. Browser storage, cookies, caches, and service-worker registrations remained empty.
+- Factory URL verification and Axe passed all routes with no console/page errors and no accessibility violations.
+- Desktop, 390 px mobile, keyboard-only navigation, visible focus, reduced motion, 200% text, and 44 px targets passed.
+- Mobile Lighthouse scored 100 performance, 100 accessibility, 100 best practices, and 100 SEO. LCP was 1.4 s; CLS was 0; TBT was 30 ms.
+- All 42 compared public files byte-match the fresh candidate build. HTML uses short revalidation; hashed assets and release tarballs use immutable one-year caching. Security headers are present.
 
-## Verification
-
-A fresh clone ran:
+## Run again
 
 ```sh
 npm ci
-# Every exact command in .factory/claims.json
-npm run check
+# Run every command in .factory/claims.json separately
+npm run typecheck
 npm run lint
+npm test
+npm run build
+npm run test:e2e
 npm pack --dry-run
 ```
 
-Results:
+Live verification evidence is under `.factory/verification-artifacts/verify-13-live/`.
 
-- All 25 exact claim commands passed separately. Logs are in `.factory/verification-artifacts/polish-4-clean/`.
-- `npm run check` passed 32 unit/package tests and 52 browser tests, with four intentional cross-project skips.
-- Browser tests cover routing, titles, metadata, route focus, real HTTP 404, keyboard use, touch targets, reduced motion, loaded-font 200% text, Axe, privacy, and offline operation.
-- `npm pack --dry-run` produced the seven-file, 11.6 KB `@sociobot/replay-capsule@0.1.7` package.
-- Local Lighthouse: performance 99, accessibility 100, best practices 100, SEO 100; LCP 1.7 s, CLS 0, TBT 0 ms.
-- Live Lighthouse: 100/100/100/100; LCP 1.4 s, CLS 0, TBT 0 ms, 97 KiB total transfer.
-- At 390×844 with fonts loaded, the normal facts end at 821.422 px. At 200% text, every checked route remains 390 px wide and every header link stays inside the viewport.
-- Live Axe found zero violations on `/`, `/demo`, `/privacy/`, `/terms/`, and the designed HTTP-404 route.
-- The cold live flow used only the product origin, wrote no browser storage, replayed offline after first load, and produced no normal-route console errors.
-- The live Phaser fixture recorded a normalized real canvas click and reproduced 20 of 20 imported seeded failures.
-- All 41 checked public files byte-match `dist/site`. The hosted tarball also installs and runs through both ESM and CommonJS.
+## Service checks
 
-Primary evidence is in `.factory/polish-4.md`, `.factory/verification-artifacts/polish-4-clean/`, `polish-4-local/`, and `polish-4-live/`.
+Replay Capsule is a static npm-library site with no backend endpoints, unlock calls, accounts, or PWA service worker. Rate-limit/429, persistence, concurrency, health endpoint, Entra sign-in, and service-worker update checks are therefore not applicable. Loaded-page offline behavior is covered and passed.
 
-## Deployment
+## Defects and next steps
 
-- URL: `https://browser-game-replay-capsule.sociobot.in`
-- Scoped resource: `sf-browser-game-replay-capsule`
-- Static deployment ID: `8f4b60f4-2c5f-4a77-84c3-da8ae781f135`
-- Deployed root: `dist/site`
-- Security policy: self-only CSP, `frame-ancestors 'none'`, `X-Frame-Options: DENY`, nosniff, strict referrer policy, and disabled camera/microphone/geolocation.
-
-## Known gaps and next steps
-
-None. Registry publication remains outside this worker’s scope and is not presented as an available or pending user path. The tested hosted tarball is the current install route.
+- Release-blocking: none.
+- High: none.
+- Medium: none.
+- Low: none.
+- Known gaps: none.
+- Next step: registry publication remains outside this verifier’s scope; the tested hosted tarball is ready and available.
