@@ -170,7 +170,10 @@ footer nav a { min-width: 44px; justify-content: center; }
   .site-header nav { gap: 8px; }
   .site-header nav a { min-height: 44px; font-size: .78rem; }
   .demo-banner { margin: 16px 20px 0; padding: 16px; align-items: flex-start; flex-direction: column; }
-  .hero { padding: 40px 20px 48px; gap: 36px; }
+  /* Keep the complete offline, price, and privacy fact set inside a cold
+     390 × 844 first view while retaining room below the final fact. */
+  .hero { padding: 20px 20px 48px; gap: 36px; }
+  .trust-line { margin-top: 8px; }
   h1 { font-size: clamp(3rem, 15vw, 4.2rem); }
   .hero-actions .button { width: 100%; }
   .action-note { max-width: none; }

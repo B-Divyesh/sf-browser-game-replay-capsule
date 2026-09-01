@@ -1,1 +1,1 @@
-Record browser-game bugs as small local replay files.
+Replay browser-game bugs from small local files.

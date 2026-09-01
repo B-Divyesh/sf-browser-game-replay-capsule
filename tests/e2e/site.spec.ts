@@ -46,9 +46,24 @@ test('keeps all first-screen facts visible on desktop', async ({ page }, testInf
   test.skip(testInfo.project.name !== 'chromium', 'This is a desktop first-screen regression.')
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
+  await page.evaluate(() => document.fonts.ready)
   const box = await page.locator('.trust-line').boundingBox()
   expect(box).not.toBeNull()
   expect(box!.y + box!.height).toBeLessThanOrEqual(900)
+})
+
+test('keeps all first-screen facts visible at the exact 390 by 844 phone edge', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile', 'This is the required cold phone first-screen regression.')
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/')
+  await page.evaluate(() => document.fonts.ready)
+  const facts = page.locator('.trust-line')
+  await expect(facts).toContainText('Record, import, and replay offline after this page loads')
+  await expect(facts).toContainText('Free under the MIT License')
+  await expect(facts).toContainText('No tracking or server calls')
+  const box = await facts.boundingBox()
+  expect(box).not.toBeNull()
+  expect(box!.y + box!.height).toBeLessThanOrEqual(844)
 })
 
 test('the trailing demo URL resolves to the canonical demo URL', async ({ page }) => {

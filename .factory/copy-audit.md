@@ -1,6 +1,6 @@
 # Copy audit
 
-Audited: 2026-09-01. Visible landing, demo, README, and legal copy was checked after repair 8. Code samples, URLs, and generated values are excluded. No listed sentence exceeds 22 words or uses a banned marketing term.
+Audited: 2026-09-01. Visible landing, demo, README, and legal copy was checked after polish 3. Code samples, URLs, and generated values are excluded. No listed sentence exceeds 22 words or uses a banned marketing term.
 
 | Copy | Words | Result |
 | --- | ---: | --- |
@@ -36,4 +36,4 @@ Audited: 2026-09-01. Visible landing, demo, README, and legal copy was checked a
 | Isolated sample experience | demo |
 | Local UI counters | capsule details |
 
-The first screen says the job, audience, first action, result, offline behavior, price, and privacy in one view. The catalog line is verb-first: “Record browser-game bugs as small local replay files.”
+The first screen says the job, audience, first action, result, offline behavior, price, and privacy in one view. The catalog line is verb-first: “Replay browser-game bugs from small local files.”
