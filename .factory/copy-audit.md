@@ -1,13 +1,13 @@
 # Copy audit
 
-Audited: 2026-08-30. Visible landing, demo, README, and legal copy was checked after polish 2. Code samples, URLs, and generated values are excluded. No listed sentence exceeds 22 words or uses a banned marketing term.
+Audited: 2026-09-01. Visible landing, demo, README, and legal copy was checked after repair 8. Code samples, URLs, and generated values are excluded. No listed sentence exceeds 22 words or uses a banned marketing term.
 
 | Copy | Words | Result |
 | --- | ---: | --- |
 | Replay browser-game bugs from a small file. | 7 | Pass |
 | For solo 2D game developers who need a bug report that repeats the player’s inputs and timing. | 17 | Pass |
 | Loads a seeded bug run you can replay. | 8 | Pass |
-| Works offline after this page loads | 6 | Pass; tested offline fact |
+| Record, import, and replay offline after this page loads | 9 | Pass; tested offline fact |
 | Free under the MIT License | 5 | Pass; tested price fact |
 | No tracking or server calls | 5 | Pass; tested privacy fact |
 | A person starts recording | 4 | Pass |

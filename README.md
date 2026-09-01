@@ -11,7 +11,7 @@ Open [the sample demo](https://browser-game-replay-capsule.sociobot.in/demo), or
 ## Install
 
 ```sh
-npm install https://browser-game-replay-capsule.sociobot.in/releases/sociobot-replay-capsule-0.1.6.tgz
+npm install https://browser-game-replay-capsule.sociobot.in/releases/sociobot-replay-capsule-0.1.7.tgz
 ```
 
 This versioned npm tarball is available now.
@@ -69,10 +69,10 @@ await player.play()
 
 The repository includes [a small Phaser 3 scene](examples/phaser-seeded-failure.ts). It records from Phaser’s canvas and replays imported files through the scene adapter. Its deterministic game model lives beside it for auditing without bundling Phaser into this package.
 
-`tests/phaser-fixture.test.ts` imports 20 generated replay files. It reproduces all 20 seeded fault outcomes. The target is 18 of 20 (90%). Run it with the full test suite:
+The browser fixture imports 20 generated replay files under the deployed content-security policy. It reproduces all 20 seeded fault outcomes. The target is 18 of 20 (90%). Run its exact regression with:
 
 ```sh
-npm test
+npm run test:e2e -- --grep @claim:seeded-failure-fixture
 ```
 
 ## API
@@ -89,7 +89,8 @@ The package exports ESM, CommonJS, and declarations. The `ReplayEvent`, `ReplayC
 
 - Default cap: 128 KB; supported range: 4 KB–1 MB. The recorder stops before an event would cross the cap and reports `limit-reached`. On `stop()` or `export()`, the recorder rechecks the cap after timing changes. It keeps only whole entries that fit. Accounting and the downloaded file use the same compact JSON bytes, so a capped recorder export stays importable.
 - Pointer coordinates are normalized to the configured target when possible.
-- Key identity uses `KeyboardEvent.code`, not typed characters. Text-entry events are ignored in light, open-shadow, and closed-shadow DOM. If an event may come from a text field in closed Shadow DOM, the library does not record it.
+- Key identity uses `KeyboardEvent.code`, not typed characters. Text-entry events are ignored in light, open-shadow, and closed-shadow DOM. If an event may come from a text field in closed Shadow DOM, the library does not record it. Set `shouldCaptureKey` to keep a game surface's control keys out of its replay stream.
+- After its first load, the demo can record, import, and replay while the browser is offline. It does not claim that an offline reload works.
 - Gamepads are sampled once per animation frame, but browser gamepad timestamps are inconsistent. Replay Capsule timestamps the sample at observation time and stores the browser timestamp only as optional diagnostic metadata.
 - Capsule imports are schema-validated and reject malformed, unsupported, or over-limit files.
 - No network requests, persistence, telemetry, cookies, or third-party runtime dependencies.

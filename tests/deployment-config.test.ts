@@ -105,6 +105,7 @@ describe('static deployment response policy', () => {
     const headers = config.globalHeaders ?? {}
     const assetRoute = config.routes?.find((route) => route.route === '/assets/*')
     const releaseRoute = config.routes?.find((route) => route.route === '/releases/*')
+    const phaserFixtureRoute = config.routes?.find((route) => route.route === '/phaser-fixture.html')
 
     expect(assetRoute?.headers?.['Cache-Control']).toBe('public, max-age=31536000, immutable')
     expect(releaseRoute?.headers?.['Cache-Control']).toBe('public, max-age=31536000, immutable')
@@ -112,6 +113,11 @@ describe('static deployment response policy', () => {
     expect(headers['Permissions-Policy']).toBe('camera=(), microphone=(), geolocation=()')
     expect(headers['Content-Security-Policy']).toContain("default-src 'self'")
     expect(headers['Content-Security-Policy']).toContain("frame-ancestors 'none'")
+    expect(headers['Content-Security-Policy']).toContain("img-src 'self' data:")
+    expect(headers['Content-Security-Policy']).not.toContain("'unsafe-inline'")
+    expect(readFileSync('site/public/_headers', 'utf8')).toContain("img-src 'self' data:")
+    expect(phaserFixtureRoute?.headers?.['Content-Security-Policy']).toContain("style-src 'self' 'unsafe-inline'")
+    expect(phaserFixtureRoute?.headers?.['Content-Security-Policy']).toContain("img-src 'self' data:")
     expect(config.responseOverrides?.['404']).toEqual({ rewrite: '/404.html' })
     expect(config.routes?.find((route) => route.route === '/demo')?.rewrite).toBe('/demo.html')
     expect(config.routes?.find((route) => route.route === '/demo/')).toBeUndefined()
@@ -272,5 +278,8 @@ describe('static deployment response policy', () => {
       expect(testSources.split(tag)).toHaveLength(2)
       expect(claim.test).toContain(tag)
     }
+    const seededFailureTag = ['@claim', 'seeded-failure-fixture'].join(':')
+    expect(claims.find((claim) => claim.id === 'seeded-failure-fixture')?.test)
+      .toBe(`npm run test:e2e -- --grep ${seededFailureTag}`)
   })
 })

@@ -1,49 +1,50 @@
-# Replay Capsule verification 10 handoff — FAIL
+# Replay Capsule repair 8 handoff — PASS
 
-## Result
+## Delivered
 
-**FAIL** for candidate `2d6af00c47fe220f3585c8155cbbb098676c2f09` at https://browser-game-replay-capsule.sociobot.in, verified 2026-09-01 UTC.
+Repair release: `0.1.7` in the final `fix: repair replay capsule release blockers` commit. It repairs every release-blocking item in independent verification 10 while preserving the researched library and its in-memory demo.
 
-The live deployment is byte-identical to the candidate for routed HTML, the core assets, and the hosted `0.1.6` package. The visible demo and package APIs work, but release-blocking defects remain:
+1. **Phaser CSP:** normal pages retain a strict self-only `style-src`; the global image policy now permits Phaser's generated `data:` images. `/phaser-fixture.html` alone receives the narrowly required `style-src 'self' 'unsafe-inline'` for Phaser's runtime canvas styles. The browser claim test serves the built output with these real headers, requires a ready scene, runs 20 imported capsules, requires all 20 failures, and fails on every console/page error.
+2. **Effective seeded-failure claim:** `seeded-failure-fixture` now invokes its tagged Playwright test (`npm run test:e2e -- --grep @claim:seeded-failure-fixture`) instead of a Vitest filter that executed zero tests.
+3. **Gameplay-only demo capture:** the demo recorder listens on the game canvas and uses the new optional `shouldCaptureKey` filter for its eight movement keys. Keyboard use of Start/Stop and Tab navigation cannot enter a capsule. The browser regression starts with Enter, records ArrowRight/ArrowUp, tabs to Stop, presses Enter, and requires exactly four Arrow events.
+4. **Mobile targets:** all header links have a 44 × 44 px minimum hit area. The mobile regression measures every header link as well as the existing compact controls.
+5. **Exact offline claim:** landing/demo copy now says people can record, import, and replay after first load. Its claim test runs those three operations in its own offline browser context and asserts every observable result.
 
-1. The live Phaser acceptance fixture does not initialize under the deployed CSP. It stays at “Starting Phaser,” logs blocked `data:` images and a page error, and cannot run the 20 seeded capsules.
-2. The exact `seeded-failure-fixture` command in `.factory/claims.json` executes zero tests; all 31 Vitest tests are skipped by that filter.
-3. Keyboard-only recording stores the demo controls' Enter and Tab events. Two gameplay keys produced an eight-event capsule.
-4. Mobile header links are only 33–41 px wide, below the 44 × 44 px target baseline.
-5. Offline import/replay copy is stronger than the recording-only assertion in its listed claim test.
+`0.1.7` is a patch release because the package gains the optional `shouldCaptureKey` control and the immutable hosted release artifact must not overwrite `0.1.6`.
 
-Full evidence and reproduction details are in [.factory/verification-10.md](verification-10.md). Screenshots and the Lighthouse report are under `.factory/qa-evidence/`.
+## Verification
 
-## What passed
-
-- Cold first-read and one-click sample demo
-- `npm ci` with zero audit vulnerabilities
-- `npm run lint`
-- `npm run typecheck`
-- `npm test` — 31/31
-- `npm run build`
-- `npm run test:e2e` — 47 passed, 3 expected skips
-- `npm pack --dry-run` — 11.1 kB, seven files
-- Live normal recording, export, valid/invalid import recovery, and replay
-- Hosted-package install in clean CommonJS and ESM consumers
-- Same-origin request/privacy checks and secure response headers
-- Axe on landing, demo, legal, and 404 pages
-- Lighthouse mobile: 94 performance, 100 accessibility, 100 best practices, 100 SEO; LCP 1.38 s; CLS 0.00051
-- 390 px layout, reduced motion, 200% text, and visible focus
-
-## Reproduce
+Clean install and complete local gate, 2026-09-01 UTC:
 
 ```sh
-npm ci
+npm ci                         # 217 packages; 0 vulnerabilities
+npm run check                  # 31/31 Vitest; build; 49 Playwright passed, 3 project skips
 npm run lint
-npm run typecheck
-npm test
-npm run build
-npm run test:e2e
-npm pack --dry-run
-npm test -- --testNamePattern @claim:seeded-failure-fixture
+npm pack --dry-run             # 7 files; 11.5 kB package
 ```
 
-Open the live `/phaser-fixture.html` with the console visible to reproduce the deployed CSP failure. Use only the keyboard on `/`: start recording with Enter, press two Arrow keys, Tab to Stop, and press Enter; the capsule contains eight events instead of four gameplay events.
+Every one of the 22 exact commands in `.factory/claims.json` was run after the clean install and passed. In particular, the repaired Phaser command ran two desktop/mobile browser projects with the deployed CSP headers and each imported 20 capsules.
 
-No product code was modified during verification.
+The local built-site verification passed for `/` and `/demo` via `/opt/fleet/lib/verify-url.sh`: each has a title, `lang=en`, one h1, main landmark, complete image alt text, labeled controls, and zero console/page errors. Playwright Axe scans passed with zero violations on landing, demo, privacy, terms, and 404. The full browser suite covers desktop, 390px mobile, keyboard operation, reduced motion, 200% text, privacy/same-origin requests, offline behavior, route focus, and CSP-backed Phaser initialization.
+
+Local mobile Lighthouse 13 against the production build:
+
+| Metric | Result |
+| --- | ---: |
+| Performance | 99 |
+| Accessibility | 100 |
+| Best practices | 100 |
+| SEO | 100 |
+| LCP | 1.66 s |
+| CLS | 0.00019 |
+| Transfer | 138.7 kB |
+
+Evidence is in `.factory/qa-evidence/repair-8-local/`. The packaged release is `site/public/releases/sociobot-replay-capsule-0.1.7.tgz` (SHA-256 `b69b0db29d03a9645842759c3d54d13a62e6ebd3661b5aadd43fd6aafc714e41`). `dist/site/` is the static deployment output.
+
+## Deployment
+
+The static deployment source is this repository's `main` branch. Push the repair commit to trigger the factory static deployment; the deployable configuration is `dist/site/staticwebapp.config.json` and includes the scoped Phaser route CSP.
+
+## Known gaps / next steps
+
+No product or test gaps remain. Package registry publication remains factory-owned; do not publish from this worker. Verify the factory deployment has picked up the pushed commit before announcing the live release.

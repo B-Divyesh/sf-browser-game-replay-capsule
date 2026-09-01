@@ -42,7 +42,7 @@ a:hover { text-decoration-thickness: 2px; }
 .wordmark { min-height: 44px; padding-block: 8px; display: inline-flex; gap: 12px; align-items: center; color: var(--ink); font-weight: 700; text-decoration: none; }
 .wordmark span { padding: 4px 7px; font: 700 11px/1 'Space Mono', monospace; color: var(--petrol-contrast); background: var(--petrol); letter-spacing: .08em; }
 nav { display: flex; gap: 24px; align-items: center; }
-nav a { min-height: 44px; display: inline-flex; align-items: center; color: var(--ink); font-weight: 700; text-decoration: none; }
+nav a { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; color: var(--ink); font-weight: 700; text-decoration: none; }
 .demo-banner { max-width: 1216px; margin: 24px auto 0; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px; border: 2px solid var(--ink); background: var(--panel); box-shadow: 6px 6px 0 var(--shadow); }
 .demo-banner[hidden] { display: none; }
 .demo-banner p { margin: 0; }

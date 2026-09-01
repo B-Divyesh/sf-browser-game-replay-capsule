@@ -243,12 +243,40 @@ test('keeps the visible import control focused for keyboard users', async ({ pag
 test('keeps compact navigation, footer links, and code actions at 44px targets on mobile', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile', 'Target dimensions are a compact-layout regression.')
   await page.goto('/')
-  for (const selector of ['.wordmark', '.copy-code', 'footer a[href="/demo"]']) {
-    const box = await page.locator(selector).boundingBox()
-    expect(box, `${selector} should have a measurable target`).not.toBeNull()
-    expect(box!.width).toBeGreaterThanOrEqual(44)
-    expect(box!.height).toBeGreaterThanOrEqual(44)
+  for (const selector of ['.wordmark', '.copy-code', 'footer a[href="/demo"]', 'header nav a']) {
+    const targets = page.locator(selector)
+    for (let index = 0; index < await targets.count(); index += 1) {
+      const box = await targets.nth(index).boundingBox()
+      expect(box, `${selector} ${index} should have a measurable target`).not.toBeNull()
+      expect(box!.width).toBeGreaterThanOrEqual(44)
+      expect(box!.height).toBeGreaterThanOrEqual(44)
+    }
   }
+})
+
+test('records gameplay keys but not Tab or Enter used to operate demo controls', async ({ page }) => {
+  await page.goto('/demo')
+  await page.getByRole('button', { name: 'Start recording' }).focus()
+  await page.keyboard.press('Enter')
+  await expect(page.locator('#game')).toBeFocused()
+  await page.keyboard.press('ArrowRight')
+  await page.keyboard.press('ArrowUp')
+  await page.keyboard.press('Tab')
+  await expect(page.getByRole('button', { name: 'Stop recording' })).toBeFocused()
+  await page.keyboard.press('Enter')
+  await expect(page.locator('#event-readout')).toHaveText('4')
+
+  const downloadPromise = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Download capsule' }).click()
+  const downloadPath = await (await downloadPromise).path()
+  expect(downloadPath).not.toBeNull()
+  const capsule = JSON.parse(await (await import('node:fs/promises')).readFile(downloadPath!, 'utf8'))
+  expect(capsule.events).toEqual([
+    expect.objectContaining({ type: 'key', action: 'down', code: 'ArrowRight' }),
+    expect.objectContaining({ type: 'key', action: 'up', code: 'ArrowRight' }),
+    expect.objectContaining({ type: 'key', action: 'down', code: 'ArrowUp' }),
+    expect.objectContaining({ type: 'key', action: 'up', code: 'ArrowUp' }),
+  ])
 })
 
 test('invalid imports explain how to recover', async ({ page }) => {
@@ -366,7 +394,7 @@ test('never records text-entry events through an open Shadow DOM path', async ({
   }
 })
 
-test('@claim:offline-demo continues to record offline without browser persistence', async ({ browser }) => {
+test('@claim:offline-demo records, imports, and replays after first load while offline', async ({ browser }) => {
   const offlineContext = await browser.newContext()
   const offlinePage = await offlineContext.newPage()
   try {
@@ -376,7 +404,18 @@ test('@claim:offline-demo continues to record offline without browser persistenc
 
     await offlineContext.setOffline(true)
     await offlinePage.evaluate(() => window.dispatchEvent(new Event('offline')))
-    await expect(offlinePage.getByText('You are offline.')).toBeVisible()
+    await expect(offlinePage.locator('#offline-note')).toHaveText('You are offline. You can record, import, and replay after this page loads.')
+
+    const importedCapsule = {
+      format: 'replay-capsule', version: 1, createdAt: '2026-09-01T00:00:00.000Z', durationMs: 0, seed: 'offline-import', truncated: false,
+      events: [{ type: 'pointer', action: 'down', x: 0.2, y: 0.8, button: 0, buttons: 1, pointerId: 1, pointerType: 'mouse', pressure: 0.5, t: 0 }],
+      checkpoints: [],
+    }
+    await offlinePage.locator('#import').setInputFiles({ name: 'offline-import.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(importedCapsule)) })
+    await expect(offlinePage.locator('#demo-message')).toHaveText('Imported 1 events. Seed and checkpoints validated locally.')
+    await offlinePage.getByRole('button', { name: 'Replay capsule' }).click()
+    await expect(offlinePage.locator('#demo-message')).toHaveText('Replay complete: the same 1 recorded events were applied.')
+
     await offlinePage.getByRole('button', { name: 'Start recording' }).click()
     await offlinePage.keyboard.press('ArrowRight')
     await expect(offlinePage.locator('#event-readout')).toHaveText('2')
@@ -386,7 +425,11 @@ test('@claim:offline-demo continues to record offline without browser persistenc
 })
 
 test('@claim:seeded-failure-fixture runs 20 imported capsules through the shipped Phaser scene', async ({ page }) => {
-  await page.goto('/phaser-fixture.html')
+  const errors: string[] = []
+  page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()) })
+  page.on('pageerror', (error) => errors.push(error.message))
+  const response = await page.goto('/phaser-fixture.html')
+  expect(response?.headers()['content-security-policy']).toContain("img-src 'self' data:")
   await expect(page.locator('#status')).toHaveText('Phaser scene ready.')
   await expect(page.locator('canvas')).toBeVisible()
   let reproduced = 0
@@ -408,6 +451,7 @@ test('@claim:seeded-failure-fixture runs 20 imported capsules through the shippe
   }
   expect(reproduced).toBeGreaterThanOrEqual(18)
   expect(reproduced).toBe(20)
+  expect(errors).toEqual([])
 })
 
 test('keeps the same header and legal navigation on every route', async ({ page }, testInfo) => {

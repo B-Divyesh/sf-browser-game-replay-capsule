@@ -65,6 +65,7 @@ let capsule: ReplayCapsule | undefined
 let runEnded = false
 let replaying = false
 let replayedEvents: ReplayEvent[] = []
+const gameplayKeyCodes = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'KeyW', 'KeyA', 'KeyS', 'KeyD'])
 
 const hashSeed = (value: string) => {
   let hash = 2166136261
@@ -195,7 +196,9 @@ function createRunRecorder(seed: string) {
   return createRecorder({
     seed,
     target: canvas,
+    keyTarget: canvas,
     maxBytes: 128_000,
+    shouldCaptureKey: (event) => gameplayKeyCodes.has(event.code),
     onStatus: (status) => {
       eventReadout.textContent = String(status.eventCount)
       timeReadout.textContent = `${(recorder?.export().durationMs ?? 0) / 1000 >= 0 ? ((recorder?.export().durationMs ?? 0) / 1000).toFixed(2) : '0.00'} s`
@@ -362,7 +365,7 @@ replayButton.addEventListener('click', () => { void replayCapsule() })
 replayFirstScreenButton?.addEventListener('click', () => { void replayCapsule() })
 
 window.addEventListener('keydown', (event) => {
-  if (recorder?.state !== 'recording' || !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'KeyW', 'KeyA', 'KeyS', 'KeyD'].includes(event.code)) return
+  if (recorder?.state !== 'recording' || !gameplayKeyCodes.has(event.code)) return
   event.preventDefault()
   applyEvent({ type: 'key', action: 'down', code: event.code, repeat: event.repeat, t: 0 })
 })

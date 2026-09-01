@@ -108,8 +108,8 @@
     "id": "seeded-failure-fixture",
     "claim": "The Phaser fixture reproduces at least 90% of 20 seeded failures.",
     "where": "README",
-    "test": "npm test -- --testNamePattern @claim:seeded-failure-fixture",
-    "sandbox": "import 20 generated replay capsules into the shipped deterministic Phaser model and count reproduced faults"
+    "test": "npm run test:e2e -- --grep @claim:seeded-failure-fixture",
+    "sandbox": "load the shipped Phaser scene under the deployment CSP, import 20 generated replay capsules, and count reproduced faults"
   },
   {
     "id": "package-formats",
@@ -134,10 +134,10 @@
   },
   {
     "id": "offline-demo",
-    "claim": "The demo continues to record after its first load when the browser is offline.",
-    "where": "demo offline notice, README",
+    "claim": "The demo can record, import, and replay after its first load when the browser is offline.",
+    "where": "landing offline fact and notice, demo offline notice, README",
     "test": "npm run test:e2e -- --grep @claim:offline-demo",
-    "sandbox": "new browser context; load /demo, set only that context offline, start recording, and assert a new event is captured"
+    "sandbox": "new browser context; load /demo, set only that context offline, record a key, import a one-event capsule, replay it, and assert each observable result"
   },
   {
     "id": "mit-license",

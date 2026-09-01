@@ -63,6 +63,8 @@ export interface RecorderOptions {
   keyTarget?: EventTarget
   maxBytes?: number
   captureGamepads?: boolean
+  /** Return false to keep a key from this game's replay stream. Defaults to capturing every non-text key. */
+  shouldCaptureKey?: (event: KeyboardEvent) => boolean
   pointerMoveIntervalMs?: number
   now?: () => number
   onStatus?: (status: RecorderStatus) => void
@@ -248,7 +250,7 @@ export function createRecorder(options: RecorderOptions): ReplayRecorder {
   }
 
   function onKey(raw: Event) {
-    if (state !== 'recording' || !(raw instanceof KeyboardEvent) || originatesInTextEntry(raw)) return
+    if (state !== 'recording' || !(raw instanceof KeyboardEvent) || originatesInTextEntry(raw) || options.shouldCaptureKey?.(raw) === false) return
     append({ type: 'key', action: raw.type === 'keydown' ? 'down' : 'up', code: raw.code, repeat: raw.repeat, t: timestamp() }, 'event')
   }
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.7 — 2026-09-01
+
+- Allow Phaser's self-generated `data:` images under the fixture's otherwise self-only image policy, and run the browser fixture under that deployment CSP.
+- Scope the demo recorder to the game canvas and its movement keys, so Tab and Enter used to operate controls are never written into a gameplay capsule.
+- Bring every header navigation link to the 44 px touch-target baseline.
+- Exercise offline recording, import, and replay together and point the seeded-failure claim at its real browser fixture.
+
 ## 0.1.6 — 2026-08-30
 
 - Exclude ambiguous keyboard and pointer events retargeted from closed Shadow DOM hosts, preventing hidden text-entry capture.

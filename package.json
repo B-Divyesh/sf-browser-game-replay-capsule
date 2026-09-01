@@ -1,6 +1,6 @@
 {
   "name": "@sociobot/replay-capsule",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Tiny deterministic input-and-seed replay files for browser games",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -37,6 +37,7 @@
     "verify:site-build": "node scripts/verify-site-build.mjs",
     "test": "vitest run --coverage=false",
     "test:e2e": "playwright test",
+    "preview:site": "npm run build:site && node scripts/serve-site.mjs",
     "check": "npm run typecheck && npm test && npm run build && npm run test:e2e"
   },
   "keywords": [
