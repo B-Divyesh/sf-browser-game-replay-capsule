@@ -11,7 +11,7 @@ Open [the sample demo](https://browser-game-replay-capsule.sociobot.in/demo), or
 ## Install
 
 ```sh
-npm install https://browser-game-replay-capsule.sociobot.in/releases/sociobot-replay-capsule-0.1.7.tgz
+npm install https://browser-game-replay-capsule.sociobot.in/releases/sociobot-replay-capsule-0.1.8.tgz
 ```
 
 This versioned npm tarball is available now.
@@ -89,6 +89,7 @@ The package exports ESM, CommonJS, and declarations. The `ReplayEvent`, `ReplayC
 
 - Default cap: 128 KB; supported range: 4 KB–1 MB. The recorder stops before an event would cross the cap and reports `limit-reached`. On `stop()` or `export()`, the recorder rechecks the cap after timing changes. It keeps only whole entries that fit. Accounting and the downloaded file use the same compact JSON bytes, so a capped recorder export stays importable.
 - Pointer coordinates are normalized to the configured target when possible.
+- Pointer input is captured before the host game handles it, so the input that ends a run remains in the capsule.
 - Key identity uses `KeyboardEvent.code`, not typed characters. Text-entry events are ignored in light, open-shadow, and closed-shadow DOM. If an event may come from a text field in closed Shadow DOM, the library does not record it. Set `shouldCaptureKey` to keep a game surface's control keys out of its replay stream.
 - After its first load, the demo can record, import, and replay while the browser is offline. It does not claim that an offline reload works.
 - Gamepads are sampled once per animation frame, but browser gamepad timestamps are inconsistent. Replay Capsule timestamps the sample at observation time and stores the browser timestamp only as optional diagnostic metadata.

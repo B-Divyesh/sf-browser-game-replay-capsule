@@ -2,6 +2,44 @@ import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 import { seededFault } from '../../examples/seeded-failure-model'
 
+test.afterEach(async ({ page }, testInfo) => {
+  if (testInfo.status === testInfo.expectedStatus) return
+  const diagnostics = await page.evaluate(() => ({
+    url: location.href,
+    title: document.title,
+    activeElement: document.activeElement instanceof HTMLElement ? document.activeElement.outerHTML : null,
+    recordState: document.querySelector('#record-state')?.textContent,
+    eventCount: document.querySelector('#event-readout')?.textContent,
+    message: document.querySelector('#demo-message')?.textContent,
+    overlay: document.querySelector('#scope-overlay')?.textContent,
+    gameOutcome: document.body.dataset.gameOutcome,
+    replayOutcome: document.body.dataset.replayOutcome,
+    replayedEvents: document.body.dataset.replayedEvents,
+  })).catch((error: unknown) => ({ diagnosticError: error instanceof Error ? error.message : String(error) }))
+  await testInfo.attach('browser-state.json', {
+    body: Buffer.from(JSON.stringify(diagnostics, null, 2)),
+    contentType: 'application/json',
+  })
+})
+
+const sampleFaultY = (seed: string) => {
+  let value = 2166136261
+  for (let index = 0; index < seed.length; index += 1) {
+    value ^= seed.charCodeAt(index)
+    value = Math.imul(value, 16777619)
+  }
+  value >>>= 0
+  const random = () => {
+    value += 0x6d2b79f5
+    let next = value
+    next = Math.imul(next ^ (next >>> 15), next | 1)
+    next ^= next + Math.imul(next ^ (next >>> 7), next | 61)
+    return ((next ^ (next >>> 14)) >>> 0) / 4294967296
+  }
+  random() // The game places its beacon before its first fault.
+  return .12 + random() * .64
+}
+
 test('landing page is semantic, clean, and accessible', async ({ page }, testInfo) => {
   const errors: string[] = []
   page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()) })
@@ -64,6 +102,26 @@ test('keeps all first-screen facts visible at the exact 390 by 844 phone edge', 
   const box = await facts.boundingBox()
   expect(box).not.toBeNull()
   expect(box!.y + box!.height).toBeLessThanOrEqual(844)
+})
+
+test('keeps mobile LCP below 2.5 seconds and the heading out of entrance animations', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile', 'This is the mobile LCP regression.')
+  await page.addInitScript(() => {
+    const state = window as Window & { __lastLcp?: number }
+    new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) state.__lastLcp = entry.startTime
+    }).observe({ type: 'largest-contentful-paint', buffered: true })
+  })
+  await page.goto('/', { waitUntil: 'networkidle' })
+  await page.waitForTimeout(500)
+  const paintPolicy = await page.locator('.hero-copy').evaluate((element) => {
+    const style = getComputedStyle(element)
+    return { animationName: style.animationName, opacity: style.opacity, transform: style.transform }
+  })
+  const lcp = await page.evaluate(() => (window as Window & { __lastLcp?: number }).__lastLcp)
+  expect(paintPolicy).toEqual({ animationName: 'none', opacity: '1', transform: 'none' })
+  expect(lcp).toBeDefined()
+  expect(lcp!).toBeLessThan(2_500)
 })
 
 test('the trailing demo URL resolves to the canonical demo URL', async ({ page }) => {
@@ -243,31 +301,65 @@ test('@claim:capture-surface keeps page, identity, cookie, and network values ou
   expect(JSON.stringify(capsule)).not.toMatch(/dom-secret-480|person-480|robots\.txt/)
 })
 
-test('@claim:record-export-replay records, exports, imports, and replays the exact input sequence', async ({ page }) => {
-  await page.goto('/#demo')
-  await page.getByRole('button', { name: 'Start recording' }).click()
-  await expect(page.getByText('Recording', { exact: true })).toBeVisible()
-  await page.keyboard.press('ArrowRight')
-  await page.keyboard.press('ArrowUp')
-  await page.getByRole('button', { name: 'Stop recording' }).click()
-  await expect(page.locator('#event-readout')).toHaveText('4')
+test('@claim:record-export-replay records, exports, imports, and replays the exact input sequence', async ({ page }, testInfo) => {
+  const eventCount = page.locator('#event-readout')
+  const capsulePath = testInfo.outputPath('recorded-capsule.json')
+
+  await test.step('record acknowledged keyboard input through a real game end', async () => {
+    await page.goto('/demo')
+    await page.getByRole('button', { name: 'Start recording' }).click()
+    await expect(page.getByText('Recording', { exact: true })).toBeVisible()
+
+    await page.keyboard.down('ArrowRight')
+    await expect(eventCount).toHaveText('1')
+    await page.keyboard.up('ArrowRight')
+    await expect(eventCount).toHaveText('2')
+    await page.keyboard.down('ArrowUp')
+    await expect(eventCount).toHaveText('3')
+    await page.keyboard.up('ArrowUp')
+    await expect(eventCount).toHaveText('4')
+
+    const seed = await page.locator('#seed-readout').innerText()
+    const box = await page.locator('#game').boundingBox()
+    expect(box).not.toBeNull()
+    await page.locator('#game').click({ position: { x: box!.width * .34, y: box!.height * sampleFaultY(seed) } })
+    await expect(eventCount).toHaveText('6')
+    await expect(page.locator('#record-state')).toHaveText('Stopped')
+    await expect(page.locator('#scope-overlay strong')).toHaveText('Fault reproduced')
+    await expect(page.locator('body')).toHaveAttribute('data-game-outcome', 'fault-contact')
+  })
 
   const downloadPromise = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Download capsule' }).click()
   const download = await downloadPromise
   expect(download.suggestedFilename()).toMatch(/^replay-.+\.json$/)
+  await download.saveAs(capsulePath)
 
-  const downloadPath = await download.path()
-  expect(downloadPath).not.toBeNull()
-  const capsule = JSON.parse(await (await import('node:fs/promises')).readFile(downloadPath!, 'utf8'))
-  expect(capsule.events).toHaveLength(4)
-  await page.locator('#import').setInputFiles(downloadPath!)
-  await expect(page.locator('#demo-message')).toContainText('Imported 4 events')
+  const capsule = JSON.parse(await (await import('node:fs/promises')).readFile(capsulePath, 'utf8'))
+  await testInfo.attach('recorded-capsule.json', { body: Buffer.from(JSON.stringify(capsule, null, 2)), contentType: 'application/json' })
+  expect(capsule.events).toHaveLength(6)
+  expect(capsule.events.slice(0, 4).map(({ type, action, code }: { type: string, action: string, code: string }) => ({ type, action, code }))).toEqual([
+    { type: 'key', action: 'down', code: 'ArrowRight' },
+    { type: 'key', action: 'up', code: 'ArrowRight' },
+    { type: 'key', action: 'down', code: 'ArrowUp' },
+    { type: 'key', action: 'up', code: 'ArrowUp' },
+  ])
+  expect(capsule.events.slice(4)).toEqual([
+    expect.objectContaining({ type: 'pointer', action: 'move', x: .34 }),
+    expect.objectContaining({ type: 'pointer', action: 'down', x: .34 }),
+  ])
+  expect(capsule.checkpoints).toEqual([expect.objectContaining({ label: 'fault-contact' })])
 
-  await page.getByRole('button', { name: 'Replay capsule' }).click()
-  await expect(page.locator('#demo-message')).toHaveText('Replay complete: the same 4 recorded events were applied.')
-  expect(await page.evaluate(() => JSON.parse(document.body.dataset.replayedEvents ?? '[]'))).toEqual(capsule.events)
-  expect(await page.locator('body').getAttribute('data-replay-outcome')).toBe('recorded-sequence-applied')
+  await test.step('import the saved artifact and replay its exact end state', async () => {
+    await page.locator('#import').setInputFiles(capsulePath)
+    await expect(page.locator('#demo-message')).toContainText('Imported 6 events')
+    await page.getByRole('button', { name: 'Replay capsule' }).click()
+    await expect(page.locator('#demo-message')).toHaveText('Replay complete: the recorded outcome was reproduced.')
+    await expect(page.locator('#scope-overlay strong')).toHaveText('Replay matched the end state')
+    expect(await page.evaluate(() => JSON.parse(document.body.dataset.replayedEvents ?? '[]'))).toEqual(capsule.events)
+    await expect(page.locator('body')).toHaveAttribute('data-game-outcome', 'fault-contact')
+    await expect(page.locator('body')).toHaveAttribute('data-replay-outcome', 'recorded-outcome-reproduced')
+  })
 })
 
 test('keeps the visible import control focused for keyboard users', async ({ page }) => {

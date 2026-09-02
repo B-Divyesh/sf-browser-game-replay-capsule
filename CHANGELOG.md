@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.8 — 2026-09-02
+
+- Capture the pointer input that causes a game-ending fault before host handlers stop recording.
+- Make the mobile record-export-import-replay claim wait for every input and verify the same visible end state.
+- Preserve traces, screenshots, video, browser state, and exported capsule data when the browser regression fails.
+- Paint the mobile LCP heading immediately instead of hiding it behind an entrance animation.
+
 ## 0.1.7 polish 4 — 2026-09-01
 
 - Keep every shared route within a 390 px viewport when text is enlarged to 200% after local fonts load.

@@ -99,6 +99,7 @@ function resetGame(seed = activeSeed || 'RC-DEMO') {
   timeline.setAttribute('aria-valuenow', '0')
   delete document.body.dataset.replayedEvents
   delete document.body.dataset.replayOutcome
+  delete document.body.dataset.gameOutcome
   drawGame()
 }
 
@@ -158,8 +159,14 @@ function assessRun() {
   const won = Math.hypot(player.x - beacon.x, player.y - beacon.y) < .055
   if (hit || won) {
     runEnded = true
-    recorder?.checkpoint(hit ? 'fault-contact' : 'beacon-reached', { x: Number(player.x.toFixed(4)), y: Number(player.y.toFixed(4)) })
+    const outcome = hit ? 'fault-contact' : 'beacon-reached'
+    recorder?.checkpoint(outcome, { x: Number(player.x.toFixed(4)), y: Number(player.y.toFixed(4)) })
     if (recorder?.state === 'recording') recorder.stop()
+    document.body.dataset.gameOutcome = outcome
+    overlay.hidden = false
+    overlay.innerHTML = hit
+      ? '<strong>Fault reproduced</strong><span>The run ended on a striped fault cell.</span>'
+      : '<strong>Beacon reached</strong><span>The run ended at the round beacon.</span>'
     if (!replaying) {
       capsule = recorder?.export()
       exportButton.disabled = !capsule
@@ -357,6 +364,10 @@ async function replayCapsule() {
   timeline.setAttribute('aria-valuenow', '100')
   document.body.dataset.replayedEvents = JSON.stringify(replayedEvents)
   document.body.dataset.replayOutcome = runEnded ? 'recorded-outcome-reproduced' : 'recorded-sequence-applied'
+  if (runEnded) {
+    overlay.hidden = false
+    overlay.innerHTML = '<strong>Replay matched the end state</strong><span>The recorded run reached the same game result.</span>'
+  }
   setMessage(runEnded ? 'Replay complete: the recorded outcome was reproduced.' : `Replay complete: the same ${replayedEvents.length} recorded events were applied.`, 'success')
   syncStatus()
 }

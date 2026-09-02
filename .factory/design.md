@@ -26,7 +26,7 @@ Spacing follows an 8px base rhythm with 4px micro-adjustments: 4, 8, 12, 16, 24,
 
 - Primary controls depress 2px like sprung keys and immediately change their verb/status.
 - Recording is shown by a static amber lamp plus the explicit word “Recording”; no surveillance-style pulsing.
-- Replay progress travels across the timeline in 180ms transform transitions. Panels enter once with a 240ms opacity/translate reveal.
+- Replay progress travels across the timeline in 180ms transform transitions. The critical headline paints immediately; the instrument illustration enters once in 240ms.
 - With `prefers-reduced-motion: reduce`, transforms and smooth scrolling are removed, progress updates instantly, and the game loop remains functional without ornamental motion.
 - Focus is a 3px amber outer ring with a cream buffer. Hover never communicates anything that focus does not.
 

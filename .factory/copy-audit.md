@@ -1,6 +1,6 @@
 # Copy audit
 
-Audited: 2026-09-01 after polish 5. Visible landing, demo-state, README, and legal copy was checked. Code samples, URLs, and generated values are excluded. No sentence exceeds 22 words or uses a banned marketing term.
+Audited: 2026-09-02 after repair 9. Visible landing, demo-state, README, and legal copy was checked. Code samples, URLs, and generated values are excluded. No sentence exceeds 22 words or uses a banned marketing term.
 
 ## Landing page
 
@@ -57,9 +57,9 @@ Audited: 2026-09-01 after polish 5. Visible landing, demo-state, README, and leg
 | Install the library | 3 | Pass — section label |
 | Add replay capture to your game loop. | 7 | Pass |
 | Copy code | 2 | Pass — result-naming action |
-| Install version 0.1.7 from this hosted npm tarball. | 9 | Pass — `installable-release` |
+| Install version 0.1.8 from this hosted npm tarball. | 9 | Pass — `installable-release` |
 | Local replay files for browser-game debugging. | 6 | Pass |
-| Built by Param Factory · v0.1.7 · polish-4 | 6 | Pass — build label |
+| Built by Param Factory · v0.1.8 · repair-9 | 6 | Pass — build label |
 
 ## Landing interaction and demo state
 
@@ -84,8 +84,11 @@ Audited: 2026-09-01 after polish 5. Visible landing, demo-state, README, and leg
 | The last complete event is preserved; download or reset the capsule. | 11 | Pass |
 | Fault reproduced and checkpointed. | 4 | Pass |
 | Download this capsule or replay it here. | 7 | Pass |
+| Fault reproduced. | 2 | Pass — game end heading |
+| The run ended on a striped fault cell. | 8 | Pass — game end result |
 | Beacon reached. | 2 | Pass |
 | The successful path is ready to replay. | 7 | Pass |
+| The run ended at the round beacon. | 7 | Pass — game end result |
 | Capsule downloaded. | 2 | Pass |
 | It contains no video or typed text. | 7 | Pass |
 | Imported [count] events. | 3 | Pass |
@@ -96,6 +99,8 @@ Audited: 2026-09-01 after polish 5. Visible landing, demo-state, README, and leg
 | Replaying recorded timing at 2× speed… | 6 | Pass |
 | Replay complete: the recorded outcome was reproduced. | 7 | Pass |
 | Replay complete: the same [count] recorded events were applied. | 9 | Pass |
+| Replay matched the end state. | 5 | Pass — replay result heading |
+| The recorded run reached the same game result. | 8 | Pass — replay result |
 | You are offline. | 3 | Pass |
 | You can record, import, and replay after this page loads. | 10 | Pass |
 | Install command copied. | 3 | Pass |
@@ -113,7 +118,7 @@ Every README capability is tied to an exact claim regression. Audience descripti
 | Exports a capped JSON file that can be replayed | `default-byte-cap`, `record-export-replay` |
 | Does not record typed text or send data to a service | `text-entry-excluded`, `no-network-calls` |
 | Seeded, isolated, resettable sample without browser storage | `sample-demo` |
-| Hosted version 0.1.7 tarball installs now | `installable-release` |
+| Hosted version 0.1.8 tarball installs now | `installable-release` |
 | Recording starts only after opt-in | `opt-in-recording` |
 | Replay callbacks receive normalized stored events | `adapter-callbacks` |
 | Replay can pause, resume, stop, and accelerate | `replay-controls` |

@@ -206,10 +206,10 @@ export function createRecorder(options: RecorderOptions): ReplayRecorder {
   const removeListeners = () => {
     keyTarget.removeEventListener('keydown', onKey)
     keyTarget.removeEventListener('keyup', onKey)
-    pointerTarget.removeEventListener('pointerdown', onPointer)
-    pointerTarget.removeEventListener('pointermove', onPointer)
-    pointerTarget.removeEventListener('pointerup', onPointer)
-    pointerTarget.removeEventListener('pointercancel', onPointer)
+    pointerTarget.removeEventListener('pointerdown', onPointer, true)
+    pointerTarget.removeEventListener('pointermove', onPointer, true)
+    pointerTarget.removeEventListener('pointerup', onPointer, true)
+    pointerTarget.removeEventListener('pointercancel', onPointer, true)
     if (animationFrame !== undefined && typeof cancelAnimationFrame === 'function') cancelAnimationFrame(animationFrame)
     animationFrame = undefined
   }
@@ -305,10 +305,13 @@ export function createRecorder(options: RecorderOptions): ReplayRecorder {
       state = 'recording'
       keyTarget.addEventListener('keydown', onKey)
       keyTarget.addEventListener('keyup', onKey)
-      pointerTarget.addEventListener('pointerdown', onPointer)
-      pointerTarget.addEventListener('pointermove', onPointer)
-      pointerTarget.addEventListener('pointerup', onPointer)
-      pointerTarget.addEventListener('pointercancel', onPointer)
+      // Capture before the host game handles the input. A game commonly stops
+      // recording as soon as an input reaches a failure state; the failure-
+      // causing input must already be inside the exported capsule at that point.
+      pointerTarget.addEventListener('pointerdown', onPointer, true)
+      pointerTarget.addEventListener('pointermove', onPointer, true)
+      pointerTarget.addEventListener('pointerup', onPointer, true)
+      pointerTarget.addEventListener('pointercancel', onPointer, true)
       if (captureGamepads && typeof requestAnimationFrame === 'function') animationFrame = requestAnimationFrame(sampleGamepads)
       notify()
     },

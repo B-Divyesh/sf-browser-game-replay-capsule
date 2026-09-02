@@ -32,7 +32,7 @@
     "claim": "The demo records timed keyboard input with a seed, downloads JSON, imports it, and replays the same event sequence.",
     "where": "landing headline and demo, README overview",
     "test": "npm run test:e2e -- --grep @claim:record-export-replay",
-    "sandbox": "fresh demo; record four key events, download and parse the capsule, import it, replay, and compare the exact applied sequence and result"
+    "sandbox": "fresh /demo; acknowledge four keyboard transitions, enter a seeded fault, save and parse the download, import it, then compare the exact sequence and visible end state"
   },
   {
     "id": "no-browser-persistence",
