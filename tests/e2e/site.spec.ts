@@ -507,6 +507,35 @@ test('@claim:pointer-normalization stores target-relative pointer coordinates', 
   expect(capsule.events[0]).toMatchObject({ type: 'pointer', x: 0.2, y: 0.8, pointerId: 7 })
 })
 
+test('@claim:pointer-capture-order records a pointer before a bubble-phase game handler stops recording', async ({ page }) => {
+  await page.goto('/#demo')
+  await page.getByRole('button', { name: 'Start recording' }).click()
+  await page.locator('#game').evaluate((canvas) => {
+    canvas.addEventListener('pointerdown', () => {
+      document.querySelector<HTMLButtonElement>('#stop')!.click()
+    }, { once: true })
+    const box = canvas.getBoundingClientRect()
+    canvas.dispatchEvent(new PointerEvent('pointerdown', {
+      bubbles: true,
+      clientX: box.left + box.width * 0.2,
+      clientY: box.top + box.height * 0.8,
+      pointerId: 13,
+      pointerType: 'mouse',
+      buttons: 1,
+    }))
+  })
+  await expect(page.locator('#record-state')).toHaveText('Stopped')
+  const downloadPromise = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Download capsule' }).click()
+  const download = await downloadPromise
+  const downloadPath = await download.path()
+  expect(downloadPath).not.toBeNull()
+  const capsule = JSON.parse(await (await import('node:fs/promises')).readFile(downloadPath!, 'utf8'))
+  expect(capsule.events).toEqual([
+    expect.objectContaining({ type: 'pointer', action: 'down', x: 0.2, y: 0.8, pointerId: 13 }),
+  ])
+})
+
 test('never records text-entry events through an open Shadow DOM path', async ({ page }) => {
   await page.goto('/#demo')
   await page.getByRole('button', { name: 'Start recording' }).click()

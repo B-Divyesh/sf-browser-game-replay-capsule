@@ -98,6 +98,13 @@
     "sandbox": "dispatch a pointer event at 20% × 80% of the canvas, download the capsule, and assert x=0.2 and y=0.8"
   },
   {
+    "id": "pointer-capture-order",
+    "claim": "Pointer input is captured before bubble-phase game handlers.",
+    "where": "README limits and browser behavior",
+    "test": "npm run test:e2e -- --grep @claim:pointer-capture-order",
+    "sandbox": "start a recorder on the demo canvas; a bubble-phase game handler immediately stops it after a dispatched pointer event; download and assert that event remains in the capsule"
+  },
+  {
     "id": "gamepad-sampling",
     "claim": "Gamepads are sampled once per animation frame; changed samples use observation time and retain a finite browser timestamp as diagnostic metadata.",
     "where": "demo captured fields, privacy page, README",

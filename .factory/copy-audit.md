@@ -128,6 +128,7 @@ Every README capability is tied to an exact claim regression. Audience descripti
 | Cap range is 4 KB–1 MB and defaults to 128 KB | `custom-cap-range`, `default-byte-cap` |
 | Near-cap downloaded JSON stays within its cap and imports unchanged | `capped-export-import` |
 | Pointer positions are target-normalized | `pointer-normalization` |
+| Pointer input is captured before bubble-phase game handlers | `pointer-capture-order` |
 | Key identity uses codes; text-entry keys are excluded | `checkpoint-capture`, `text-entry-excluded` |
 | `shouldCaptureKey` excludes rejected control keys | `key-filter` |
 | Demo records, imports, and replays after first load while offline | `offline-demo` |

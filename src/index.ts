@@ -305,9 +305,8 @@ export function createRecorder(options: RecorderOptions): ReplayRecorder {
       state = 'recording'
       keyTarget.addEventListener('keydown', onKey)
       keyTarget.addEventListener('keyup', onKey)
-      // Capture before the host game handles the input. A game commonly stops
-      // recording as soon as an input reaches a failure state; the failure-
-      // causing input must already be inside the exported capsule at that point.
+      // Capture before bubble-phase game handlers. Earlier capture-phase
+      // handlers still run in browser registration order.
       pointerTarget.addEventListener('pointerdown', onPointer, true)
       pointerTarget.addEventListener('pointermove', onPointer, true)
       pointerTarget.addEventListener('pointerup', onPointer, true)
