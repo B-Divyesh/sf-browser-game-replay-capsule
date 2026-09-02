@@ -1,0 +1,68 @@
+[
+  {
+    "name": "desktop",
+    "viewport": {
+      "width": 1366,
+      "height": 900
+    },
+    "errors": [],
+    "requests": [
+      "http://127.0.0.1:4173/demo",
+      "http://127.0.0.1:4173/assets/modulepreload-polyfill-B5Qt9EMX.js",
+      "http://127.0.0.1:4173/assets/route-focus-NNJLyGYl.js",
+      "http://127.0.0.1:4173/assets/index-BGTqcOzg.js",
+      "http://127.0.0.1:4173/assets/main-Czv-CLCO.js",
+      "http://127.0.0.1:4173/assets/main-C-vXIa8n.css",
+      "http://127.0.0.1:4173/assets/atkinson-hyperlegible-latin-400-normal-BKTgBNmI.woff2",
+      "http://127.0.0.1:4173/assets/space-mono-latin-700-normal-mWgeinG7.woff2",
+      "http://127.0.0.1:4173/assets/atkinson-hyperlegible-latin-700-normal-BriLmxM2.woff2",
+      "http://127.0.0.1:4173/assets/space-mono-latin-400-normal-Rg4St2Dn.woff2"
+    ],
+    "cookies": [],
+    "browserState": {
+      "message": "Replay complete: the recorded outcome was reproduced.",
+      "eventCount": "6",
+      "gameOutcome": "fault-contact",
+      "replayOutcome": "recorded-outcome-reproduced",
+      "replayedEvents": 6,
+      "localStorage": [],
+      "sessionStorage": [],
+      "indexedDB": [],
+      "caches": [],
+      "serviceWorkers": 0
+    }
+  },
+  {
+    "name": "mobile",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "errors": [],
+    "requests": [
+      "http://127.0.0.1:4173/demo",
+      "http://127.0.0.1:4173/assets/modulepreload-polyfill-B5Qt9EMX.js",
+      "http://127.0.0.1:4173/assets/route-focus-NNJLyGYl.js",
+      "http://127.0.0.1:4173/assets/index-BGTqcOzg.js",
+      "http://127.0.0.1:4173/assets/main-Czv-CLCO.js",
+      "http://127.0.0.1:4173/assets/main-C-vXIa8n.css",
+      "http://127.0.0.1:4173/assets/atkinson-hyperlegible-latin-400-normal-BKTgBNmI.woff2",
+      "http://127.0.0.1:4173/assets/space-mono-latin-700-normal-mWgeinG7.woff2",
+      "http://127.0.0.1:4173/assets/atkinson-hyperlegible-latin-700-normal-BriLmxM2.woff2",
+      "http://127.0.0.1:4173/assets/space-mono-latin-400-normal-Rg4St2Dn.woff2"
+    ],
+    "cookies": [],
+    "browserState": {
+      "message": "Replay complete: the recorded outcome was reproduced.",
+      "eventCount": "6",
+      "gameOutcome": "fault-contact",
+      "replayOutcome": "recorded-outcome-reproduced",
+      "replayedEvents": 6,
+      "localStorage": [],
+      "sessionStorage": [],
+      "indexedDB": [],
+      "caches": [],
+      "serviceWorkers": 0
+    }
+  }
+]
