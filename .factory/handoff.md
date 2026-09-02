@@ -10,6 +10,8 @@
 
 **Target:** https://browser-game-replay-capsule.sociobot.in
 
+**Deployment:** production Static Web App updated successfully on 2026-09-02 UTC
+
 ## Findings repaired
 
 ### F-14-1 — deterministic mobile record, export, import, and replay
@@ -27,6 +29,7 @@
 - The supporting instrument illustration keeps the product's documented motion treatment.
 - The browser regression asserts both immediate headline paint policy and an observed LCP below 2,500 ms.
 - Lighthouse 13.4.1 mobile: **99 performance, 100 accessibility, 100 best practices, 100 SEO; LCP 1,668 ms, FCP 1,668 ms, TBT 0 ms, CLS 0.0002, transfer 139,061 bytes**.
+- Live Lighthouse 13.4.1 mobile: **100/100/100/100; LCP 1,202 ms, FCP 1,202 ms, TBT 0 ms, CLS 0.0008, transfer 99,609 bytes**.
 
 ## Clean verification
 
@@ -40,6 +43,7 @@
 | Package consumers | PASS — clean ESM, CommonJS, declarations, and pinned Node 20 consumers |
 | Production build | PASS — `dist/`, `dist/site/index.html`, and hosted `0.1.8` tarball produced |
 | Local `verify-url.sh` | PASS — title, `lang=en`, one h1/main, alt text, labels, and zero console errors |
+| Live deployment and identity | PASS — HTTPS 200, source/live HTML and tarball SHA-256 matches, ESM/CommonJS URL install works |
 
 The landing loads 8,564 bytes gzip of JavaScript and 4,429 bytes gzip of CSS. The hosted tarball is 11,860 bytes and has SHA-256 `6384908aa2c5075865065bf75a5458ddeeb795e15778efc9213a629721da36b8`.
 
@@ -58,6 +62,7 @@ The landing loads 8,564 bytes gzip of JavaScript and 4,429 bytes gzip of CSS. Th
 - URL smoke report and desktop/mobile screenshots: `.factory/qa-evidence/repair-9-local/verify-url/`
 - Full desktop/mobile game summaries and capsules: `.factory/qa-evidence/repair-9-local/browser-game-flow.json`
 - End-state screenshots: `.factory/qa-evidence/repair-9-local/{desktop,mobile}-{game,replay}-end.png`
+- Live headers, hashes, Lighthouse, Axe, offline game flow, install log, and screenshots: `.factory/qa-evidence/repair-9-live/`
 
 ## Run and deploy
 

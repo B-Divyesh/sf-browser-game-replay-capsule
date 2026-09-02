@@ -1,0 +1,143 @@
+{
+  "flow": {
+    "offlineNotice": "You are offline. You can record, import, and replay after this page loads.",
+    "message": "Replay complete: the recorded outcome was reproduced.",
+    "eventCount": "6",
+    "gameOutcome": "fault-contact",
+    "replayOutcome": "recorded-outcome-reproduced",
+    "replayedEvents": 6,
+    "localStorage": [],
+    "sessionStorage": [],
+    "indexedDB": [],
+    "caches": [],
+    "serviceWorkers": 0
+  },
+  "errors": [],
+  "requests": [
+    {
+      "method": "GET",
+      "type": "document",
+      "url": "https://browser-game-replay-capsule.sociobot.in/demo"
+    },
+    {
+      "method": "GET",
+      "type": "script",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/modulepreload-polyfill-B5Qt9EMX.js"
+    },
+    {
+      "method": "GET",
+      "type": "script",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/route-focus-NNJLyGYl.js"
+    },
+    {
+      "method": "GET",
+      "type": "script",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/index-BGTqcOzg.js"
+    },
+    {
+      "method": "GET",
+      "type": "script",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/main-Czv-CLCO.js"
+    },
+    {
+      "method": "GET",
+      "type": "stylesheet",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/main-C-vXIa8n.css"
+    },
+    {
+      "method": "GET",
+      "type": "font",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-400-normal-BKTgBNmI.woff2"
+    },
+    {
+      "method": "GET",
+      "type": "font",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-700-normal-mWgeinG7.woff2"
+    },
+    {
+      "method": "GET",
+      "type": "font",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-700-normal-BriLmxM2.woff2"
+    },
+    {
+      "method": "GET",
+      "type": "font",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-400-normal-Rg4St2Dn.woff2"
+    }
+  ],
+  "sameOriginOnly": true,
+  "cookies": [],
+  "routeAudits": [
+    {
+      "route": "/",
+      "status": 200,
+      "violations": 0,
+      "semantics": {
+        "title": "Replay Capsule — replay browser-game bugs",
+        "lang": "en",
+        "h1": 1,
+        "main": 1,
+        "scrollWidth": 390,
+        "clientWidth": 390
+      }
+    },
+    {
+      "route": "/demo",
+      "status": 200,
+      "violations": 0,
+      "semantics": {
+        "title": "Demo — Replay Capsule",
+        "lang": "en",
+        "h1": 1,
+        "main": 1,
+        "scrollWidth": 390,
+        "clientWidth": 390
+      }
+    },
+    {
+      "route": "/privacy/",
+      "status": 200,
+      "violations": 0,
+      "semantics": {
+        "title": "Privacy — Replay Capsule",
+        "lang": "en",
+        "h1": 1,
+        "main": 1,
+        "scrollWidth": 390,
+        "clientWidth": 390
+      }
+    },
+    {
+      "route": "/terms/",
+      "status": 200,
+      "violations": 0,
+      "semantics": {
+        "title": "Terms — Replay Capsule",
+        "lang": "en",
+        "h1": 1,
+        "main": 1,
+        "scrollWidth": 390,
+        "clientWidth": 390
+      }
+    },
+    {
+      "route": "/repair-9-missing",
+      "status": 404,
+      "violations": 0,
+      "semantics": {
+        "title": "Page not found — Replay Capsule",
+        "lang": "en",
+        "h1": 1,
+        "main": 1,
+        "scrollWidth": 390,
+        "clientWidth": 390
+      }
+    }
+  ],
+  "focus": {
+    "text": "Skip to main content",
+    "focusVisible": true,
+    "outline": "3px solid rgb(164, 71, 33)",
+    "top": 8
+  }
+}
