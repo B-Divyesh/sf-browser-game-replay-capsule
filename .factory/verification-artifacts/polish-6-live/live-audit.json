@@ -1,0 +1,291 @@
+{
+  "base": "https://browser-game-replay-capsule.sociobot.in",
+  "checkedAt": "2026-09-02T01:48:30.495Z",
+  "axe": {
+    "/": [],
+    "/demo": [],
+    "/privacy/": [],
+    "/terms/": [],
+    "/not-a-real-route-polish-5": []
+  },
+  "demo": {
+    "banner": "Demo — sample data, nothing is saved. This run stays in memory and is discarded when you leave. Reset demoStart for real",
+    "caches": [],
+    "databases": [],
+    "events": "1",
+    "local": [],
+    "namespace": "demo:replay-capsule:memory",
+    "quickActionBottom": 548.328125,
+    "registrations": 0,
+    "seed": "RC-SAMPLE-FAULT-17",
+    "session": [],
+    "offlineMessage": "Replay complete: the recorded outcome was reproduced."
+  },
+  "landing": {
+    "factsBottom": 821.421875,
+    "headline": "Replay browser-game bugs from a small file.",
+    "height": 844,
+    "title": "Replay Capsule — replay browser-game bugs",
+    "trustFacts": "Record, import, and replay offline after this page loads Free under the MIT License No tracking or API calls",
+    "width": 390
+  },
+  "network": [
+    {
+      "method": "GET",
+      "resourceType": "document",
+      "url": "https://browser-game-replay-capsule.sociobot.in/demo"
+    },
+    {
+      "method": "GET",
+      "resourceType": "script",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/modulepreload-polyfill-B5Qt9EMX.js"
+    },
+    {
+      "method": "GET",
+      "resourceType": "script",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/route-focus-NNJLyGYl.js"
+    },
+    {
+      "method": "GET",
+      "resourceType": "script",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/index-BGTqcOzg.js"
+    },
+    {
+      "method": "GET",
+      "resourceType": "script",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/main-Czv-CLCO.js"
+    },
+    {
+      "method": "GET",
+      "resourceType": "stylesheet",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/main-C-vXIa8n.css"
+    },
+    {
+      "method": "GET",
+      "resourceType": "font",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-400-normal-BKTgBNmI.woff2"
+    },
+    {
+      "method": "GET",
+      "resourceType": "font",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-700-normal-mWgeinG7.woff2"
+    },
+    {
+      "method": "GET",
+      "resourceType": "font",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/atkinson-hyperlegible-latin-700-normal-BriLmxM2.woff2"
+    },
+    {
+      "method": "GET",
+      "resourceType": "font",
+      "url": "https://browser-game-replay-capsule.sociobot.in/assets/space-mono-latin-400-normal-Rg4St2Dn.woff2"
+    }
+  ],
+  "phaser": {
+    "recordedEvents": 3,
+    "recordedSeed": "polish-5-live",
+    "reproduced": 20
+  },
+  "routes": {
+    "/": {
+      "canonical": true,
+      "description": true,
+      "externalLinks": 0,
+      "footer": [
+        "Demo",
+        "Privacy",
+        "Terms"
+      ],
+      "h1": 1,
+      "header": [
+        "Demo",
+        "Privacy",
+        "Terms"
+      ],
+      "lang": "en",
+      "main": 1,
+      "og": 7,
+      "title": "Replay Capsule — replay browser-game bugs",
+      "twitter": 4,
+      "reflow": {
+        "clientWidth": 390,
+        "links": [
+          {
+            "left": 16,
+            "right": 83
+          },
+          {
+            "left": 91,
+            "right": 177
+          },
+          {
+            "left": 185,
+            "right": 256
+          }
+        ],
+        "scrollWidth": 390
+      },
+      "status": 200
+    },
+    "/demo": {
+      "canonical": true,
+      "description": true,
+      "externalLinks": 0,
+      "footer": [
+        "Demo",
+        "Privacy",
+        "Terms"
+      ],
+      "h1": 1,
+      "header": [
+        "Demo",
+        "Privacy",
+        "Terms"
+      ],
+      "lang": "en",
+      "main": 1,
+      "og": 7,
+      "title": "Demo — Replay Capsule",
+      "twitter": 4,
+      "reflow": {
+        "clientWidth": 390,
+        "links": [
+          {
+            "left": 16,
+            "right": 83
+          },
+          {
+            "left": 91,
+            "right": 177
+          },
+          {
+            "left": 185,
+            "right": 256
+          }
+        ],
+        "scrollWidth": 390
+      },
+      "status": 200
+    },
+    "/privacy/": {
+      "canonical": true,
+      "description": true,
+      "externalLinks": 0,
+      "footer": [
+        "Demo",
+        "Privacy",
+        "Terms"
+      ],
+      "h1": 1,
+      "header": [
+        "Demo",
+        "Privacy",
+        "Terms"
+      ],
+      "lang": "en",
+      "main": 1,
+      "og": 7,
+      "title": "Privacy — Replay Capsule",
+      "twitter": 4,
+      "reflow": {
+        "clientWidth": 390,
+        "links": [
+          {
+            "left": 16,
+            "right": 83
+          },
+          {
+            "left": 91,
+            "right": 177
+          },
+          {
+            "left": 185,
+            "right": 256
+          }
+        ],
+        "scrollWidth": 390
+      },
+      "status": 200
+    },
+    "/terms/": {
+      "canonical": true,
+      "description": true,
+      "externalLinks": 0,
+      "footer": [
+        "Demo",
+        "Privacy",
+        "Terms"
+      ],
+      "h1": 1,
+      "header": [
+        "Demo",
+        "Privacy",
+        "Terms"
+      ],
+      "lang": "en",
+      "main": 1,
+      "og": 7,
+      "title": "Terms — Replay Capsule",
+      "twitter": 4,
+      "reflow": {
+        "clientWidth": 390,
+        "links": [
+          {
+            "left": 16,
+            "right": 83
+          },
+          {
+            "left": 91,
+            "right": 177
+          },
+          {
+            "left": 185,
+            "right": 256
+          }
+        ],
+        "scrollWidth": 390
+      },
+      "status": 200
+    },
+    "/not-a-real-route-polish-5": {
+      "canonical": true,
+      "description": true,
+      "externalLinks": 0,
+      "footer": [
+        "Demo",
+        "Privacy",
+        "Terms"
+      ],
+      "h1": 1,
+      "header": [
+        "Demo",
+        "Privacy",
+        "Terms"
+      ],
+      "lang": "en",
+      "main": 1,
+      "og": 7,
+      "title": "Page not found — Replay Capsule",
+      "twitter": 4,
+      "reflow": {
+        "clientWidth": 390,
+        "links": [
+          {
+            "left": 16,
+            "right": 83
+          },
+          {
+            "left": 91,
+            "right": 177
+          },
+          {
+            "left": 185,
+            "right": 256
+          }
+        ],
+        "scrollWidth": 390
+      },
+      "status": 404
+    }
+  }
+}

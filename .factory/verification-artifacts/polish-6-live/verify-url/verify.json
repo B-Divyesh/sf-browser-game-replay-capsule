@@ -1,0 +1,14 @@
+{
+  "url": "https://browser-game-replay-capsule.sociobot.in",
+  "loadMs": 866,
+  "errors": [],
+  "a11y": {
+    "title": "Replay Capsule — replay browser-game bugs",
+    "lang": "en",
+    "h1": 1,
+    "main": true,
+    "imgsMissingAlt": 0,
+    "buttonsUnlabeled": 0,
+    "textLength": 2233
+  }
+}
